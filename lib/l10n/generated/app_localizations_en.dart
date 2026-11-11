@@ -721,4 +721,111 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get atLeastOne => 'At least 1';
+
+  @override
+  String reminderDoseTitle(String child, String medicine) {
+    return '$child: $medicine';
+  }
+
+  @override
+  String reminderDoseBody(String dose, String time) {
+    return '$dose at $time';
+  }
+
+  @override
+  String reminderFollowUpTitle(String child, String medicine) {
+    return 'Still due: $medicine for $child';
+  }
+
+  @override
+  String reminderFollowUpBody(String time) {
+    return 'Planned for $time and not logged yet.';
+  }
+
+  @override
+  String reminderMissedTitle(String child, String medicine) {
+    return 'Not logged: $medicine for $child';
+  }
+
+  @override
+  String reminderMissedBody(String time) {
+    return 'The $time dose isn\'t logged. Open ZT Meds to check before giving it.';
+  }
+
+  @override
+  String reminderLastDayTitle(String child, String medicine) {
+    return 'Last day of $medicine for $child';
+  }
+
+  @override
+  String get reminderLastDayBody => 'Today is the last day of this course.';
+
+  @override
+  String get reminderPrivateTitle => 'Medicine reminder';
+
+  @override
+  String get reminderPrivateBody => 'Open ZT Meds to see which dose.';
+
+  @override
+  String get reminderChannel => 'Dose reminders';
+
+  @override
+  String get reminderChannelHint =>
+      'When your children\'s doses are due or missed';
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get remindersHint => 'When doses are due, follow-ups and missed doses';
+
+  @override
+  String get remindersOn => 'Dose reminders';
+
+  @override
+  String get remindersOnHint => 'At each planned dose time';
+
+  @override
+  String get followUp => 'Follow-up';
+
+  @override
+  String get followUpHint => 'Again if a dose isn\'t logged yet';
+
+  @override
+  String get followUpOff => 'Off';
+
+  @override
+  String followUpAfter(int minutes) {
+    return '$minutes minutes later';
+  }
+
+  @override
+  String get missedAlerts => 'Missed-dose alert';
+
+  @override
+  String get missedAlertsHint =>
+      'When a dose passes the child\'s \"missed after\" time';
+
+  @override
+  String get lastDayNotice => 'Last-day notice';
+
+  @override
+  String get lastDayNoticeHint => 'At 9:00 on the last day of a course';
+
+  @override
+  String get showNamesInReminders => 'Names in reminders';
+
+  @override
+  String get showNamesInRemindersHint =>
+      'Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.';
+
+  @override
+  String get remindersForChildren => 'Remind me about';
+
+  @override
+  String get remindersHowTheyWork =>
+      'Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.';
+
+  @override
+  String get reminderDoseGone => 'That dose isn\'t planned any more.';
 }

@@ -499,5 +499,105 @@
   "disclaimerBody4": "In an emergency, call your local emergency number.",
   "disclaimerAccept": "I understand",
   "newTimesFromTomorrow": "Saved. The new times start tomorrow, so today's records stay as they are.",
-  "atLeastOne": "At least 1"
+  "atLeastOne": "At least 1",
+  "reminderDoseTitle": "{child}: {medicine}",
+  "@reminderDoseTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDoseBody": "{dose} at {time}",
+  "@reminderDoseBody": {
+    "placeholders": {
+      "dose": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpTitle": "Still due: {medicine} for {child}",
+  "@reminderFollowUpTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpBody": "Planned for {time} and not logged yet.",
+  "@reminderFollowUpBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedTitle": "Not logged: {medicine} for {child}",
+  "@reminderMissedTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedBody": "The {time} dose isn't logged. Open ZT Meds to check before giving it.",
+  "@reminderMissedBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayTitle": "Last day of {medicine} for {child}",
+  "@reminderLastDayTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayBody": "Today is the last day of this course.",
+  "reminderPrivateTitle": "Medicine reminder",
+  "reminderPrivateBody": "Open ZT Meds to see which dose.",
+  "reminderChannel": "Dose reminders",
+  "reminderChannelHint": "When your children's doses are due or missed",
+  "remindersTitle": "Reminders",
+  "remindersHint": "When doses are due, follow-ups and missed doses",
+  "remindersOn": "Dose reminders",
+  "remindersOnHint": "At each planned dose time",
+  "followUp": "Follow-up",
+  "followUpHint": "Again if a dose isn't logged yet",
+  "followUpOff": "Off",
+  "followUpAfter": "{minutes} minutes later",
+  "@followUpAfter": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "missedAlerts": "Missed-dose alert",
+  "missedAlertsHint": "When a dose passes the child's \"missed after\" time",
+  "lastDayNotice": "Last-day notice",
+  "lastDayNoticeHint": "At 9:00 on the last day of a course",
+  "showNamesInReminders": "Names in reminders",
+  "showNamesInRemindersHint": "Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.",
+  "remindersForChildren": "Remind me about",
+  "remindersHowTheyWork": "Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.",
+  "reminderDoseGone": "That dose isn't planned any more."
 }

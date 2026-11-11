@@ -7,6 +7,7 @@ import '../data/meds_data.dart';
 import '../model/models.dart';
 import 'common.dart';
 import 'disclaimer.dart';
+import 'reminders_page.dart';
 
 /// The shared Zero-Trust settings screen, with Meds' own rows.
 class MedsSettingsPage extends ConsumerWidget {
@@ -31,6 +32,14 @@ class MedsSettingsPage extends ConsumerWidget {
           title: Text(l.yourName),
           subtitle: Text(me == null || me.name.isEmpty ? l.notSet : me.name),
           onTap: me == null ? null : () => _editName(context, ref, me),
+        ),
+        ListTile(
+          leading: const Icon(Icons.notifications_outlined),
+          title: Text(l.remindersTitle),
+          subtitle: Text(l.remindersHint),
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const RemindersPage()),
+          ),
         ),
         ListTile(
           leading: const Icon(Icons.medication_outlined),

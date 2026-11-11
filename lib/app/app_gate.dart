@@ -5,7 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zero_trust_core/zero_trust_core.dart';
 
 import '../data/meds_data.dart';
+import '../logic/dose_logic.dart';
 import '../platform/links.dart';
+import '../reminders/reminders.dart';
+import '../ui/child_page.dart';
+import '../ui/common.dart';
+import '../ui/dose_actions.dart';
 import '../ui/disclaimer.dart';
 import '../ui/home_page.dart';
 import '../ui/sharing_pages.dart';
@@ -85,6 +90,8 @@ class _AppGateState extends ConsumerState<AppGate> with WidgetsBindingObserver {
     ref.listen(currentUserProvider, (_, user) {
       if (user == null) {
         ref.read(vaultControllerProvider.notifier).lock();
+        // Reminders name the children: none stay after signing out.
+        ref.read(reminderSchedulerProvider).cancelAll().ignore();
         setState(() => _signingIn = true);
       }
     });
@@ -144,18 +151,66 @@ class MedsHome extends ConsumerStatefulWidget {
 
 class _MedsHomeState extends ConsumerState<MedsHome> {
   StreamSubscription<void>? _links;
+  StreamSubscription<void>? _taps;
+  Timer? _resyncSoon;
+  Timer? _hourly;
+  bool _handlingTaps = false;
 
   @override
   void initState() {
     super.initState();
     _links = IncomingLinks.instance.arrived.listen((_) => _takeLinks());
-    WidgetsBinding.instance.addPostFrameCallback((_) => _takeLinks());
+    _taps = ref.read(reminderSchedulerProvider).tapped.listen((_) {
+      _takeTaps();
+    });
+    // Reminders are set 14 days ahead; this keeps the window moving, and
+    // drops follow-ups for doses given while the app stayed open.
+    _hourly = Timer.periodic(const Duration(hours: 1), (_) => _resync());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _takeLinks();
+      _takeTaps();
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // The language or the 24-hour setting changed the reminders' text.
+    _resync();
   }
 
   @override
   void dispose() {
     _links?.cancel();
+    _taps?.cancel();
+    _resyncSoon?.cancel();
+    _hourly?.cancel();
     super.dispose();
+  }
+
+  /// Sets the phone's reminders from what this phone knows now. Runs
+  /// after every change (local or synced), so a dose logged anywhere
+  /// cancels its follow-up and missed alert here.
+  void _resync() {
+    _resyncSoon?.cancel();
+    _resyncSoon = Timer(const Duration(milliseconds: 400), () async {
+      if (!mounted) return;
+      try {
+        final family = await ref.read(familyProvider.future);
+        final prefs = await ref.read(reminderPrefsProvider.future);
+        if (!mounted) return;
+        final texts = L10nReminderTexts(context);
+        final plan = ReminderPlan.plan(
+          family.children,
+          prefs,
+          texts,
+          DateTime.now().toUtc(),
+        );
+        await ref.read(reminderSchedulerProvider).sync(plan, texts.channel);
+      } on Object {
+        // Retried on the next change or within the hour.
+      }
+    });
   }
 
   Future<void> _takeLinks() async {
@@ -168,11 +223,65 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     }
   }
 
+  /// A reminder tapped, or "Mark as given" pressed, now that the app is
+  /// unlocked: opens the dose, or logs it (warning first about a double
+  /// dose, as everywhere else).
+  Future<void> _takeTaps() async {
+    if (_handlingTaps) return;
+    _handlingTaps = true;
+    try {
+      while (mounted) {
+        final taps = ref.read(reminderSchedulerProvider).takeTaps();
+        if (taps.isEmpty) break;
+        for (final tap in taps) {
+          if (!mounted) return;
+          await _open(tap);
+        }
+      }
+    } finally {
+      _handlingTaps = false;
+    }
+  }
+
+  Future<void> _open(ReminderTarget tap) async {
+    final me = await ref.read(meProvider.future);
+    if (!me.disclaimerAccepted || !mounted) return;
+    final family = await ref.read(familyProvider.future);
+    final c = family.child(tap.spaceId);
+    if (c == null || !mounted) return;
+    final nav = Navigator.of(context);
+    nav.popUntil((r) => r.isFirst);
+    nav.push(
+      MaterialPageRoute<void>(builder: (_) => ChildPage(spaceId: c.spaceId)),
+    );
+    final dose = ReminderPlan.doseFor(c, tap);
+    if (dose == null) {
+      if (tap.date != null) showSnack(context, context.l.reminderDoseGone);
+      return;
+    }
+    // Let the child's page open first.
+    await Future<void>.delayed(const Duration(milliseconds: 350));
+    if (!mounted) return;
+    if (tap.markGiven) {
+      await giveDose(context, ref, c, dose.treatment, slot: dose);
+    } else {
+      final status = DoseRules.statusOf(
+        dose,
+        c.logsOf(dose.treatment.id),
+        DateTime.now().toUtc(),
+        missedAfter: c.missedAfter,
+      );
+      await showDoseSheet(context, ref, c, status);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Sync for the account's own vault (name, notice) and the children.
     ref.watch(ztSyncControllerProvider);
     ref.watch(ztSpacesProvider);
+    ref.listen(familyProvider, (_, _) => _resync());
+    ref.listen(reminderPrefsProvider, (_, _) => _resync());
     final me = ref.watch(meProvider);
     final accepted = me.value?.disclaimerAccepted;
     if (accepted == null) {
