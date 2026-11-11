@@ -7,6 +7,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../data/meds_data.dart';
+import '../logic/photo.dart';
 import '../model/models.dart';
 import 'child_page.dart';
 import 'common.dart';
@@ -323,7 +324,11 @@ class _PhotoPicker extends StatelessWidget {
         requestFullMetadata: false,
       );
       if (file == null) return;
-      onChanged(base64Encode(await file.readAsBytes()));
+      // The picker's resize keeps EXIF (GPS included) on Android, so the
+      // pixels are re-encoded here without any metadata.
+      final clean = cleanPhoto(await file.readAsBytes());
+      if (clean == null) throw const FormatException('not an image');
+      onChanged(base64Encode(clean));
     } on Object {
       if (context.mounted) showSnack(context, context.l.photoFailed);
     }
