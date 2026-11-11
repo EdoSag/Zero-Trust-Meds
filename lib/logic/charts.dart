@@ -148,3 +148,154 @@ class ChildCharts {
 
   bool get isEmpty => overall.counted == 0 && asNeeded.isEmpty;
 }
+
+/// One day of a fixed-time treatment's grid: a cell per dose time.
+@immutable
+class GridRow {
+  const GridRow(this.date, this.cells);
+  final LocalDate date;
+
+  /// In the order of [TreatmentGrid.times]; null where no dose was
+  /// planned that day (before the start, after an early end).
+  final List<DoseStatus?> cells;
+}
+
+/// A treatment as a calendar grid: days as rows, dose times as columns.
+@immutable
+class TreatmentGrid {
+  const TreatmentGrid(this.treatment, this.times, this.rows);
+
+  /// The last [maxDays] days up to today, and the rest of the course up to
+  /// [aheadDays] days ahead, newest first.
+  factory TreatmentGrid.of(
+    ChildData c,
+    Treatment t,
+    DateTime nowUtc, {
+    int maxDays = 90,
+    int aheadDays = 14,
+  }) {
+    final schedule = t.schedule;
+    final times = schedule is FixedTimes
+        ? ([...schedule.times]..sort())
+        : const <TimeOfDose>[];
+    final today = c.today(nowUtc);
+    var from = today.addDays(-(maxDays - 1));
+    if (from.isBefore(t.startDate)) from = t.startDate;
+    var to = today.addDays(aheadDays);
+    final last = t.lastDay;
+    if (last != null && last.isBefore(to)) to = last;
+    final byKey = {
+      for (final s in c.dosesOf(t, nowUtc, from: from, to: to))
+        '${s.dose.date}|${s.dose.time}': s,
+    };
+    final rows = <GridRow>[
+      for (var d = to; !d.isBefore(from); d = d.addDays(-1))
+        GridRow(d, [for (final time in times) byKey['$d|$time']]),
+    ];
+    return TreatmentGrid(t, times, rows);
+  }
+
+  final Treatment treatment;
+  final List<TimeOfDose> times;
+
+  /// Newest first.
+  final List<GridRow> rows;
+}
+
+/// One line of a child's combined timeline: a planned dose with its
+/// status, or an as-needed dose given.
+@immutable
+class TimelineEntry {
+  const TimelineEntry.planned(DoseStatus this.status)
+    : treatment = null,
+      log = null;
+  const TimelineEntry.asNeeded(Treatment this.treatment, DoseLog this.log)
+    : status = null;
+
+  final DoseStatus? status;
+  final Treatment? treatment;
+  final DoseLog? log;
+
+  Treatment get medicine => status?.dose.treatment ?? treatment!;
+
+  /// When it was planned, or when the as-needed dose was given (UTC).
+  DateTime get at => status?.dose.at ?? log!.at;
+}
+
+/// A day of the combined timeline, in the child's calendar.
+@immutable
+class TimelineDay {
+  const TimelineDay(this.date, this.entries);
+  final LocalDate date;
+
+  /// By time.
+  final List<TimelineEntry> entries;
+}
+
+abstract final class ChildTimeline {
+  /// Every medicine's doses over the last [days] days (today's still to
+  /// come included), newest day first.
+  static List<TimelineDay> of(ChildData c, DateTime nowUtc, {int days = 7}) {
+    final to = c.today(nowUtc);
+    final from = to.addDays(-(days - 1));
+    final byDay = <LocalDate, List<TimelineEntry>>{};
+    for (final t in c.treatments) {
+      if (t.startDate.isAfter(to)) continue;
+      final last = t.lastDay;
+      if (last != null && last.isBefore(from)) continue;
+      if (t.schedule is AsNeeded) {
+        for (final l in c.logsOf(t.id)) {
+          if (!l.given) continue;
+          final day = c.today(l.at);
+          if (day.isBefore(from) || day.isAfter(to)) continue;
+          (byDay[day] ??= []).add(TimelineEntry.asNeeded(t, l));
+        }
+      } else {
+        for (final s in c.dosesOf(t, nowUtc, from: from, to: to)) {
+          (byDay[s.dose.date] ??= []).add(TimelineEntry.planned(s));
+        }
+      }
+    }
+    return [
+      for (var d = to; !d.isBefore(from); d = d.addDays(-1))
+        if (byDay[d] != null)
+          TimelineDay(d, byDay[d]!..sort((a, b) => a.at.compareTo(b.at))),
+    ];
+  }
+}
+
+/// One child's card in the family overview.
+@immutable
+class ChildOverview {
+  const ChildOverview({
+    required this.child,
+    required this.today,
+    required this.week,
+  });
+
+  factory ChildOverview.of(ChildData c, DateTime nowUtc) {
+    final counts = <DoseState, int>{};
+    for (final s in c.doses(c.today(nowUtc), nowUtc)) {
+      counts[s.state] = (counts[s.state] ?? 0) + 1;
+    }
+    return ChildOverview(
+      child: c,
+      today: counts,
+      week: ChildCharts.of(c, nowUtc, days: 7),
+    );
+  }
+
+  final ChildData child;
+
+  /// Today's planned doses by state.
+  final Map<DoseState, int> today;
+
+  /// The last 7 days, today included.
+  final ChildCharts week;
+
+  int count(DoseState s) => today[s] ?? 0;
+
+  /// Whether a dose today needs attention (due or missed).
+  bool get needsAttention =>
+      count(DoseState.due) > 0 || count(DoseState.missed) > 0;
+}

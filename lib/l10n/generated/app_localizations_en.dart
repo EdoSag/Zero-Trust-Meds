@@ -801,4 +801,38 @@ class AppL10nEn extends AppL10n {
     );
     return '$_temp0';
   }
+
+  @override
+  String get byTreatmentHint =>
+      'Tap a medicine to see every dose as a calendar.';
+
+  @override
+  String get timeline => 'Timeline';
+
+  @override
+  String get timelineHint =>
+      'Every medicine together, newest day first. Tap a dose for details.';
+
+  @override
+  String gridIntro(String child) {
+    return 'Days are rows and dose times are columns, in $child\'s time zone. Tap a dose to see who gave it and when.';
+  }
+
+  @override
+  String cellLabel(String day, String time, String status) {
+    return '$day, $time: $status';
+  }
+
+  @override
+  String get familyOverview => 'Family';
+
+  @override
+  String lastSevenDays(String percent) {
+    return 'Last 7 days: $percent';
+  }
+
+  @override
+  String todayCount(int count, String status) {
+    return '$count $status';
+  }
 }

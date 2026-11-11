@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../app/meds_config.dart';
 import '../data/meds_data.dart';
 import '../logic/charts.dart';
 import '../logic/dose_logic.dart';
 import '../model/models.dart';
 import 'common.dart';
+import 'dose_actions.dart';
 import 'home_page.dart';
+import 'treatment_grid_page.dart';
 
 /// How a child's doses went: share given, given / missed / skipped per day,
 /// each treatment, and as-needed doses. Worked out on the phone from the
@@ -35,7 +38,8 @@ class _ChartsPageState extends ConsumerState<ChartsPage> {
         body: Center(child: Text(l.childGone)),
       );
     }
-    final charts = ChildCharts.of(c, readNow(ref), days: _days);
+    final now = readNow(ref);
+    final charts = ChildCharts.of(c, now, days: _days);
     return Scaffold(
       appBar: AppBar(title: Text(l.chartsFor(c.child.name))),
       body: ListView(
@@ -57,6 +61,22 @@ class _ChartsPageState extends ConsumerState<ChartsPage> {
             )
           else ...[
             _Summary(charts),
+            if (charts.treatments.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Text(
+                l.byTreatment,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              Text(
+                l.byTreatmentHint,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              for (final t in charts.treatments)
+                _TreatmentRow(
+                  t,
+                  onTap: () => _openGrid(context, c, t.treatment),
+                ),
+            ],
             if (charts.overall.counted > 0) ...[
               const SizedBox(height: 24),
               Text(
@@ -67,14 +87,6 @@ class _ChartsPageState extends ConsumerState<ChartsPage> {
               const _Legend(),
               const SizedBox(height: 8),
               _DayBars(charts),
-            ],
-            if (charts.treatments.isNotEmpty) ...[
-              const SizedBox(height: 24),
-              Text(
-                l.byTreatment,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              for (final t in charts.treatments) _TreatmentRow(t),
             ],
             if (charts.asNeeded.isNotEmpty) ...[
               const SizedBox(height: 24),
@@ -90,7 +102,22 @@ class _ChartsPageState extends ConsumerState<ChartsPage> {
                   leading: const Icon(Icons.medication_outlined),
                   title: Text(a.treatment.medication.name),
                   subtitle: Text(l.asNeededSummary(a.given, a.mostInADay)),
+                  trailing: const Icon(Icons.chevron_right),
+                  onTap: () => _openGrid(context, c, a.treatment),
                 ),
+            ],
+            const SizedBox(height: 24),
+            Text(l.timeline, style: Theme.of(context).textTheme.titleMedium),
+            Text(l.timelineHint, style: Theme.of(context).textTheme.bodySmall),
+            for (final day in ChildTimeline.of(c, now, days: _days)) ...[
+              Padding(
+                padding: const EdgeInsetsDirectional.only(top: 12, bottom: 4),
+                child: Text(
+                  formatLocalDate(context, day.date),
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+              for (final e in day.entries) _TimelineTile(c, e),
             ],
           ],
           const SizedBox(height: 16),
@@ -345,51 +372,116 @@ class _AsNeededBars extends StatelessWidget {
   }
 }
 
+void _openGrid(BuildContext context, ChildData c, Treatment t) =>
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            TreatmentGridPage(spaceId: c.spaceId, treatmentId: t.id),
+      ),
+    );
+
+/// One dose in the combined timeline: when, which medicine, what happened
+/// and who did it. Planned doses open the dose sheet.
+class _TimelineTile extends ConsumerWidget {
+  const _TimelineTile(this.c, this.e);
+  final ChildData c;
+  final TimelineEntry e;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l;
+    final m = e.medicine.medication;
+    final s = e.status;
+    final title =
+        '${formatTime(context, e.at)} · ${m.name} · ${doseText(context, m)}';
+    if (s == null) {
+      final log = e.log!;
+      return ListTile(
+        contentPadding: EdgeInsets.zero,
+        dense: true,
+        leading: const Icon(Icons.check_circle, color: Color(0xFF22C55E)),
+        title: Text(title),
+        subtitle: Text(
+          '${l.asNeeded} · ${l.givenBy(c.nameOf(log.byUserId), formatWhen(context, log.at))}',
+        ),
+      );
+    }
+    final look = StatusLook.of(context, s.state);
+    final logs = s.logs;
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      dense: true,
+      leading: Icon(
+        s.givenTwice ? Icons.error_outline : look.icon,
+        color: s.givenTwice ? missedAmber : look.color,
+      ),
+      title: Text(title),
+      subtitle: Text(
+        [
+          s.givenTwice ? l.statusGivenTwice : look.label,
+          for (final log in logs)
+            log.given
+                ? l.givenBy(c.nameOf(log.byUserId), formatWhen(context, log.at))
+                : l.skippedBy(
+                    c.nameOf(log.byUserId),
+                    formatWhen(context, log.at),
+                  ),
+        ].join(' · '),
+      ),
+      onTap: () => showDoseSheet(context, ref, c, s),
+    );
+  }
+}
+
 class _TreatmentRow extends StatelessWidget {
-  const _TreatmentRow(this.stats);
+  const _TreatmentRow(this.stats, {required this.onTap});
   final TreatmentStats stats;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l;
     final a = stats.adherence;
     final m = stats.treatment.medication;
-    return Padding(
-      padding: const EdgeInsetsDirectional.only(top: 12),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  '${m.name} · ${doseText(context, m)}',
-                  style: Theme.of(context).textTheme.bodyLarge,
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.only(top: 12, bottom: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    '${m.name} · ${doseText(context, m)}',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
                 ),
-              ),
-              Text(_percent(context, a.percent)),
-            ],
-          ),
-          const SizedBox(height: 4),
-          LinearProgressIndicator(
-            value: a.counted == 0 ? 0 : a.given / a.counted,
-            minHeight: 8,
-            borderRadius: BorderRadius.circular(4),
-            // The value must be a number; the words are in the label.
-            semanticsLabel:
-                '${m.name}: ${l.plannedGivenShare(a.given, a.counted)}',
-          ),
-          const SizedBox(height: 4),
-          Text(
-            [
-              l.plannedGivenShare(a.given, a.counted),
-              if (a.missed > 0) l.missedCount(a.missed),
-              if (a.skipped > 0) l.skippedCount(a.skipped),
-              if (stats.givenTwice > 0) l.givenTwiceCount(stats.givenTwice),
-            ].join(' · '),
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-        ],
+                Text(_percent(context, a.percent)),
+              ],
+            ),
+            const SizedBox(height: 4),
+            LinearProgressIndicator(
+              value: a.counted == 0 ? 0 : a.given / a.counted,
+              minHeight: 8,
+              borderRadius: BorderRadius.circular(4),
+              // The value must be a number; the words are in the label.
+              semanticsLabel:
+                  '${m.name}: ${l.plannedGivenShare(a.given, a.counted)}',
+            ),
+            const SizedBox(height: 4),
+            Text(
+              [
+                l.plannedGivenShare(a.given, a.counted),
+                if (a.missed > 0) l.missedCount(a.missed),
+                if (a.skipped > 0) l.skippedCount(a.skipped),
+                if (stats.givenTwice > 0) l.givenTwiceCount(stats.givenTwice),
+              ].join(' · '),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+        ),
       ),
     );
   }

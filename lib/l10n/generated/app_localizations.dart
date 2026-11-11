@@ -1316,6 +1316,54 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'{count, plural, =1{1 given twice} other{{count} given twice}}'**
   String givenTwiceCount(int count);
+
+  /// No description provided for @byTreatmentHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a medicine to see every dose as a calendar.'**
+  String get byTreatmentHint;
+
+  /// No description provided for @timeline.
+  ///
+  /// In en, this message translates to:
+  /// **'Timeline'**
+  String get timeline;
+
+  /// No description provided for @timelineHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Every medicine together, newest day first. Tap a dose for details.'**
+  String get timelineHint;
+
+  /// No description provided for @gridIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'Days are rows and dose times are columns, in {child}\'s time zone. Tap a dose to see who gave it and when.'**
+  String gridIntro(String child);
+
+  /// No description provided for @cellLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}, {time}: {status}'**
+  String cellLabel(String day, String time, String status);
+
+  /// No description provided for @familyOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Family'**
+  String get familyOverview;
+
+  /// No description provided for @lastSevenDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days: {percent}'**
+  String lastSevenDays(String percent);
+
+  /// No description provided for @todayCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} {status}'**
+  String todayCount(int count, String status);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

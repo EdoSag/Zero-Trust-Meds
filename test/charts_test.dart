@@ -9,7 +9,9 @@ import 'package:zerotrust_meds/l10n/generated/app_localizations.dart';
 import 'package:zerotrust_meds/logic/charts.dart';
 import 'package:zerotrust_meds/model/models.dart';
 import 'package:zerotrust_meds/ui/charts_page.dart';
+import 'package:zerotrust_meds/logic/dose_logic.dart';
 import 'package:zerotrust_meds/ui/home_page.dart';
+import 'package:zerotrust_meds/ui/treatment_grid_page.dart';
 
 import 'support/phone.dart';
 
@@ -223,6 +225,7 @@ void main() {
     expect(find.text('Planned doses per day'), findsOneWidget);
     expect(find.textContaining('1 given twice'), findsOneWidget);
     expect(find.text('Paracetamol'), findsOneWidget);
+    expect(find.text('Timeline'), findsOneWidget);
     expect(
       find.byWidgetPredicate(
         (w) =>
@@ -245,5 +248,155 @@ void main() {
       expect(tester.takeException(), isNull);
     }
     semantics.dispose();
+  });
+
+  test(
+    'a medicine as a calendar: days as rows, dose times as columns',
+    () async {
+      final c = await noa();
+      final t = c.treatments.firstWhere((x) => x.id == 't1');
+      final grid = TreatmentGrid.of(c, t, now);
+      expect(grid.times, const [TimeOfDose(8, 0), TimeOfDose(20, 0)]);
+      // Newest first, from the course's last day back to its first.
+      expect(grid.rows.first.date, LocalDate.parse('2026-01-16'));
+      expect(grid.rows.last.date, LocalDate.parse('2026-01-10'));
+      expect(grid.rows.length, 7);
+      List<DoseState?> states(String day) => [
+        for (final cell
+            in grid.rows.firstWhere((r) => r.date.toString() == day).cells)
+          cell?.state,
+      ];
+      expect(states('2026-01-10'), [DoseState.given, DoseState.given]);
+      expect(states('2026-01-11'), [DoseState.given, DoseState.skipped]);
+      expect(states('2026-01-12'), [DoseState.missed, DoseState.upcoming]);
+      expect(states('2026-01-14'), [DoseState.upcoming, DoseState.upcoming]);
+      final twice = grid.rows
+          .firstWhere((r) => r.date.toString() == '2026-01-11')
+          .cells
+          .first!;
+      expect(twice.givenTwice, isTrue);
+      expect(twice.givenLogs.map((l) => l.byUserId), [mum, mum]);
+    },
+  );
+
+  test('one timeline for all the medicines, newest day first', () async {
+    final c = await noa();
+    final days = ChildTimeline.of(c, now, days: 7);
+    expect(days.map((d) => d.date.toString()), [
+      '2026-01-12',
+      '2026-01-11',
+      '2026-01-10',
+    ]);
+    final jan11 = days[1].entries;
+    expect(jan11.map((e) => (e.medicine.id, e.at.hour, e.status?.state)), [
+      ('t1', 8, DoseState.given),
+      ('p1', 9, null),
+      ('p1', 17, null),
+      ('t1', 20, DoseState.skipped),
+    ]);
+    // Today: the as-needed dose at 07:00, the missed 08:00 and the 20:00
+    // still to come.
+    expect(days.first.entries.map((e) => e.at.hour), [7, 8, 20]);
+  });
+
+  test('family overview card: today by status and the last 7 days', () async {
+    final c = await noa();
+    final o = ChildOverview.of(c, now);
+    expect(o.count(DoseState.missed), 1);
+    expect(o.count(DoseState.upcoming), 1);
+    expect(o.count(DoseState.given), 0);
+    expect(o.needsAttention, isTrue);
+    expect(o.week.days.length, 7);
+    expect(o.week.overall.percent, 60);
+  });
+
+  testWidgets('tapping a cell of the calendar shows who gave it and when', (
+    tester,
+  ) async {
+    late ChildData c;
+    await tester.runAsync(() async => c = await noa());
+    await tester.binding.setSurfaceSize(const Size(360, 800));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          nowProvider.overrideWith((ref) => Stream.value(now)),
+          familyProvider.overrideWith(
+            (ref) async =>
+                FamilyData(children: [c], ready: true, loading: false),
+          ),
+        ],
+        child: MaterialApp(
+          localizationsDelegates: const [
+            AppL10n.delegate,
+            ZtL10n.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: AppL10n.supportedLocales,
+          home: TreatmentGridPage(spaceId: c.spaceId, treatmentId: 't1'),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Morning'), findsOneWidget);
+    expect(find.text('Night'), findsOneWidget);
+    // Statuses are icons with labels for screen readers, not colour only.
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    expect(find.byIcon(Icons.error_outline), findsOneWidget);
+    final cell = find.byWidgetPredicate(
+      (w) =>
+          w is Semantics &&
+          (w.properties.label ?? '').startsWith('Sun, Jan 11, ') &&
+          (w.properties.label ?? '').contains('Given twice'),
+    );
+    expect(cell, findsOneWidget);
+    await tester.tap(cell);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Given by Mum'), findsNWidgets(2));
+  });
+
+  testWidgets('the home screen shows a family overview with two children', (
+    tester,
+  ) async {
+    late ChildData a, b;
+    await tester.runAsync(() async {
+      a = await noa();
+      b = await noa();
+    });
+    await tester.binding.setSurfaceSize(const Size(360, 2400));
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    Widget app(List<ChildData> kids) => ProviderScope(
+      key: ValueKey(kids.length),
+      overrides: [
+        nowProvider.overrideWith((ref) => Stream.value(now)),
+        familyProvider.overrideWith(
+          (ref) async =>
+              FamilyData(children: kids, ready: true, loading: false),
+        ),
+        pendingJoinsProvider.overrideWith((ref) async => const []),
+      ],
+      child: const MaterialApp(
+        localizationsDelegates: [
+          AppL10n.delegate,
+          ZtL10n.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: AppL10n.supportedLocales,
+        home: HomePage(),
+      ),
+    );
+    await tester.pumpWidget(app([a, b]));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(find.text('Family'), findsOneWidget);
+    expect(find.text('Last 7 days: 60%'), findsNWidgets(2));
+    expect(find.text('1 Missed'), findsNWidgets(2));
+
+    await tester.pumpWidget(app([a]));
+    await tester.pumpAndSettle();
+    expect(find.text('Family'), findsNothing);
   });
 }
