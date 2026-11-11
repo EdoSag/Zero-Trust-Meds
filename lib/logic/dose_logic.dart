@@ -223,7 +223,7 @@ abstract final class DoseGuard {
         out.add(TooSoon(last: last, nextAllowed: last.at.add(gap)));
       }
       final max = schedule.maxPer24h;
-      if (max != null) {
+      if (max != null && max > 0) {
         final window = [
           for (final l in given)
             if (l.at.isAfter(at.subtract(const Duration(hours: 24))) &&
@@ -265,6 +265,44 @@ abstract final class DoseGuard {
     }
     return next;
   }
+}
+
+/// How an edit to a treatment is saved without rewriting what was logged.
+abstract final class TreatmentEdit {
+  /// Records answer a dose by its day and time, so changing the times of a
+  /// course that has records would turn given doses into missed ones. Then
+  /// the old course ends today and a new one with the new times starts
+  /// tomorrow, for the days that are left. Otherwise the edit is saved as
+  /// it is.
+  static List<Treatment> plan({
+    required Treatment? old,
+    required Treatment edited,
+    required LocalDate today,
+    required bool hasLogs,
+  }) {
+    if (old == null ||
+        !hasLogs ||
+        old.startDate.isAfter(today) ||
+        _same(old.schedule, edited.schedule)) {
+      return [edited];
+    }
+    final last = edited.lastDay;
+    if (last != null && !last.isAfter(today)) return [edited];
+    final tomorrow = today.addDays(1);
+    return [
+      old.copyWith(endedOn: today, medication: edited.medication),
+      Treatment(
+        id: '',
+        medication: edited.medication,
+        schedule: edited.schedule,
+        startDate: tomorrow,
+        days: last == null ? null : tomorrow.daysUntil(last) + 1,
+      ),
+    ];
+  }
+
+  static bool _same(DoseSchedule a, DoseSchedule b) =>
+      a.toJson().toString() == b.toJson().toString();
 }
 
 /// Given, missed and skipped doses over a period, and the share given.

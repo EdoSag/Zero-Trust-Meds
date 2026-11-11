@@ -457,6 +457,60 @@ void main() {
     });
   });
 
+  group('TreatmentEdit.plan', () {
+    final today = LocalDate.parse('2026-01-12');
+    final old = fixed(['08:00'], start: '2026-01-10', days: 7);
+
+    test('new times on a course with records start tomorrow', () {
+      final edited = old.copyWith(
+        schedule: FixedTimes(const [TimeOfDose(9, 0)]),
+      );
+      final plan = TreatmentEdit.plan(
+        old: old,
+        edited: edited,
+        today: today,
+        hasLogs: true,
+      );
+      expect(plan, hasLength(2));
+      expect(plan[0].id, 't1');
+      expect(plan[0].lastDay, today);
+      expect((plan[0].schedule as FixedTimes).times, [const TimeOfDose(8, 0)]);
+      expect(plan[1].id, isEmpty);
+      expect(plan[1].startDate, LocalDate.parse('2026-01-13'));
+      // Same last day as before: Jan 16.
+      expect(plan[1].lastDay, LocalDate.parse('2026-01-16'));
+      expect((plan[1].schedule as FixedTimes).times, [const TimeOfDose(9, 0)]);
+    });
+
+    test('other edits, or a course without records, save in place', () {
+      for (final (edited, logs) in [
+        (old.copyWith(days: 10), true),
+        (old.copyWith(schedule: FixedTimes(const [TimeOfDose(9, 0)])), false),
+      ]) {
+        final plan = TreatmentEdit.plan(
+          old: old,
+          edited: edited,
+          today: today,
+          hasLogs: logs,
+        );
+        expect(plan.single, same(edited));
+      }
+    });
+  });
+
+  test('a stored most-per-day of 0 is ignored instead of crashing', () {
+    final t = asNeeded(minInterval: 0, max: 0);
+    final logs = [given('p1', DateTime.utc(2026, 1, 10, 1))];
+    expect(
+      DoseGuard.beforeGiving(
+        t: t,
+        logs: logs,
+        at: DateTime.utc(2026, 1, 10, 2),
+      ),
+      isEmpty,
+    );
+  });
+
   test('adherence counts given, missed and skipped, not upcoming', () {
     final t = fixed(['08:00', '20:00'], start: '2026-01-10', days: 2);
     final doses = ChildClock.planned(

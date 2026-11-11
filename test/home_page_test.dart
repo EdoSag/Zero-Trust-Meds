@@ -64,6 +64,16 @@ void main() {
             startDate: LocalDate.parse('2026-01-01'),
           ).toJson(),
         );
+        // Starts next month: not offered today.
+        await space.save(
+          'p2',
+          Treatment(
+            id: 'p2',
+            medication: const Medication(id: 'med-3', name: 'Ibuprofen'),
+            schedule: const AsNeeded(minIntervalMinutes: 360),
+            startDate: LocalDate.parse('2026-02-01'),
+          ).toJson(),
+        );
         await space.save(
           'dose/1',
           DoseLog(
@@ -123,6 +133,7 @@ void main() {
       expect(find.textContaining('Given by Mum'), findsOneWidget);
       expect(find.textContaining('Paracetamol'), findsOneWidget);
       expect(find.textContaining('Can be given now'), findsOneWidget);
+      expect(find.textContaining('Ibuprofen'), findsNothing);
 
       // The status sits beside the medicine name, not on top of it.
       final name = tester.getRect(find.text('Amoxicillin · 5 ml').first);

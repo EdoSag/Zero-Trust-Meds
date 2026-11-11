@@ -1208,6 +1208,18 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'I understand'**
   String get disclaimerAccept;
+
+  /// No description provided for @newTimesFromTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. The new times start tomorrow, so today\'s records stay as they are.'**
+  String get newTimesFromTomorrow;
+
+  /// No description provided for @atLeastOne.
+  ///
+  /// In en, this message translates to:
+  /// **'At least 1'**
+  String get atLeastOne;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

@@ -497,5 +497,7 @@
   "disclaimerBody2": "Always follow the instructions from your doctor or pharmacist and on the medicine's label. If you are unsure, ask them.",
   "disclaimerBody3": "Reminders can be late or not show at all, for example when the phone is off, in battery saver or has notifications turned off. Never rely on the app alone.",
   "disclaimerBody4": "In an emergency, call your local emergency number.",
-  "disclaimerAccept": "I understand"
+  "disclaimerAccept": "I understand",
+  "newTimesFromTomorrow": "Saved. The new times start tomorrow, so today's records stay as they are.",
+  "atLeastOne": "At least 1"
 }

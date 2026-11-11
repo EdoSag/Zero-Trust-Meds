@@ -714,4 +714,11 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get disclaimerAccept => 'I understand';
+
+  @override
+  String get newTimesFromTomorrow =>
+      'Saved. The new times start tomorrow, so today\'s records stay as they are.';
+
+  @override
+  String get atLeastOne => 'At least 1';
 }

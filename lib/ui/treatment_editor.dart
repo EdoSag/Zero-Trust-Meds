@@ -116,8 +116,12 @@ class _TreatmentEditorPageState extends ConsumerState<TreatmentEditorPage> {
       endedOn: _t?.endedOn,
     );
     try {
-      await ref.read(medsActionsProvider).saveTreatment(c, t);
-      if (mounted) Navigator.of(context).pop();
+      final fromTomorrow = await ref
+          .read(medsActionsProvider)
+          .saveTreatment(c, t, c.today(DateTime.now().toUtc()));
+      if (!mounted) return;
+      if (fromTomorrow) showSnack(context, l.newTimesFromTomorrow);
+      Navigator.of(context).pop();
     } on Object {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -331,6 +335,12 @@ class _TreatmentEditorPageState extends ConsumerState<TreatmentEditorPage> {
                         labelText: l.maxPer24h,
                         hintText: l.optional,
                       ),
+                      validator: (v) =>
+                          v != null &&
+                              v.isNotEmpty &&
+                              (int.tryParse(v) ?? 0) < 1
+                          ? l.atLeastOne
+                          : null,
                     ),
                   ),
                 ],

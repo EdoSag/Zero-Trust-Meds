@@ -108,7 +108,7 @@ class ChildData {
   /// As-needed treatments running today.
   List<Treatment> asNeeded(DateTime nowUtc) => [
     for (final t in active(nowUtc))
-      if (t.schedule is AsNeeded && !t.isPaused) t,
+      if (t.schedule is AsNeeded && !t.isPaused && t.runsOn(today(nowUtc))) t,
   ];
 }
 
@@ -370,7 +370,23 @@ class MedsActions {
     _changed();
   }
 
-  Future<String> saveTreatment(ChildData c, Treatment t) async {
+  /// Saves a new or edited treatment. Returns true when new times take
+  /// effect tomorrow (see [TreatmentEdit.plan]).
+  Future<bool> saveTreatment(ChildData c, Treatment t, LocalDate today) async {
+    final old = c.treatments.where((x) => x.id == t.id).firstOrNull;
+    final plan = TreatmentEdit.plan(
+      old: old,
+      edited: t,
+      today: today,
+      hasLogs: old != null && c.logsOf(old.id).isNotEmpty,
+    );
+    for (final x in plan) {
+      await _saveOne(c, x);
+    }
+    return plan.length > 1;
+  }
+
+  Future<String> _saveOne(ChildData c, Treatment t) async {
     final id = t.id.isEmpty ? newUuid() : t.id;
     final med = await saveMedication(c, t.medication);
     final saved = Treatment(
