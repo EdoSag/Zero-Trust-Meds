@@ -224,33 +224,48 @@ abstract final class DoseGuard {
       }
       final max = schedule.maxPer24h;
       if (max != null && max > 0) {
-        const day = Duration(hours: 24);
-        // The 24 hours up to this dose, and, for a time corrected
-        // backwards, the 24 hours up to each dose logged after it: this
-        // one counts in those too.
-        final ends = [
-          at,
-          for (final l in given)
-            if (l.at.isAfter(at) && l.at.isBefore(at.add(day))) l.at,
-        ];
-        for (final end in ends) {
-          final window = [
+        final count = _fullWindow(given, at, max);
+        if (count != null) {
+          // The first time from here on at which one more dose fits: only
+          // when a logged dose leaves a 24 hour window can that change.
+          final candidates = [
             for (final l in given)
-              if (l.at.isAfter(end.subtract(day)) && !l.at.isAfter(end)) l,
+              if (l.at.add(_day).isAfter(at)) l.at.add(_day),
           ];
-          if (window.length < max) continue;
           out.add(
             MaxReached(
-              count: window.length,
+              count: count,
               max: max,
-              nextAllowed: window[window.length - max].at.add(day),
+              nextAllowed: candidates.firstWhere(
+                (c) => _fullWindow(given, c, max) == null,
+              ),
             ),
           );
-          break;
         }
       }
     }
     return out;
+  }
+
+  static const _day = Duration(hours: 24);
+
+  /// How many doses are already in a 24 hour window that a dose at [at]
+  /// would overfill, or null when it fits. The windows are the 24 hours up
+  /// to [at] and, for a time in the past, the 24 hours up to each dose
+  /// logged after it: this one counts in those too. [given] is sorted.
+  static int? _fullWindow(List<DoseLog> given, DateTime at, int max) {
+    final ends = [
+      at,
+      for (final l in given)
+        if (l.at.isAfter(at) && l.at.isBefore(at.add(_day))) l.at,
+    ];
+    for (final end in ends) {
+      final count = given
+          .where((l) => l.at.isAfter(end.subtract(_day)) && !l.at.isAfter(end))
+          .length;
+      if (count >= max) return count;
+    }
+    return null;
   }
 
   /// For an as-needed medicine: when the next dose is allowed (now when it
@@ -303,7 +318,9 @@ abstract final class TreatmentEdit {
     if (old == null ||
         !hasLogs ||
         old.startDate.isAfter(today) ||
-        _same(old.schedule, edited.schedule)) {
+        _same(old.schedule, edited.schedule) ||
+        // As-needed doses have no planned times for records to answer.
+        (old.schedule is AsNeeded && edited.schedule is AsNeeded)) {
       return [edited];
     }
     final last = edited.lastDay;
