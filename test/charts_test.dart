@@ -242,6 +242,12 @@ void main() {
     final sub = tester.getRect(find.text('3 of 5 planned doses given').first);
     expect(sub.top, greaterThanOrEqualTo(pct.bottom));
 
+    // As-needed counts are readable by tapping, not only by screen readers.
+    final asNeededBar = find.byWidgetPredicate(
+      (w) => w is Tooltip && w.message == 'Sun, Jan 11: 2 as-needed doses',
+    );
+    expect(asNeededBar, findsOneWidget);
+
     for (final days in ['30 days', '90 days', '7 days']) {
       await tester.tap(find.text(days));
       await tester.pumpAndSettle();

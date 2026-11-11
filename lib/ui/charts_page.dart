@@ -331,38 +331,47 @@ class _AsNeededBars extends StatelessWidget {
         children: [
           for (final d in charts.days)
             Expanded(
-              child: Semantics(
-                label: l.asNeededDayLabel(
+              child: Tooltip(
+                // Tap a bar to read its count (not only for screen readers).
+                message: l.asNeededDayLabel(
                   formatLocalDate(context, d.date),
                   d.asNeeded,
                 ),
-                excludeSemantics: true,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: n > 30 ? 0.5 : 3,
-                      ),
-                      child: Container(
-                        height: most == 0 ? 0 : height * d.asNeeded / most,
-                        decoration: BoxDecoration(
-                          color: color,
-                          borderRadius: BorderRadius.circular(n > 30 ? 1 : 4),
+                triggerMode: TooltipTriggerMode.tap,
+                excludeFromSemantics: true,
+                child: Semantics(
+                  label: l.asNeededDayLabel(
+                    formatLocalDate(context, d.date),
+                    d.asNeeded,
+                  ),
+                  excludeSemantics: true,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: n > 30 ? 0.5 : 3,
+                        ),
+                        child: Container(
+                          height: most == 0 ? 0 : height * d.asNeeded / most,
+                          decoration: BoxDecoration(
+                            color: color,
+                            borderRadius: BorderRadius.circular(n > 30 ? 1 : 4),
+                          ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 24,
-                      child: Text(
-                        _dayLabel(context, d.date, n) ?? '',
-                        style: Theme.of(context).textTheme.labelSmall,
-                        maxLines: 1,
-                        softWrap: false,
-                        overflow: TextOverflow.visible,
+                      SizedBox(
+                        height: 24,
+                        child: Text(
+                          _dayLabel(context, d.date, n) ?? '',
+                          style: Theme.of(context).textTheme.labelSmall,
+                          maxLines: 1,
+                          softWrap: false,
+                          overflow: TextOverflow.visible,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
