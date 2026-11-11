@@ -1054,17 +1054,17 @@ packages:
     dependency: "direct main"
     description:
       path: "packages/zero_trust_core"
-      ref: c1c253d1a82375e782094e788d9d3602ed320b53
-      resolved-ref: c1c253d1a82375e782094e788d9d3602ed320b53
+      ref: "5c8476ea033a30c097b2ac1d8803fe8ed7921110"
+      resolved-ref: "5c8476ea033a30c097b2ac1d8803fe8ed7921110"
       url: "https://github.com/EdoSag/Zero-Trust-Core.git"
     source: git
-    version: "0.9.0"
+    version: "0.10.0"
   zt_crypto:
     dependency: transitive
     description:
       path: "packages/zt_crypto"
-      ref: c1c253d1a82375e782094e788d9d3602ed320b53
-      resolved-ref: c1c253d1a82375e782094e788d9d3602ed320b53
+      ref: "5c8476ea033a30c097b2ac1d8803fe8ed7921110"
+      resolved-ref: "5c8476ea033a30c097b2ac1d8803fe8ed7921110"
       url: "https://github.com/EdoSag/Zero-Trust-Core.git"
     source: git
     version: "0.3.2"

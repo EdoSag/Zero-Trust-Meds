@@ -25,9 +25,9 @@ dependencies:
     git:
       url: https://github.com/EdoSag/Zero-Trust-Core.git
       path: packages/zero_trust_core
-      # Z24 shared spaces (Core PR #22). Switch to the release tag once it
-      # is merged and tagged.
-      ref: c1c253d1a82375e782094e788d9d3602ed320b53
+      # Core Dev with Z24 shared spaces (PR #22) and languages (PR #21). Switch
+      # to the release tag once one is pushed.
+      ref: 5c8476ea033a30c097b2ac1d8803fe8ed7921110
   flutter_riverpod: ^3.5.0
   supabase_flutter: ^2.9.0
   flutter_dotenv: ^6.0.1
