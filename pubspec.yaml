@@ -1,0 +1,59 @@
+name: zerotrust_meds
+description: "Zero-Trust Meds: track the medicines your children get, shared between every caregiver, end-to-end encrypted."
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.9.0
+
+# Builds SQLite3MultipleCiphers instead of plain SQLite, so the core's local
+# stores are encrypted as whole files (see Zero-Trust-Core README, "Sync").
+hooks:
+  user_defines:
+    sqlite3:
+      source: sqlite3mc
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # Shared account, keys, sync, sharing, settings and look of every
+  # Zero-Trust app. Never add cryptography_flutter: it breaks the core's key
+  # derivation.
+  zero_trust_core:
+    git:
+      url: https://github.com/EdoSag/Zero-Trust-Core.git
+      path: packages/zero_trust_core
+      # Core Dev with the shared spaces trust chain fix (PR #35) and invite
+      # links per app (PR #37). Every app that shares must be on this commit
+      # or later: older ones cannot read the new member records. Switch to
+      # the release tag once one is pushed.
+      ref: cb397d13efd868e34a34d465251a7f705b49f9e1
+  flutter_riverpod: ^3.5.0
+  supabase_flutter: ^2.9.0
+  flutter_dotenv: ^6.0.1
+  intl: any
+  timezone: ^0.11.2
+  # Dose reminders, scheduled on the phone (no push service).
+  flutter_local_notifications: ^23.0.0
+  flutter_timezone: ^5.0.0
+  url_launcher: ^6.3.1
+  share_plus: ^13.3.1
+  qr_flutter: ^4.1.0
+  # Child photos: shrunk on the phone, stored encrypted in the profile.
+  image_picker: ^1.1.2
+  # Re-encodes the photo so no EXIF (GPS, camera) data is kept.
+  image: ^4.3.0
+  qr_code_scanner_plus: ">=2.1.2 <2.2.0"
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - .env

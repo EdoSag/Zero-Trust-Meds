@@ -1,0 +1,765 @@
+{
+  "@@locale": "en",
+  "appTitle": "ZT Meds",
+  "todayTitle": "Today",
+  "settings": "Settings",
+  "loadError": "Couldn't load your children. Pull down to try again.",
+  "addChildOrJoin": "Add or join",
+  "addChild": "Add a child",
+  "addChildHint": "You manage their medicines and invite caregivers",
+  "joinWithInvite": "Join with an invite",
+  "joinWithInviteHint": "Scan or paste the invite another parent sent you",
+  "emptyTitle": "Track your children's medicines together",
+  "emptyBody": "Add a child, set up their treatments and invite everyone who gives them medicine. Everything is end-to-end encrypted.",
+  "waitingForAdmin": "Waiting for the admin to let you in",
+  "waitingForSync": "Confirmed. The child's details will appear in a moment.",
+  "waitingCode": "Your code: {code}. The admin checks it on their phone.",
+  "@waitingCode": {
+    "placeholders": {
+      "code": {
+        "type": "String"
+      }
+    }
+  },
+  "joinRequest": "{name} wants to help with {child}",
+  "@joinRequest": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "joinRequestHint": "Tap to compare codes and let them in",
+  "nothingToday": "No doses today",
+  "givenOfToday": "{given} of {total} doses given today",
+  "@givenOfToday": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "markGiven": "Mark as given",
+  "giveAgain": "Give again",
+  "givenAtOtherTime": "Given at another time",
+  "skipDose": "Skip this dose",
+  "asNeeded": "As needed",
+  "lastGiven": "Last: {name}, {when}",
+  "@lastGiven": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "nextAllowed": "Next allowed {when}",
+  "@nextAllowed": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "canGiveNow": "Can be given now",
+  "everyHours": "At least {hours} h apart",
+  "@everyHours": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "maxPerDay": "{count, plural, =1{At most 1 a day} other{At most {count} a day}}",
+  "@maxPerDay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "statusGiven": "Given",
+  "statusDue": "Due",
+  "statusMissed": "Missed",
+  "statusUpcoming": "Upcoming",
+  "statusSkipped": "Skipped",
+  "statusPaused": "Paused",
+  "statusGivenTwice": "Given twice",
+  "slot": "{slot, select, morning{Morning} noon{Noon} evening{Evening} other{Night}}",
+  "@slot": {
+    "placeholders": {
+      "slot": {
+        "type": "String"
+      }
+    }
+  },
+  "form": "{form, select, liquid{Liquid} tablet{Tablet} capsule{Capsule} drops{Drops} inhaler{Inhaler} cream{Cream} injection{Injection} other{Other}}",
+  "@form": {
+    "placeholders": {
+      "form": {
+        "type": "String"
+      }
+    }
+  },
+  "formUnit": "{form, select, liquid{ml} tablet{tablet} capsule{capsule} drops{drops} inhaler{puffs} cream{application} injection{ml} other{dose}}",
+  "@formUnit": {
+    "placeholders": {
+      "form": {
+        "type": "String"
+      }
+    }
+  },
+  "loggedGiven": "{medicine} logged as given to {child}",
+  "@loggedGiven": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      },
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "undo": "Undo",
+  "warnTitle": "Give {medicine} again?",
+  "@warnTitle": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "warnAlreadyGiven": "{name} already gave this dose at {when}.",
+  "@warnAlreadyGiven": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "warnTooSoon": "The last dose was at {last}. The next one is allowed from {next}.",
+  "@warnTooSoon": {
+    "placeholders": {
+      "last": {
+        "type": "String"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "warnMaxReached": "{count, plural, =1{Already 1 dose in the last 24 hours, the most allowed.} other{Already {count} doses in the last 24 hours, the most allowed.}} The next one is allowed from {next}.",
+  "@warnMaxReached": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "next": {
+        "type": "String"
+      }
+    }
+  },
+  "warnCheck": "Check the label or ask a doctor or pharmacist if unsure.",
+  "dontGive": "Don't give",
+  "giveAnyway": "Give anyway",
+  "skipTitle": "Skip this dose",
+  "skipReason": "Reason",
+  "skip": "Skip",
+  "reasonAsleep": "Asleep",
+  "reasonVomited": "Vomited",
+  "reasonRefused": "Refused",
+  "reasonDoctor": "Doctor's advice",
+  "cancel": "Cancel",
+  "more": "More",
+  "plannedFor": "For {child}, {when}",
+  "@plannedFor": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "givenBy": "Given by {name} at {when}",
+  "@givenBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "skippedBy": "Skipped by {name} at {when}",
+  "@skippedBy": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "changeTime": "Change the time",
+  "undoRecord": "Remove this record",
+  "recordRemoved": "Record removed",
+  "childGone": "This child is no longer here.",
+  "editChild": "Edit child",
+  "exportChild": "Export records",
+  "leaveChild": "Stop being a caregiver",
+  "deleteChild": "Delete child",
+  "addTreatment": "Add treatment",
+  "bornOn": "Born {date}",
+  "@bornOn": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "timesIn": "Dose times in {zone}",
+  "@timesIn": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "today": "Today",
+  "treatments": "Treatments",
+  "noTreatments": "No running treatments",
+  "caregivers": "Caregivers",
+  "invite": "Invite",
+  "recentRecords": "Recent records",
+  "history": "Finished treatments",
+  "leaveChildTitle": "Stop being a caregiver for {child}?",
+  "@leaveChildTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "leaveChildBody": "Their records are removed from your phones. The other caregivers keep everything.",
+  "leave": "Leave",
+  "deleteChildTitle": "Delete {child}?",
+  "@deleteChildTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteChildBody": "Deletes the child, every treatment and every dose record for all caregivers. This can't be undone. Export the records first if you want to keep them.",
+  "delete": "Delete",
+  "fromDate": "From {date}",
+  "@fromDate": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "dateRange": "{start} to {end}",
+  "@dateRange": {
+    "placeholders": {
+      "start": {
+        "type": "String"
+      },
+      "end": {
+        "type": "String"
+      }
+    }
+  },
+  "adherence": "{percent}% given",
+  "@adherence": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "editTreatment": "Edit treatment",
+  "resume": "Resume",
+  "pause": "Pause",
+  "endToday": "End after today",
+  "endTodayHint": "Moves to finished treatments tomorrow",
+  "deleteTreatment": "Delete treatment",
+  "deleteTreatmentTitle": "Delete {medicine}?",
+  "@deleteTreatmentTitle": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteTreatmentBody": "Deletes the treatment and its dose records for all caregivers. To keep the history, end it instead.",
+  "youName": "{name} (you)",
+  "@youName": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "roleAdmin": "Admin",
+  "roleCaregiver": "Caregiver",
+  "roleAdminHint": "Admins manage medicines, treatments and caregivers.",
+  "roleCaregiverHint": "Caregivers see everything and log doses.",
+  "removeCaregiverTitle": "Remove {name}?",
+  "@removeCaregiverTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "removeCaregiverBody": "They lose access at once. The child's key is replaced, so nothing written from now on can be read with their old key.",
+  "remove": "Remove",
+  "makeAdmin": "Make admin",
+  "makeCaregiver": "Make caregiver",
+  "actionFailed": "That didn't work. Check your connection and try again.",
+  "removedTreatment": "Deleted treatment",
+  "saveFailedOffline": "Couldn't save. Check your connection and try again.",
+  "save": "Save",
+  "childName": "Child's name",
+  "required": "Required",
+  "birthDate": "Birth date",
+  "optional": "Optional",
+  "color": "Colour",
+  "childTimeZone": "Time zone for dose times",
+  "childTimeZoneHint": "08:00 means 08:00 here, wherever a caregiver is",
+  "missedAfter": "Missed after",
+  "missedAfterHint": "A dose not logged by then shows as missed",
+  "minutesShort": "{minutes} min",
+  "@minutesShort": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "hoursShort": "{hours} h",
+  "@hoursShort": {
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+  "yourName": "Your name",
+  "yourNameHint": "Shown to the other caregivers",
+  "addChildPrivacy": "Only people you invite can see this child. Names, medicines and doses are encrypted on this phone before they are sent.",
+  "searchZone": "Search city or region",
+  "addATime": "Add at least one time",
+  "addTreatmentFor": "New treatment for {child}",
+  "@addTreatmentFor": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "medicine": "Medicine",
+  "medicineName": "Name",
+  "medicineForm": "Form",
+  "doseAmount": "Dose",
+  "doseUnit": "Unit",
+  "medicineNotes": "Notes",
+  "medicineNotesHint": "With food, shake well…",
+  "when": "When",
+  "fixedTimes": "Set times",
+  "timesPerDay": "{count, plural, =1{Once a day} =2{Twice a day} other{{count} times a day}}",
+  "@timesPerDay": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "fewerTimes": "Fewer times",
+  "moreTimes": "More times",
+  "timesInZone": "Times are in {zone}.",
+  "@timesInZone": {
+    "placeholders": {
+      "zone": {
+        "type": "String"
+      }
+    }
+  },
+  "minHoursBetween": "Hours between doses",
+  "maxPer24h": "Most per 24 h",
+  "howLong": "How long",
+  "startDate": "Start",
+  "numberOfDays": "Number of days",
+  "lastDayIs": "Last day: {date}",
+  "@lastDayIs": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "ongoing": "Empty: until you end it",
+  "inviteTo": "Invite to {child}",
+  "@inviteTo": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteIntro": "Invite a parent, grandparent or babysitter. They need a Zero-Trust account. The invite works once and expires in 7 days.",
+  "createInvite": "Create invite",
+  "inviteReady": "Let them scan this code, or send them the link.",
+  "inviteQr": "Invite QR code",
+  "linkCopied": "Link copied",
+  "copyLink": "Copy link",
+  "shareLink": "Send link",
+  "inviteMessage": "Join me in ZT Meds to look after {child}: {link}",
+  "@inviteMessage": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "link": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteNextSteps": "When they open it, they see an 8-digit code. Compare it with the code shown here before letting them in, so you know it is really them.",
+  "checkForAnswers": "Check for answers",
+  "needsInternet": "This needs an internet connection. Try again when you're online.",
+  "confirmJoinTitle": "Let {name} help with {child}?",
+  "@confirmJoinTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmJoinBody": "Ask them for the code on their phone. Only let them in if it is exactly this:",
+  "codesDiffer": "Codes differ",
+  "later": "Later",
+  "codesMatch": "Codes match",
+  "joined": "{name} can now see and log doses",
+  "@joined": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "inviteOtherApp": "This invite is for another Zero-Trust app",
+  "inviteInvalid": "This isn't a ZT Meds invite link",
+  "inviteUsed": "This invite was already used, expired or was withdrawn. Ask for a new one.",
+  "joinCodeTitle": "Show this code to the admin",
+  "joinCodeBody": "They compare it with the code on their phone and let you in. The child appears here once they do.",
+  "done": "Done",
+  "joinIntro": "Paste the invite link you were sent, or scan the QR code on the other parent's phone.",
+  "inviteLink": "Invite link",
+  "scanQr": "Scan QR code",
+  "join": "Join",
+  "notSet": "Not set",
+  "medicineList": "Medicines",
+  "medicineListHint": "The family's list, reused across children",
+  "medicineListEmpty": "Medicines you add to treatments appear here, ready to reuse.",
+  "deleteMedicineTitle": "Remove {medicine} from the list?",
+  "@deleteMedicineTitle": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "deleteMedicineBody": "Running treatments keep their copy of it.",
+  "edit": "Edit",
+  "disclaimerTitle": "Not medical advice",
+  "disclaimerBody1": "ZT Meds helps you remember and record the medicines your children get. It does not give medical advice, check doses or check for interactions.",
+  "disclaimerBody2": "Always follow the instructions from your doctor or pharmacist and on the medicine's label. If you are unsure, ask them.",
+  "disclaimerBody3": "Reminders can be late or not show at all, for example when the phone is off, in battery saver or has notifications turned off. Never rely on the app alone.",
+  "disclaimerBody4": "In an emergency, call your local emergency number.",
+  "disclaimerAccept": "I understand",
+  "newTimesFromTomorrow": "Saved. The new times start tomorrow, so today's records stay as they are.",
+  "timesKeptCourseEnding": "Saved. The times stay as they were, because this treatment has no days left and its records use them.",
+  "atLeastOne": "At least 1",
+  "takePhoto": "Take photo",
+  "choosePhoto": "Choose photo",
+  "removePhoto": "Remove",
+  "photoFailed": "Couldn't get the photo. Try again.",
+  "charts": "Charts",
+  "chartsFor": "{child}: how it went",
+  "@chartsFor": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "lastDays": "{days} days",
+  "@lastDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "chartsEmpty": "Nothing to show for this period yet. Charts fill in as doses are logged.",
+  "plannedDosesPerDay": "Planned doses per day",
+  "byTreatment": "By treatment",
+  "asNeededGiven": "As-needed doses given",
+  "asNeededSummary": "{given, plural, =1{Given once} other{Given {given} times}}, most in a day: {most}",
+  "@asNeededSummary": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "most": {
+        "type": "int"
+      }
+    }
+  },
+  "chartsNote": "Worked out on this phone from the records everyone logged. Doses still to come today aren't counted.",
+  "noPlannedDosesYet": "No planned doses due yet in this period",
+  "plannedGivenShare": "{given} of {total} planned doses given",
+  "@plannedGivenShare": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayBarLabel": "{day}: {given} given, {missed} missed, {skipped} skipped",
+  "@dayBarLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "given": {
+        "type": "int"
+      },
+      "missed": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "asNeededDayLabel": "{day}: {count} as-needed doses",
+  "@asNeededDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "missedCount": "{count} missed",
+  "@missedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skippedCount": "{count} skipped",
+  "@skippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "givenTwiceCount": "{count, plural, =1{1 given twice} other{{count} given twice}}",
+  "@givenTwiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "byTreatmentHint": "Tap a medicine to see every dose as a calendar.",
+  "timeline": "Timeline",
+  "timelineHint": "Every medicine together, newest day first. Tap a dose for details.",
+  "gridIntro": "Days are rows and dose times are columns, in {child}'s time zone. Tap a dose to see who gave it and when.",
+  "@gridIntro": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "cellLabel": "{day}, {time}: {status}",
+  "@cellLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "familyOverview": "Family",
+  "lastSevenDays": "Last 7 days: {percent}",
+  "@lastSevenDays": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "todayCount": "{count} {status}",
+  "@todayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDoseTitle": "{child}: {medicine}",
+  "@reminderDoseTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDoseBody": "{dose} at {time}",
+  "@reminderDoseBody": {
+    "placeholders": {
+      "dose": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpTitle": "Still due: {medicine} for {child}",
+  "@reminderFollowUpTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpBody": "Planned for {time} and not logged yet.",
+  "@reminderFollowUpBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedTitle": "Not logged: {medicine} for {child}",
+  "@reminderMissedTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedBody": "The {time} dose isn't logged. Open ZT Meds to check before giving it.",
+  "@reminderMissedBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayTitle": "Last day of {medicine} for {child}",
+  "@reminderLastDayTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayBody": "Today is the last day of this course.",
+  "reminderPrivateTitle": "Medicine reminder",
+  "reminderPrivateBody": "Open ZT Meds to see which dose.",
+  "reminderChannel": "Dose reminders",
+  "reminderChannelHint": "When your children's doses are due or missed",
+  "remindersTitle": "Reminders",
+  "remindersHint": "When doses are due, follow-ups and missed doses",
+  "remindersOn": "Dose reminders",
+  "remindersOnHint": "At each planned dose time",
+  "followUp": "Follow-up",
+  "followUpHint": "Again if a dose isn't logged yet",
+  "followUpOff": "Off",
+  "followUpAfter": "{minutes} minutes later",
+  "@followUpAfter": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "missedAlerts": "Missed-dose alert",
+  "missedAlertsHint": "When a dose passes the child's \"missed after\" time",
+  "lastDayNotice": "Last-day notice",
+  "lastDayNoticeHint": "At 9:00 on the last day of a course",
+  "showNamesInReminders": "Names in reminders",
+  "showNamesInRemindersHint": "Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.",
+  "remindersForChildren": "Remind me about",
+  "remindersHowTheyWork": "Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.",
+  "reminderDoseGone": "That dose isn't planned any more.",
+  "quietHours": "Quiet hours",
+  "quietHoursOff": "Off",
+  "quietHoursRange": "{from} to {until}: dose reminders without sound, no follow-ups or alerts",
+  "@quietHoursRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "until": {
+        "type": "String"
+      }
+    }
+  },
+  "quietHoursFrom": "Starts",
+  "quietHoursUntil": "Ends"
+}
