@@ -1394,6 +1394,36 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'That dose isn\'t planned any more.'**
   String get reminderDoseGone;
+
+  /// No description provided for @quietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get quietHours;
+
+  /// No description provided for @quietHoursOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get quietHoursOff;
+
+  /// No description provided for @quietHoursRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {until}: dose reminders without sound, no follow-ups or alerts'**
+  String quietHoursRange(String from, String until);
+
+  /// No description provided for @quietHoursFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get quietHoursFrom;
+
+  /// No description provided for @quietHoursUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get quietHoursUntil;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

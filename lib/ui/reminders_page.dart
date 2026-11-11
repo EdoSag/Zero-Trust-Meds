@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/meds_data.dart';
+import '../model/models.dart';
 import '../reminders/reminders.dart';
 import 'common.dart';
 
@@ -78,6 +79,52 @@ class RemindersPage extends ConsumerWidget {
                 : null,
           ),
           SwitchListTile(
+            secondary: const Icon(Icons.bedtime_outlined),
+            title: Text(l.quietHours),
+            subtitle: Text(
+              prefs.hasQuietHours
+                  ? l.quietHoursRange(
+                      _format(context, prefs.quietFrom!),
+                      _format(context, prefs.quietUntil!),
+                    )
+                  : l.quietHoursOff,
+            ),
+            value: prefs.hasQuietHours,
+            onChanged: on
+                ? (v) => save(
+                    v
+                        ? prefs.copyWith(
+                            quietFrom: const TimeOfDose(22, 0),
+                            quietUntil: const TimeOfDose(7, 0),
+                          )
+                        : prefs.copyWith(clearQuietHours: true),
+                  )
+                : null,
+          ),
+          if (on && prefs.hasQuietHours)
+            Padding(
+              padding: const EdgeInsetsDirectional.only(start: 56, end: 16),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _TimeButton(
+                      label: l.quietHoursFrom,
+                      time: prefs.quietFrom!,
+                      onPicked: (t) => save(prefs.copyWith(quietFrom: t)),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _TimeButton(
+                      label: l.quietHoursUntil,
+                      time: prefs.quietUntil!,
+                      onPicked: (t) => save(prefs.copyWith(quietUntil: t)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          SwitchListTile(
             secondary: const Icon(Icons.visibility_outlined),
             title: Text(l.showNamesInReminders),
             subtitle: Text(l.showNamesInRemindersHint),
@@ -119,4 +166,31 @@ class RemindersPage extends ConsumerWidget {
       ),
     );
   }
+}
+
+String _format(BuildContext context, TimeOfDose t) =>
+    TimeOfDay(hour: t.hour, minute: t.minute).format(context);
+
+class _TimeButton extends StatelessWidget {
+  const _TimeButton({
+    required this.label,
+    required this.time,
+    required this.onPicked,
+  });
+  final String label;
+  final TimeOfDose time;
+  final ValueChanged<TimeOfDose> onPicked;
+
+  @override
+  Widget build(BuildContext context) => OutlinedButton(
+    style: OutlinedButton.styleFrom(minimumSize: const Size(0, 48)),
+    onPressed: () async {
+      final picked = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay(hour: time.hour, minute: time.minute),
+      );
+      if (picked != null) onPicked(TimeOfDose(picked.hour, picked.minute));
+    },
+    child: Text('$label ${_format(context, time)}'),
+  );
 }

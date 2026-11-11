@@ -205,6 +205,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
           prefs,
           texts,
           DateTime.now().toUtc(),
+          limit: ref.read(reminderSchedulerProvider).limit,
         );
         await ref.read(reminderSchedulerProvider).sync(plan, texts.channel);
       } on Object {
@@ -229,13 +230,18 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
   Future<void> _takeTaps() async {
     if (_handlingTaps) return;
     _handlingTaps = true;
+    final scheduler = ref.read(reminderSchedulerProvider);
     try {
       while (mounted) {
-        final taps = ref.read(reminderSchedulerProvider).takeTaps();
+        final taps = scheduler.takeTaps();
         if (taps.isEmpty) break;
-        for (final tap in taps) {
-          if (!mounted) return;
-          await _open(tap);
+        for (var i = 0; i < taps.length; i++) {
+          if (!mounted || !await _open(taps[i])) {
+            // Not ready yet (children still loading, notice not read):
+            // kept, and tried again when the family data changes.
+            scheduler.putBack(taps.sublist(i));
+            return;
+          }
         }
       }
     } finally {
@@ -243,12 +249,22 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     }
   }
 
-  Future<void> _open(ReminderTarget tap) async {
+  /// False when the tap can't be handled yet and should be kept.
+  Future<bool> _open(ReminderTarget tap) async {
     final me = await ref.read(meProvider.future);
-    if (!me.disclaimerAccepted || !mounted) return;
+    if (!me.disclaimerAccepted || !mounted) return false;
     final family = await ref.read(familyProvider.future);
+    if (!mounted) return false;
     final c = family.child(tap.spaceId);
-    if (c == null || !mounted) return;
+    if (c == null) {
+      // The child's space may still be loading or syncing here. Once
+      // everything has loaded, a child that isn't there is gone: dropped.
+      final waiting =
+          family.loading ||
+          !family.ready ||
+          family.pending.any((p) => p.spaceId == tap.spaceId);
+      return !waiting;
+    }
     final nav = Navigator.of(context);
     nav.popUntil((r) => r.isFirst);
     nav.push(
@@ -257,11 +273,11 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     final dose = ReminderPlan.doseFor(c, tap);
     if (dose == null) {
       if (tap.date != null) showSnack(context, context.l.reminderDoseGone);
-      return;
+      return true;
     }
     // Let the child's page open first.
     await Future<void>.delayed(const Duration(milliseconds: 350));
-    if (!mounted) return;
+    if (!mounted) return true;
     if (tap.markGiven) {
       await giveDose(context, ref, c, dose.treatment, slot: dose);
     } else {
@@ -273,6 +289,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
       );
       await showDoseSheet(context, ref, c, status);
     }
+    return true;
   }
 
   @override
@@ -280,7 +297,11 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     // Sync for the account's own vault (name, notice) and the children.
     ref.watch(ztSyncControllerProvider);
     ref.watch(ztSpacesProvider);
-    ref.listen(familyProvider, (_, _) => _resync());
+    ref.listen(familyProvider, (_, _) {
+      _resync();
+      _takeTaps();
+    });
+    ref.listen(meProvider, (_, _) => _takeTaps());
     ref.listen(reminderPrefsProvider, (_, _) => _resync());
     final me = ref.watch(meProvider);
     final accepted = me.value?.disclaimerAccepted;

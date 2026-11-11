@@ -419,4 +419,77 @@ void main() {
     expect(r.length, ReminderPlan.max);
     expect(r.first.at, DateTime.utc(2026, 1, 12, 10, 30));
   });
+
+  test(
+    'quiet hours: dose reminders come silently, the extras are dropped',
+    () async {
+      final f = await Family.start(treatments: [course('t1')]);
+      final c = await f.child();
+      // Phone 2 hours ahead of UTC: 20:00 UTC is 22:00 on the phone.
+      DateTime phone(DateTime u) => u.add(const Duration(hours: 2));
+      const prefs = ReminderPrefs(
+        quietFrom: TimeOfDose(21, 30),
+        quietUntil: TimeOfDose(7, 0),
+      );
+      final r = ReminderPlan.plan(
+        [c],
+        prefs,
+        FakeTexts(),
+        DateTime.utc(2026, 1, 12, 10),
+        toLocal: phone,
+      );
+      final evening = [
+        for (final x in r)
+          if (x.date == LocalDate.parse('2026-01-12')) x,
+      ];
+      expect(evening.map((x) => (x.kind, x.silent)), [
+        (ReminderKind.dose, true),
+      ]);
+      // 08:00 UTC is 10:00 on the phone: not quiet.
+      final morning = r.firstWhere(
+        (x) =>
+            x.date == LocalDate.parse('2026-01-13') &&
+            x.time == const TimeOfDose(8, 0) &&
+            x.kind == ReminderKind.dose,
+      );
+      expect(morning.silent, isFalse);
+      // The last-day notice at 09:00 UTC (11:00 on the phone) stays.
+      expect(r.where((x) => x.kind == ReminderKind.lastDay).length, 1);
+      // Silent and loud versions are different notifications.
+      expect(
+        ReminderPlan.plan(
+          [c],
+          const ReminderPrefs(),
+          FakeTexts(),
+          DateTime.utc(2026, 1, 12, 10),
+          toLocal: phone,
+        ).first.notificationId,
+        isNot(r.first.notificationId),
+      );
+      expect(prefs.isQuiet(DateTime(2026, 1, 1, 23)), isTrue);
+      expect(prefs.isQuiet(DateTime(2026, 1, 1, 6, 59)), isTrue);
+      expect(prefs.isQuiet(DateTime(2026, 1, 1, 7)), isFalse);
+      expect(const ReminderPrefs().isQuiet(DateTime(2026, 1, 1, 23)), isFalse);
+      final back = ReminderPrefs.fromJson(prefs.toJson());
+      expect(back.quietFrom, const TimeOfDose(21, 30));
+      expect(back.quietUntil, const TimeOfDose(7, 0));
+      expect(back.copyWith(clearQuietHours: true).hasQuietHours, isFalse);
+    },
+  );
+
+  test('on iOS only the soonest reminders are kept', () async {
+    final f = await Family.start(treatments: [course('t1', days: null)]);
+    final now = DateTime.utc(2026, 1, 12, 10);
+    final r = ReminderPlan.plan(
+      [await f.child()],
+      const ReminderPrefs(),
+      FakeTexts(),
+      now,
+      limit: ReminderPlan.maxIos,
+    );
+    expect(r.length, ReminderPlan.maxIos);
+    expect(r.first.at, DateTime.utc(2026, 1, 12, 20));
+    final all = plan(await f.child(), now);
+    expect(r, all.sublist(0, ReminderPlan.maxIos));
+  });
 }

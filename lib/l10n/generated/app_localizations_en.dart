@@ -828,4 +828,21 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get reminderDoseGone => 'That dose isn\'t planned any more.';
+
+  @override
+  String get quietHours => 'Quiet hours';
+
+  @override
+  String get quietHoursOff => 'Off';
+
+  @override
+  String quietHoursRange(String from, String until) {
+    return '$from to $until: dose reminders without sound, no follow-ups or alerts';
+  }
+
+  @override
+  String get quietHoursFrom => 'Starts';
+
+  @override
+  String get quietHoursUntil => 'Ends';
 }

@@ -11,7 +11,7 @@ Track the medicines your children get, shared between every caregiver, end-to-en
 - **Today.** Each child's doses for today, grouped by time of day, each marked Given, Due, Missed, Upcoming, Skipped or Paused, always with an icon and a label as well as a colour.
 - **Logging.** One tap logs a dose with who gave it and when. The time can be changed, a dose can be skipped with a reason, and a record can be undone. The app warns before a second dose of the same planned dose, and before an as-needed dose inside its minimum gap or above its daily most. A dose not logged within the child's window (2 hours by default) becomes Missed.
 
-- **Reminders.** A notification at each planned dose time with a "Mark as given" button, a follow-up if the dose still isn't logged (30 minutes by default, or off), an alert when it turns missed, and a notice on the morning of a course's last day. Each caregiver chooses their own reminders and which children they get them for, and can keep names out of the notification text. The lock screen never shows the text.
+- **Reminders.** A notification at each planned dose time with a "Mark as given" button, a follow-up if the dose still isn't logged (30 minutes by default, or off), an alert when it turns missed, and a notice on the morning of a course's last day. Each caregiver chooses their own reminders, which children they get them for and quiet hours (dose reminders come without sound then, the extras not at all), and can keep names out of the notification text. The lock screen never shows the text.
 
 Charts come in the next version.
 

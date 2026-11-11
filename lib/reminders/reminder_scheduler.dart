@@ -32,8 +32,15 @@ abstract interface class ReminderScheduler {
   /// Makes the OS's pending reminders exactly [reminders].
   Future<void> sync(List<MedsReminder> reminders, ReminderChannelTexts texts);
 
-  /// Drops every reminder (sign-out).
+  /// Drops every reminder (sign-out). A [sync] still running stops
+  /// before scheduling anything more.
   Future<void> cancelAll();
+
+  /// How many reminders the platform keeps (iOS: 64, Android: 500).
+  int get limit;
+
+  /// Puts targets taken with [takeTaps] back, to try again later.
+  void putBack(List<ReminderTarget> targets);
 
   /// Asks for notification (and exact alarm) permission. False when off.
   Future<bool> requestPermission();
@@ -71,6 +78,12 @@ class NoopReminderScheduler implements ReminderScheduler {
   Future<void> cancelAll() async => scheduled = const [];
 
   @override
+  int get limit => ReminderPlan.max;
+
+  @override
+  void putBack(List<ReminderTarget> targets) => pending.insertAll(0, targets);
+
+  @override
   Future<bool> requestPermission() async {
     permissionAsks++;
     return true;
@@ -96,11 +109,32 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
   final _pending = <ReminderTarget>[];
   Future<void>? _ready;
 
+  /// Syncs and cancels run one at a time, in order.
+  Future<void> _queue = Future.value();
+
+  /// Bumped by [cancelAll]: a sync from before it stops scheduling.
+  int _generation = 0;
+
+  Future<void> _serial(Future<void> Function() job) {
+    final next = _queue.then((_) => job());
+    _queue = next.catchError((Object _) {});
+    return next;
+  }
+
+  @override
+  int get limit => defaultTargetPlatform == TargetPlatform.iOS
+      ? ReminderPlan.maxIos
+      : ReminderPlan.max;
+
+  @override
+  void putBack(List<ReminderTarget> targets) => _pending.insertAll(0, targets);
+
   static const _channelId = 'dose_reminders';
 
   static NotificationDetails _details(
     ReminderChannelTexts texts, {
     required bool offersGiven,
+    required bool silent,
   }) => NotificationDetails(
     android: AndroidNotificationDetails(
       _channelId,
@@ -111,6 +145,8 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
       category: AndroidNotificationCategory.reminder,
       // The lock screen shows "ZT Meds", not the child or the medicine.
       visibility: NotificationVisibility.private,
+      // Quiet hours.
+      silent: silent,
       actions: [
         if (offersGiven)
           AndroidNotificationAction(
@@ -124,7 +160,7 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
           ),
       ],
     ),
-    iOS: const DarwinNotificationDetails(),
+    iOS: DarwinNotificationDetails(presentSound: !silent),
   );
 
   void _onResponse(NotificationResponse response) {
@@ -197,13 +233,22 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
   }
 
   @override
-  Future<void> sync(
+  Future<void> sync(List<MedsReminder> reminders, ReminderChannelTexts texts) {
+    final generation = _generation;
+    return _serial(() => _sync(reminders, texts, generation));
+  }
+
+  Future<void> _sync(
     List<MedsReminder> reminders,
     ReminderChannelTexts texts,
+    int generation,
   ) async {
     await _init();
+    // Signed out since this plan was made: nothing of it may be set.
+    if (generation != _generation) return;
     final wanted = {for (final r in reminders) r.notificationId: r};
     for (final request in await _plugin.pendingNotificationRequests()) {
+      if (generation != _generation) return;
       final want = wanted[request.id];
       if (want == null) {
         await _plugin.cancel(id: request.id);
@@ -216,6 +261,7 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
     if (wanted.isEmpty) return;
     final exact = await _android?.canScheduleExactNotifications() ?? true;
     for (final r in wanted.values) {
+      if (generation != _generation) return;
       await _plugin.zonedSchedule(
         id: r.notificationId,
         title: r.title,
@@ -223,7 +269,11 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
         payload: r.payload,
         // An absolute instant, so the phone's own time zone doesn't matter.
         scheduledDate: tz.TZDateTime.from(r.at.toUtc(), tz.UTC),
-        notificationDetails: _details(texts, offersGiven: r.offersGiven),
+        notificationDetails: _details(
+          texts,
+          offersGiven: r.offersGiven,
+          silent: r.silent,
+        ),
         androidScheduleMode: exact
             ? AndroidScheduleMode.exactAllowWhileIdle
             : AndroidScheduleMode.inexactAllowWhileIdle,
@@ -232,9 +282,13 @@ class LocalNotificationsReminderScheduler implements ReminderScheduler {
   }
 
   @override
-  Future<void> cancelAll() async {
-    await _init();
-    await _plugin.cancelAll();
+  Future<void> cancelAll() {
+    // Stops a sync already running at its next step, and any queued one.
+    _generation++;
+    return _serial(() async {
+      await _init();
+      await _plugin.cancelAll();
+    });
   }
 }
 

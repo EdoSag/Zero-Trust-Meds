@@ -18,6 +18,8 @@ class ReminderPrefs {
     this.lastDayNotice = true,
     this.showNames = true,
     this.mutedChildren = const {},
+    this.quietFrom,
+    this.quietUntil,
   });
 
   factory ReminderPrefs.fromJson(Map<String, Object?>? j) => ReminderPrefs(
@@ -30,7 +32,18 @@ class ReminderPrefs {
       for (final s in (j?['mutedChildren'] as List?) ?? const [])
         if (s is String) s,
     },
+    quietFrom: _time(j?['quietFrom']),
+    quietUntil: _time(j?['quietUntil']),
   );
+
+  static TimeOfDose? _time(Object? v) {
+    if (v is! String) return null;
+    try {
+      return TimeOfDose.parse(v);
+    } on Object {
+      return null;
+    }
+  }
 
   static const itemId = 'meds.reminders';
 
@@ -57,6 +70,23 @@ class ReminderPrefs {
   /// Children (space ids) this account gets no reminders for.
   final Set<String> mutedChildren;
 
+  /// Quiet hours on this phone's clock (both set, or off). Dose reminders
+  /// still come, silently; follow-ups, missed alerts and last-day notices
+  /// that fall inside are dropped. May wrap midnight (22:00 to 07:00).
+  final TimeOfDose? quietFrom;
+  final TimeOfDose? quietUntil;
+
+  bool get hasQuietHours =>
+      quietFrom != null && quietUntil != null && quietFrom != quietUntil;
+
+  /// Whether [local] (a time on this phone's clock) is in quiet hours.
+  bool isQuiet(DateTime local) {
+    if (!hasQuietHours) return false;
+    final m = local.hour * 60 + local.minute;
+    final from = quietFrom!.minutes, until = quietUntil!.minutes;
+    return from < until ? m >= from && m < until : m >= from || m < until;
+  }
+
   ReminderPrefs copyWith({
     bool? enabled,
     int? followUpMinutes,
@@ -64,6 +94,9 @@ class ReminderPrefs {
     bool? lastDayNotice,
     bool? showNames,
     Set<String>? mutedChildren,
+    TimeOfDose? quietFrom,
+    TimeOfDose? quietUntil,
+    bool clearQuietHours = false,
   }) => ReminderPrefs(
     enabled: enabled ?? this.enabled,
     followUpMinutes: followUpMinutes ?? this.followUpMinutes,
@@ -71,6 +104,8 @@ class ReminderPrefs {
     lastDayNotice: lastDayNotice ?? this.lastDayNotice,
     showNames: showNames ?? this.showNames,
     mutedChildren: mutedChildren ?? this.mutedChildren,
+    quietFrom: clearQuietHours ? null : quietFrom ?? this.quietFrom,
+    quietUntil: clearQuietHours ? null : quietUntil ?? this.quietUntil,
   );
 
   Map<String, Object?> toJson() => {
@@ -81,6 +116,8 @@ class ReminderPrefs {
     'lastDayNotice': lastDayNotice,
     'showNames': showNames,
     'mutedChildren': mutedChildren.toList()..sort(),
+    'quietFrom': quietFrom?.toString(),
+    'quietUntil': quietUntil?.toString(),
   };
 }
 
@@ -121,6 +158,7 @@ class MedsReminder {
     required this.body,
     this.date,
     this.time,
+    this.silent = false,
   });
 
   final ReminderKind kind;
@@ -136,12 +174,15 @@ class MedsReminder {
   final String title;
   final String body;
 
+  /// In quiet hours: shown without sound or vibration.
+  final bool silent;
+
   /// "Mark as given" is offered for a dose that can still be given.
   bool get offersGiven => kind != ReminderKind.lastDay;
 
   String get key =>
       '${kind.name}|$spaceId|$treatmentId|${date ?? ''}|${time ?? ''}|'
-      '${at.toUtc().toIso8601String()}';
+      '${at.toUtc().toIso8601String()}${silent ? '|quiet' : ''}';
 
   int get notificationId => idFor(key);
 
@@ -238,6 +279,10 @@ abstract final class ReminderPlan {
   /// Android keeps at most 500 alarms per app.
   static const max = 400;
 
+  /// iOS keeps only the 64 notifications scheduled last, so a phone there
+  /// holds the soonest 60 (the app tops them up whenever it runs).
+  static const maxIos = 60;
+
   /// Last-day notices come at this time in the child's zone.
   static const lastDayAt = TimeOfDose(9, 0);
 
@@ -250,8 +295,11 @@ abstract final class ReminderPlan {
     Iterable<ChildData> children,
     ReminderPrefs prefs,
     ReminderTexts texts,
-    DateTime nowUtc,
-  ) {
+    DateTime nowUtc, {
+    int limit = max,
+    DateTime Function(DateTime utc)? toLocal,
+  }) {
+    final local = toLocal ?? (DateTime u) => u.toLocal();
     if (!prefs.enabled) return const [];
     final until = nowUtc.add(horizon);
     final out = <MedsReminder>[];
@@ -284,6 +332,7 @@ abstract final class ReminderPlan {
           at: at,
           title: title,
           body: body,
+          silent: kind == ReminderKind.dose && prefs.isQuiet(local(at)),
         );
 
         final logs = c.logsOf(t.id);
@@ -291,9 +340,11 @@ abstract final class ReminderPlan {
           if (t.pausedAt(d.at) || logs.any(d.answeredBy)) continue;
           final time = texts.timeOf(d.at);
           void add(ReminderKind kind, DateTime at, String ttl, String bdy) {
-            if (at.isAfter(nowUtc) && at.isBefore(until)) {
-              out.add(make(kind, at, ttl, bdy, d));
-            }
+            if (!at.isAfter(nowUtc) || !at.isBefore(until)) return;
+            // Quiet hours: the dose itself still reminds (silently), the
+            // extras are dropped.
+            if (kind != ReminderKind.dose && prefs.isQuiet(local(at))) return;
+            out.add(make(kind, at, ttl, bdy, d));
           }
 
           add(
@@ -328,7 +379,10 @@ abstract final class ReminderPlan {
             // A one-day course needs no notice that it ends today.
             last.isAfter(t.startDate)) {
           final at = ChildClock.instant(c.zone, last, lastDayAt);
-          if (!t.pausedAt(at) && at.isAfter(nowUtc) && at.isBefore(until)) {
+          if (!t.pausedAt(at) &&
+              !prefs.isQuiet(local(at)) &&
+              at.isAfter(nowUtc) &&
+              at.isBefore(until)) {
             out.add(
               make(
                 ReminderKind.lastDay,
@@ -342,7 +396,7 @@ abstract final class ReminderPlan {
       }
     }
     out.sort((a, b) => a.at.compareTo(b.at));
-    return out.length > max ? out.sublist(0, max) : out;
+    return out.length > limit ? out.sublist(0, limit) : out;
   }
 
   /// The planned dose a reminder points at, if it's still planned.

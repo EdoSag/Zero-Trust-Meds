@@ -599,5 +599,20 @@
   "showNamesInRemindersHint": "Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.",
   "remindersForChildren": "Remind me about",
   "remindersHowTheyWork": "Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.",
-  "reminderDoseGone": "That dose isn't planned any more."
+  "reminderDoseGone": "That dose isn't planned any more.",
+  "quietHours": "Quiet hours",
+  "quietHoursOff": "Off",
+  "quietHoursRange": "{from} to {until}: dose reminders without sound, no follow-ups or alerts",
+  "@quietHoursRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "until": {
+        "type": "String"
+      }
+    }
+  },
+  "quietHoursFrom": "Starts",
+  "quietHoursUntil": "Ends"
 }
