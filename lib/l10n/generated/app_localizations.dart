@@ -1220,6 +1220,102 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'At least 1'**
   String get atLeastOne;
+
+  /// No description provided for @charts.
+  ///
+  /// In en, this message translates to:
+  /// **'Charts'**
+  String get charts;
+
+  /// No description provided for @chartsFor.
+  ///
+  /// In en, this message translates to:
+  /// **'{child}: how it went'**
+  String chartsFor(String child);
+
+  /// No description provided for @lastDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days'**
+  String lastDays(int days);
+
+  /// No description provided for @chartsEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to show for this period yet. Charts fill in as doses are logged.'**
+  String get chartsEmpty;
+
+  /// No description provided for @plannedDosesPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned doses per day'**
+  String get plannedDosesPerDay;
+
+  /// No description provided for @byTreatment.
+  ///
+  /// In en, this message translates to:
+  /// **'By treatment'**
+  String get byTreatment;
+
+  /// No description provided for @asNeededGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'As-needed doses given'**
+  String get asNeededGiven;
+
+  /// No description provided for @asNeededSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{given, plural, =1{Given once} other{Given {given} times}}, most in a day: {most}'**
+  String asNeededSummary(int given, int most);
+
+  /// No description provided for @chartsNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Worked out on this phone from the records everyone logged. Doses still to come today aren\'t counted.'**
+  String get chartsNote;
+
+  /// No description provided for @noPlannedDosesYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No planned doses due yet in this period'**
+  String get noPlannedDosesYet;
+
+  /// No description provided for @plannedGivenShare.
+  ///
+  /// In en, this message translates to:
+  /// **'{given} of {total} planned doses given'**
+  String plannedGivenShare(int given, int total);
+
+  /// No description provided for @dayBarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}: {given} given, {missed} missed, {skipped} skipped'**
+  String dayBarLabel(String day, int given, int missed, int skipped);
+
+  /// No description provided for @asNeededDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{day}: {count} as-needed doses'**
+  String asNeededDayLabel(String day, int count);
+
+  /// No description provided for @missedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} missed'**
+  String missedCount(int count);
+
+  /// No description provided for @skippedCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} skipped'**
+  String skippedCount(int count);
+
+  /// No description provided for @givenTwiceCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{1 given twice} other{{count} given twice}}'**
+  String givenTwiceCount(int count);
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

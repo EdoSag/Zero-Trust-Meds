@@ -721,4 +721,84 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get atLeastOne => 'At least 1';
+
+  @override
+  String get charts => 'Charts';
+
+  @override
+  String chartsFor(String child) {
+    return '$child: how it went';
+  }
+
+  @override
+  String lastDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get chartsEmpty =>
+      'Nothing to show for this period yet. Charts fill in as doses are logged.';
+
+  @override
+  String get plannedDosesPerDay => 'Planned doses per day';
+
+  @override
+  String get byTreatment => 'By treatment';
+
+  @override
+  String get asNeededGiven => 'As-needed doses given';
+
+  @override
+  String asNeededSummary(int given, int most) {
+    String _temp0 = intl.Intl.pluralLogic(
+      given,
+      locale: localeName,
+      other: 'Given $given times',
+      one: 'Given once',
+    );
+    return '$_temp0, most in a day: $most';
+  }
+
+  @override
+  String get chartsNote =>
+      'Worked out on this phone from the records everyone logged. Doses still to come today aren\'t counted.';
+
+  @override
+  String get noPlannedDosesYet => 'No planned doses due yet in this period';
+
+  @override
+  String plannedGivenShare(int given, int total) {
+    return '$given of $total planned doses given';
+  }
+
+  @override
+  String dayBarLabel(String day, int given, int missed, int skipped) {
+    return '$day: $given given, $missed missed, $skipped skipped';
+  }
+
+  @override
+  String asNeededDayLabel(String day, int count) {
+    return '$day: $count as-needed doses';
+  }
+
+  @override
+  String missedCount(int count) {
+    return '$count missed';
+  }
+
+  @override
+  String skippedCount(int count) {
+    return '$count skipped';
+  }
+
+  @override
+  String givenTwiceCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count given twice',
+      one: '1 given twice',
+    );
+    return '$_temp0';
+  }
 }
