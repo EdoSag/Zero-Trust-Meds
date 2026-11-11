@@ -37,6 +37,8 @@ dependencies:
   url_launcher: ^6.3.1
   share_plus: ^13.3.1
   qr_flutter: ^4.1.0
+  # Child photos: shrunk on the phone, stored encrypted in the profile.
+  image_picker: ^1.1.2
   qr_code_scanner_plus: ">=2.1.2 <2.2.0"
 
 dev_dependencies:

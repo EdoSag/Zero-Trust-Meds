@@ -2,8 +2,8 @@
     <!-- Sign-in and sync with the shared Zero-Trust account. -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-    <!-- Invite QR codes are scanned with the camera, only when the user
-         taps "Scan QR code". -->
+    <!-- The camera opens only when the user taps "Scan QR code" (invites)
+         or "Take photo" (the child's profile photo). -->
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
 
