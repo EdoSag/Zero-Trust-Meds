@@ -47,11 +47,13 @@ abstract final class ChildClock {
     // The zone's offset well before and well after the wanted wall time
     // (offsets never change twice within a day).
     final before = tz.TZDateTime.from(
-            wanted.subtract(const Duration(hours: 14)), zone)
-        .timeZoneOffset;
-    final after =
-        tz.TZDateTime.from(wanted.add(const Duration(hours: 14)), zone)
-            .timeZoneOffset;
+      wanted.subtract(const Duration(hours: 14)),
+      zone,
+    ).timeZoneOffset;
+    final after = tz.TZDateTime.from(
+      wanted.add(const Duration(hours: 14)),
+      zone,
+    ).timeZoneOffset;
     final valid = [
       for (final o in {before, after})
         if (lands(wanted.subtract(o))) wanted.subtract(o),
@@ -69,7 +71,11 @@ abstract final class ChildClock {
 
   /// Planned doses of [t] from [from] to [to] (both included).
   static List<PlannedDose> planned(
-      Treatment t, tz.Location zone, LocalDate from, LocalDate to) {
+    Treatment t,
+    tz.Location zone,
+    LocalDate from,
+    LocalDate to,
+  ) {
     final schedule = t.schedule;
     if (schedule is! FixedTimes) return const [];
     final out = <PlannedDose>[];
@@ -78,12 +84,14 @@ abstract final class ChildClock {
     final end = last != null && last.isBefore(to) ? last : to;
     while (!day.isAfter(end)) {
       for (final time in schedule.times) {
-        out.add(PlannedDose(
-          treatment: t,
-          date: day,
-          time: time,
-          at: instant(zone, day, time),
-        ));
+        out.add(
+          PlannedDose(
+            treatment: t,
+            date: day,
+            time: time,
+            at: instant(zone, day, time),
+          ),
+        );
       }
       day = day.addDays(1);
     }
@@ -105,7 +113,10 @@ class DoseStatus {
   /// The records answering this dose, oldest first.
   final List<DoseLog> logs;
 
-  List<DoseLog> get givenLogs => [for (final l in logs) if (l.given) l];
+  List<DoseLog> get givenLogs => [
+    for (final l in logs)
+      if (l.given) l,
+  ];
 
   /// Two caregivers both logged it as given: said loudly, never hidden.
   bool get givenTwice => givenLogs.length > 1;
@@ -167,8 +178,11 @@ class TooSoon extends DoseWarning {
 
 /// An as-needed medicine already at its most for 24 hours.
 class MaxReached extends DoseWarning {
-  const MaxReached(
-      {required this.count, required this.max, required this.nextAllowed});
+  const MaxReached({
+    required this.count,
+    required this.max,
+    required this.nextAllowed,
+  });
   final int count;
   final int max;
   final DateTime nextAllowed;
@@ -217,13 +231,15 @@ abstract final class DoseGuard {
               l,
         ];
         if (window.length >= max) {
-          out.add(MaxReached(
-            count: window.length,
-            max: max,
-            nextAllowed: window[window.length - max]
-                .at
-                .add(const Duration(hours: 24)),
-          ));
+          out.add(
+            MaxReached(
+              count: window.length,
+              max: max,
+              nextAllowed: window[window.length - max].at.add(
+                const Duration(hours: 24),
+              ),
+            ),
+          );
         }
       }
     }
@@ -233,7 +249,10 @@ abstract final class DoseGuard {
   /// For an as-needed medicine: when the next dose is allowed (now when it
   /// already is).
   static DateTime nextAllowed(
-      Treatment t, Iterable<DoseLog> logs, DateTime nowUtc) {
+    Treatment t,
+    Iterable<DoseLog> logs,
+    DateTime nowUtc,
+  ) {
     final warnings = beforeGiving(t: t, logs: logs, at: nowUtc);
     var next = nowUtc;
     for (final w in warnings) {
