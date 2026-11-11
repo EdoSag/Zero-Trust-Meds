@@ -44,6 +44,10 @@ jobs:
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          # 3.50 deprecates package:flutter/material.dart in favour of
+          # material_ui, and analyze fails on those infos. Stay on 3.47
+          # until the suite moves over.
+          flutter-version: 3.47.9
           cache: true
 
       - name: Write .env when it is not committed
