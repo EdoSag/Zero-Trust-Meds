@@ -27,7 +27,7 @@ dependencies:
       path: packages/zero_trust_core
       # Z24 shared spaces (Core PR #22). Switch to the release tag once it
       # is merged and tagged.
-      ref: a1ff2ecf8f6a30052ac789f7eae89080dd27d345
+      ref: c1c253d1a82375e782094e788d9d3602ed320b53
   flutter_riverpod: ^3.5.0
   supabase_flutter: ^2.9.0
   flutter_dotenv: ^6.0.1
