@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/data/latest_all.dart' as tzdata;
@@ -15,6 +14,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tzdata.initializeTimeZones();
   await dotenv.load(fileName: '.env');
+  // The language picked in Settings, before the first frame.
+  await ZtLanguageController.preload();
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL']!,
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
@@ -49,14 +50,13 @@ class ZeroTrustMedsApp extends ConsumerWidget {
         theme: theme,
         darkTheme: darkTheme,
         themeMode: mode,
+        // English (default) or Hebrew, from Settings → Appearance → Language.
+        locale: ref.watch(ztLanguageProvider),
+        supportedLocales: ZtLanguages.supported,
         localizationsDelegates: const [
           AppL10n.delegate,
-          ZtL10n.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
+          ...ZtLanguages.delegates,
         ],
-        supportedLocales: AppL10n.supportedLocales,
         home: home,
         // Any touch on any screen counts as activity for auto-lock.
         builder: (context, child) => Listener(
