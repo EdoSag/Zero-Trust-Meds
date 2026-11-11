@@ -1219,6 +1219,12 @@ abstract class AppL10n {
   /// **'Saved. The new times start tomorrow, so today\'s records stay as they are.'**
   String get newTimesFromTomorrow;
 
+  /// No description provided for @timesKeptCourseEnding.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. The times stay as they were, because this treatment has no days left and its records use them.'**
+  String get timesKeptCourseEnding;
+
   /// No description provided for @atLeastOne.
   ///
   /// In en, this message translates to:

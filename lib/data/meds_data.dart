@@ -370,9 +370,13 @@ class MedsActions {
     _changed();
   }
 
-  /// Saves a new or edited treatment. Returns true when new times take
-  /// effect tomorrow (see [TreatmentEdit.plan]).
-  Future<bool> saveTreatment(ChildData c, Treatment t, LocalDate today) async {
+  /// Saves a new or edited treatment, and says what became of new times
+  /// (see [TreatmentEdit.plan]).
+  Future<TimesEdit> saveTreatment(
+    ChildData c,
+    Treatment t,
+    LocalDate today,
+  ) async {
     final old = c.treatments.where((x) => x.id == t.id).firstOrNull;
     final plan = TreatmentEdit.plan(
       old: old,
@@ -383,7 +387,8 @@ class MedsActions {
     for (final x in plan) {
       await _saveOne(c, x);
     }
-    return plan.length > 1;
+    if (plan.length > 1) return TimesEdit.fromTomorrow;
+    return identical(plan.single, t) ? TimesEdit.saved : TimesEdit.kept;
   }
 
   Future<String> _saveOne(ChildData c, Treatment t) async {

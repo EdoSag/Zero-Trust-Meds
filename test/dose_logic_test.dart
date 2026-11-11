@@ -431,6 +431,29 @@ void main() {
       );
     });
 
+    test('as-needed: a time corrected backwards still counts later doses', () {
+      final t = asNeeded(minInterval: 0, max: 3);
+      final logs = [
+        for (final h in [7, 13, 19])
+          given('p1', DateTime.utc(2026, 1, 10, h), id: 'l$h'),
+      ];
+      final w = DoseGuard.beforeGiving(
+        t: t,
+        logs: logs,
+        at: DateTime.utc(2026, 1, 10, 1),
+      );
+      expect((w.single as MaxReached).count, 3);
+      // More than 24 hours before the last one: only two share a window.
+      expect(
+        DoseGuard.beforeGiving(
+          t: t,
+          logs: logs,
+          at: DateTime.utc(2026, 1, 9, 12),
+        ),
+        isEmpty,
+      );
+    });
+
     test('skipped records never count toward double doses', () {
       final t = asNeeded();
       final logs = [
@@ -496,6 +519,25 @@ void main() {
         expect(plan.single, same(edited));
       }
     });
+  });
+
+  test('new times on the last day of a course with records are not saved', () {
+    final old = fixed(['08:00'], start: '2026-01-10', days: 3);
+    final edited = old.copyWith(
+      schedule: FixedTimes(const [TimeOfDose(9, 0)]),
+      pauses: [Pause(DateTime.utc(2026, 1, 11))],
+    );
+    final plan = TreatmentEdit.plan(
+      old: old,
+      edited: edited,
+      today: LocalDate.parse('2026-01-12'),
+      hasLogs: true,
+    );
+    expect((plan.single.schedule as FixedTimes).times, [
+      const TimeOfDose(8, 0),
+    ]);
+    expect(plan.single.pauses, hasLength(1));
+    expect(plan.single.id, old.id);
   });
 
   test('a stored most-per-day of 0 is ignored instead of crashing', () {

@@ -499,6 +499,7 @@
   "disclaimerBody4": "In an emergency, call your local emergency number.",
   "disclaimerAccept": "I understand",
   "newTimesFromTomorrow": "Saved. The new times start tomorrow, so today's records stay as they are.",
+  "timesKeptCourseEnding": "Saved. The times stay as they were, because this treatment has no days left and its records use them.",
   "atLeastOne": "At least 1",
   "takePhoto": "Take photo",
   "choosePhoto": "Choose photo",

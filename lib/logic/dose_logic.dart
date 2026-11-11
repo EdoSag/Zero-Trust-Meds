@@ -224,22 +224,29 @@ abstract final class DoseGuard {
       }
       final max = schedule.maxPer24h;
       if (max != null && max > 0) {
-        final window = [
+        const day = Duration(hours: 24);
+        // The 24 hours up to this dose, and, for a time corrected
+        // backwards, the 24 hours up to each dose logged after it: this
+        // one counts in those too.
+        final ends = [
+          at,
           for (final l in given)
-            if (l.at.isAfter(at.subtract(const Duration(hours: 24))) &&
-                !l.at.isAfter(at))
-              l,
+            if (l.at.isAfter(at) && l.at.isBefore(at.add(day))) l.at,
         ];
-        if (window.length >= max) {
+        for (final end in ends) {
+          final window = [
+            for (final l in given)
+              if (l.at.isAfter(end.subtract(day)) && !l.at.isAfter(end)) l,
+          ];
+          if (window.length < max) continue;
           out.add(
             MaxReached(
               count: window.length,
               max: max,
-              nextAllowed: window[window.length - max].at.add(
-                const Duration(hours: 24),
-              ),
+              nextAllowed: window[window.length - max].at.add(day),
             ),
           );
+          break;
         }
       }
     }
@@ -267,13 +274,26 @@ abstract final class DoseGuard {
   }
 }
 
+/// What saving an edited treatment did with its times.
+enum TimesEdit {
+  /// Saved as edited.
+  saved,
+
+  /// The new times start tomorrow, in a new course.
+  fromTomorrow,
+
+  /// The course has no days left, so its times stayed as they were.
+  kept,
+}
+
 /// How an edit to a treatment is saved without rewriting what was logged.
 abstract final class TreatmentEdit {
   /// Records answer a dose by its day and time, so changing the times of a
   /// course that has records would turn given doses into missed ones. Then
   /// the old course ends today and a new one with the new times starts
-  /// tomorrow, for the days that are left. Otherwise the edit is saved as
-  /// it is.
+  /// tomorrow, for the days that are left. A course with no days left
+  /// (its last day, or already finished) keeps its times and takes the
+  /// other changes. Otherwise the edit is saved as it is.
   static List<Treatment> plan({
     required Treatment? old,
     required Treatment edited,
@@ -287,7 +307,9 @@ abstract final class TreatmentEdit {
       return [edited];
     }
     final last = edited.lastDay;
-    if (last != null && !last.isAfter(today)) return [edited];
+    if (last != null && !last.isAfter(today)) {
+      return [edited.copyWith(schedule: old.schedule)];
+    }
     final tomorrow = today.addDays(1);
     return [
       old.copyWith(endedOn: today, medication: edited.medication),
