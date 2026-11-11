@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/meds_data.dart';
 import '../model/models.dart';
+import '../reminders/reminders.dart';
 import 'common.dart';
 import 'home_page.dart';
 
@@ -120,6 +123,7 @@ class _TreatmentEditorPageState extends ConsumerState<TreatmentEditorPage> {
           .read(medsActionsProvider)
           .saveTreatment(c, t, c.today(DateTime.now().toUtc()));
       if (!mounted) return;
+      if (schedule is FixedTimes) unawaited(askReminderPermission(ref));
       if (fromTomorrow) showSnack(context, l.newTimesFromTomorrow);
       Navigator.of(context).pop();
     } on Object {

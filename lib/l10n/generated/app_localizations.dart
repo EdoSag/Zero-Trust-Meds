@@ -1220,6 +1220,210 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'At least 1'**
   String get atLeastOne;
+
+  /// No description provided for @reminderDoseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'{child}: {medicine}'**
+  String reminderDoseTitle(String child, String medicine);
+
+  /// No description provided for @reminderDoseBody.
+  ///
+  /// In en, this message translates to:
+  /// **'{dose} at {time}'**
+  String reminderDoseBody(String dose, String time);
+
+  /// No description provided for @reminderFollowUpTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Still due: {medicine} for {child}'**
+  String reminderFollowUpTitle(String child, String medicine);
+
+  /// No description provided for @reminderFollowUpBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Planned for {time} and not logged yet.'**
+  String reminderFollowUpBody(String time);
+
+  /// No description provided for @reminderMissedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Not logged: {medicine} for {child}'**
+  String reminderMissedTitle(String child, String medicine);
+
+  /// No description provided for @reminderMissedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The {time} dose isn\'t logged. Open ZT Meds to check before giving it.'**
+  String reminderMissedBody(String time);
+
+  /// No description provided for @reminderLastDayTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Last day of {medicine} for {child}'**
+  String reminderLastDayTitle(String child, String medicine);
+
+  /// No description provided for @reminderLastDayBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Today is the last day of this course.'**
+  String get reminderLastDayBody;
+
+  /// No description provided for @reminderPrivateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine reminder'**
+  String get reminderPrivateTitle;
+
+  /// No description provided for @reminderPrivateBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Open ZT Meds to see which dose.'**
+  String get reminderPrivateBody;
+
+  /// No description provided for @reminderChannel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose reminders'**
+  String get reminderChannel;
+
+  /// No description provided for @reminderChannelHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When your children\'s doses are due or missed'**
+  String get reminderChannelHint;
+
+  /// No description provided for @remindersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders'**
+  String get remindersTitle;
+
+  /// No description provided for @remindersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When doses are due, follow-ups and missed doses'**
+  String get remindersHint;
+
+  /// No description provided for @remindersOn.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose reminders'**
+  String get remindersOn;
+
+  /// No description provided for @remindersOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At each planned dose time'**
+  String get remindersOnHint;
+
+  /// No description provided for @followUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow-up'**
+  String get followUp;
+
+  /// No description provided for @followUpHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Again if a dose isn\'t logged yet'**
+  String get followUpHint;
+
+  /// No description provided for @followUpOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get followUpOff;
+
+  /// No description provided for @followUpAfter.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} minutes later'**
+  String followUpAfter(int minutes);
+
+  /// No description provided for @missedAlerts.
+  ///
+  /// In en, this message translates to:
+  /// **'Missed-dose alert'**
+  String get missedAlerts;
+
+  /// No description provided for @missedAlertsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'When a dose passes the child\'s \"missed after\" time'**
+  String get missedAlertsHint;
+
+  /// No description provided for @lastDayNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Last-day notice'**
+  String get lastDayNotice;
+
+  /// No description provided for @lastDayNoticeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'At 9:00 on the last day of a course'**
+  String get lastDayNoticeHint;
+
+  /// No description provided for @showNamesInReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Names in reminders'**
+  String get showNamesInReminders;
+
+  /// No description provided for @showNamesInRemindersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.'**
+  String get showNamesInRemindersHint;
+
+  /// No description provided for @remindersForChildren.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me about'**
+  String get remindersForChildren;
+
+  /// No description provided for @remindersHowTheyWork.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.'**
+  String get remindersHowTheyWork;
+
+  /// No description provided for @reminderDoseGone.
+  ///
+  /// In en, this message translates to:
+  /// **'That dose isn\'t planned any more.'**
+  String get reminderDoseGone;
+
+  /// No description provided for @quietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet hours'**
+  String get quietHours;
+
+  /// No description provided for @quietHoursOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Off'**
+  String get quietHoursOff;
+
+  /// No description provided for @quietHoursRange.
+  ///
+  /// In en, this message translates to:
+  /// **'{from} to {until}: dose reminders without sound, no follow-ups or alerts'**
+  String quietHoursRange(String from, String until);
+
+  /// No description provided for @quietHoursFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts'**
+  String get quietHoursFrom;
+
+  /// No description provided for @quietHoursUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Ends'**
+  String get quietHoursUntil;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
