@@ -714,6 +714,10 @@ class AppL10nHe extends AppL10n {
       'נשמר. השעות החדשות מתחילות מחר, כך שהרישומים של היום נשארים כמו שהם.';
 
   @override
+  String get timesKeptCourseEnding =>
+      'נשמר. השעות נשארות כפי שהיו, כי לטיפול הזה לא נותרו ימים והרישומים שלו מבוססים עליהן.';
+
+  @override
   String get atLeastOne => 'לפחות 1';
 
   @override

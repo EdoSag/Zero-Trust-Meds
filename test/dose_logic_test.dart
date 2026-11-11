@@ -431,6 +431,29 @@ void main() {
       );
     });
 
+    test('as-needed: a time corrected backwards still counts later doses', () {
+      final t = asNeeded(minInterval: 0, max: 3);
+      final logs = [
+        for (final h in [7, 13, 19])
+          given('p1', DateTime.utc(2026, 1, 10, h), id: 'l$h'),
+      ];
+      final w = DoseGuard.beforeGiving(
+        t: t,
+        logs: logs,
+        at: DateTime.utc(2026, 1, 10, 1),
+      );
+      expect((w.single as MaxReached).count, 3);
+      // More than 24 hours before the last one: only two share a window.
+      expect(
+        DoseGuard.beforeGiving(
+          t: t,
+          logs: logs,
+          at: DateTime.utc(2026, 1, 9, 12),
+        ),
+        isEmpty,
+      );
+    });
+
     test('skipped records never count toward double doses', () {
       final t = asNeeded();
       final logs = [
@@ -496,6 +519,62 @@ void main() {
         expect(plan.single, same(edited));
       }
     });
+  });
+
+  test('new times on the last day of a course with records are not saved', () {
+    final old = fixed(['08:00'], start: '2026-01-10', days: 3);
+    final edited = old.copyWith(
+      schedule: FixedTimes(const [TimeOfDose(9, 0)]),
+      pauses: [Pause(DateTime.utc(2026, 1, 11))],
+    );
+    final plan = TreatmentEdit.plan(
+      old: old,
+      edited: edited,
+      today: LocalDate.parse('2026-01-12'),
+      hasLogs: true,
+    );
+    expect((plan.single.schedule as FixedTimes).times, [
+      const TimeOfDose(8, 0),
+    ]);
+    expect(plan.single.pauses, hasLength(1));
+    expect(plan.single.id, old.id);
+  });
+
+  test('as-needed: the next time after a backdated dose fits every window', () {
+    final t = asNeeded(minInterval: 0, max: 2);
+    final logs = [
+      given('p1', DateTime.utc(2026, 1, 9, 12), id: 'a'),
+      given('p1', DateTime.utc(2026, 1, 10, 6), id: 'b'),
+      given('p1', DateTime.utc(2026, 1, 10, 13), id: 'c'),
+    ];
+    final w = DoseGuard.beforeGiving(
+      t: t,
+      logs: logs,
+      at: DateTime.utc(2026, 1, 10, 1),
+    );
+    // Jan 10 12:00 would share a window with the 06:00 and 13:00 doses.
+    final next = (w.single as MaxReached).nextAllowed;
+    expect(next, DateTime.utc(2026, 1, 11, 6));
+    expect(DoseGuard.beforeGiving(t: t, logs: logs, at: next), isEmpty);
+  });
+
+  test('as-needed limits can be changed on the last day of a course', () {
+    final old = asNeeded().copyWith(days: 3);
+    final edited = old.copyWith(
+      schedule: const AsNeeded(minIntervalMinutes: 360, maxPer24h: 3),
+    );
+    for (final today in ['2026-01-02', '2026-01-03']) {
+      final plan = TreatmentEdit.plan(
+        old: old,
+        edited: edited,
+        today: LocalDate.parse(today),
+        hasLogs: true,
+      );
+      final saved = plan.single.schedule as AsNeeded;
+      expect(saved.minIntervalMinutes, 360);
+      expect(saved.maxPer24h, 3);
+      expect(plan.single.id, old.id);
+    }
   });
 
   test('a stored most-per-day of 0 is ignored instead of crashing', () {

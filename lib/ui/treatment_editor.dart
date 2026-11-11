@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/meds_data.dart';
+import '../logic/dose_logic.dart';
 import '../model/models.dart';
 import '../reminders/reminders.dart';
 import 'common.dart';
@@ -119,12 +120,19 @@ class _TreatmentEditorPageState extends ConsumerState<TreatmentEditorPage> {
       endedOn: _t?.endedOn,
     );
     try {
-      final fromTomorrow = await ref
+      final times = await ref
           .read(medsActionsProvider)
           .saveTreatment(c, t, c.today(DateTime.now().toUtc()));
       if (!mounted) return;
       if (schedule is FixedTimes) unawaited(askReminderPermission(ref));
-      if (fromTomorrow) showSnack(context, l.newTimesFromTomorrow);
+      switch (times) {
+        case TimesEdit.fromTomorrow:
+          showSnack(context, l.newTimesFromTomorrow);
+        case TimesEdit.kept:
+          showSnack(context, l.timesKeptCourseEnding);
+        case TimesEdit.saved:
+          break;
+      }
       Navigator.of(context).pop();
     } on Object {
       if (!mounted) return;

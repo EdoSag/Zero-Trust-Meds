@@ -720,6 +720,10 @@ class AppL10nEn extends AppL10n {
       'Saved. The new times start tomorrow, so today\'s records stay as they are.';
 
   @override
+  String get timesKeptCourseEnding =>
+      'Saved. The times stay as they were, because this treatment has no days left and its records use them.';
+
+  @override
   String get atLeastOne => 'At least 1';
 
   @override
