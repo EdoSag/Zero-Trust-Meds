@@ -13,7 +13,7 @@ Track the medicines your children get, shared between every caregiver, end-to-en
 
 - **Reminders.** A notification at each planned dose time with a "Mark as given" button, a follow-up if the dose still isn't logged (30 minutes by default, or off), an alert when it turns missed, and a notice on the morning of a course's last day. Each caregiver chooses their own reminders, which children they get them for and quiet hours (dose reminders come without sound then, the extras not at all), and can keep names out of the notification text. The lock screen never shows the text.
 
-Charts come in the next version.
+- **Charts.** Per medicine, a calendar with days as rows and dose times as columns; tap a dose to see who gave it and when. Per child, one timeline of every medicine with the share of planned doses given for each, over 7, 30 or 90 days. With more than one child, the home screen starts with a card per child: today's doses by status and the last 7 days. Every status has an icon and a label, never colour alone.
 
 ## How the sharing stays private
 
