@@ -11,6 +11,7 @@ import 'child_editor.dart';
 import 'child_page.dart';
 import 'common.dart';
 import 'dose_actions.dart';
+import 'family_overview.dart';
 import 'settings_page.dart';
 import 'sharing_pages.dart';
 
@@ -68,6 +69,8 @@ class HomePage extends ConsumerWidget {
           children: [
             for (final j in joins) _JoinRequestCard(j, family: data),
             for (final p in data.pending) _PendingCard(p),
+            if (data.children.length > 1)
+              FamilyOverview(data.children, now: now),
             for (final c in data.children) _ChildToday(c, now: now),
           ],
         ),

@@ -9,6 +9,7 @@ import 'package:zero_trust_core/zero_trust_core.dart';
 import 'app/app_gate.dart';
 import 'app/meds_config.dart';
 import 'l10n/generated/app_localizations.dart';
+import 'reminders/reminder_scheduler.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,9 +19,14 @@ Future<void> main() async {
     url: dotenv.env['SUPABASE_URL']!,
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
+  // Catches the reminder (or "Mark as given") that started the app, before
+  // it's unlocked.
+  final reminders = platformReminderScheduler();
+  reminders.initialize().ignore();
   runApp(
     ProviderScope(
       overrides: [
+        reminderSchedulerProvider.overrideWithValue(reminders),
         ztAppConfigProvider.overrideWithValue(medsAppConfig),
         ztSpacePolicyProvider.overrideWithValue(medsSpacePolicy),
       ],

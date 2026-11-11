@@ -503,5 +503,262 @@
   "takePhoto": "Take photo",
   "choosePhoto": "Choose photo",
   "removePhoto": "Remove",
-  "photoFailed": "Couldn't get the photo. Try again."
+  "photoFailed": "Couldn't get the photo. Try again.",
+  "charts": "Charts",
+  "chartsFor": "{child}: how it went",
+  "@chartsFor": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "lastDays": "{days} days",
+  "@lastDays": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "chartsEmpty": "Nothing to show for this period yet. Charts fill in as doses are logged.",
+  "plannedDosesPerDay": "Planned doses per day",
+  "byTreatment": "By treatment",
+  "asNeededGiven": "As-needed doses given",
+  "asNeededSummary": "{given, plural, =1{Given once} other{Given {given} times}}, most in a day: {most}",
+  "@asNeededSummary": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "most": {
+        "type": "int"
+      }
+    }
+  },
+  "chartsNote": "Worked out on this phone from the records everyone logged. Doses still to come today aren't counted.",
+  "noPlannedDosesYet": "No planned doses due yet in this period",
+  "plannedGivenShare": "{given} of {total} planned doses given",
+  "@plannedGivenShare": {
+    "placeholders": {
+      "given": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "dayBarLabel": "{day}: {given} given, {missed} missed, {skipped} skipped",
+  "@dayBarLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "given": {
+        "type": "int"
+      },
+      "missed": {
+        "type": "int"
+      },
+      "skipped": {
+        "type": "int"
+      }
+    }
+  },
+  "asNeededDayLabel": "{day}: {count} as-needed doses",
+  "@asNeededDayLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "missedCount": "{count} missed",
+  "@missedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "skippedCount": "{count} skipped",
+  "@skippedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "givenTwiceCount": "{count, plural, =1{1 given twice} other{{count} given twice}}",
+  "@givenTwiceCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "byTreatmentHint": "Tap a medicine to see every dose as a calendar.",
+  "timeline": "Timeline",
+  "timelineHint": "Every medicine together, newest day first. Tap a dose for details.",
+  "gridIntro": "Days are rows and dose times are columns, in {child}'s time zone. Tap a dose to see who gave it and when.",
+  "@gridIntro": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      }
+    }
+  },
+  "cellLabel": "{day}, {time}: {status}",
+  "@cellLabel": {
+    "placeholders": {
+      "day": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "familyOverview": "Family",
+  "lastSevenDays": "Last 7 days: {percent}",
+  "@lastSevenDays": {
+    "placeholders": {
+      "percent": {
+        "type": "String"
+      }
+    }
+  },
+  "todayCount": "{count} {status}",
+  "@todayCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "status": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDoseTitle": "{child}: {medicine}",
+  "@reminderDoseTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderDoseBody": "{dose} at {time}",
+  "@reminderDoseBody": {
+    "placeholders": {
+      "dose": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpTitle": "Still due: {medicine} for {child}",
+  "@reminderFollowUpTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderFollowUpBody": "Planned for {time} and not logged yet.",
+  "@reminderFollowUpBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedTitle": "Not logged: {medicine} for {child}",
+  "@reminderMissedTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderMissedBody": "The {time} dose isn't logged. Open ZT Meds to check before giving it.",
+  "@reminderMissedBody": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayTitle": "Last day of {medicine} for {child}",
+  "@reminderLastDayTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderLastDayBody": "Today is the last day of this course.",
+  "reminderPrivateTitle": "Medicine reminder",
+  "reminderPrivateBody": "Open ZT Meds to see which dose.",
+  "reminderChannel": "Dose reminders",
+  "reminderChannelHint": "When your children's doses are due or missed",
+  "remindersTitle": "Reminders",
+  "remindersHint": "When doses are due, follow-ups and missed doses",
+  "remindersOn": "Dose reminders",
+  "remindersOnHint": "At each planned dose time",
+  "followUp": "Follow-up",
+  "followUpHint": "Again if a dose isn't logged yet",
+  "followUpOff": "Off",
+  "followUpAfter": "{minutes} minutes later",
+  "@followUpAfter": {
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+  "missedAlerts": "Missed-dose alert",
+  "missedAlertsHint": "When a dose passes the child's \"missed after\" time",
+  "lastDayNotice": "Last-day notice",
+  "lastDayNoticeHint": "At 9:00 on the last day of a course",
+  "showNamesInReminders": "Names in reminders",
+  "showNamesInRemindersHint": "Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.",
+  "remindersForChildren": "Remind me about",
+  "remindersHowTheyWork": "Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.",
+  "reminderDoseGone": "That dose isn't planned any more.",
+  "quietHours": "Quiet hours",
+  "quietHoursOff": "Off",
+  "quietHoursRange": "{from} to {until}: dose reminders without sound, no follow-ups or alerts",
+  "@quietHoursRange": {
+    "placeholders": {
+      "from": {
+        "type": "String"
+      },
+      "until": {
+        "type": "String"
+      }
+    }
+  },
+  "quietHoursFrom": "Starts",
+  "quietHoursUntil": "Ends"
 }

@@ -733,4 +733,242 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get photoFailed => 'Couldn\'t get the photo. Try again.';
+
+  @override
+  String get charts => 'Charts';
+
+  @override
+  String chartsFor(String child) {
+    return '$child: how it went';
+  }
+
+  @override
+  String lastDays(int days) {
+    return '$days days';
+  }
+
+  @override
+  String get chartsEmpty =>
+      'Nothing to show for this period yet. Charts fill in as doses are logged.';
+
+  @override
+  String get plannedDosesPerDay => 'Planned doses per day';
+
+  @override
+  String get byTreatment => 'By treatment';
+
+  @override
+  String get asNeededGiven => 'As-needed doses given';
+
+  @override
+  String asNeededSummary(int given, int most) {
+    String _temp0 = intl.Intl.pluralLogic(
+      given,
+      locale: localeName,
+      other: 'Given $given times',
+      one: 'Given once',
+    );
+    return '$_temp0, most in a day: $most';
+  }
+
+  @override
+  String get chartsNote =>
+      'Worked out on this phone from the records everyone logged. Doses still to come today aren\'t counted.';
+
+  @override
+  String get noPlannedDosesYet => 'No planned doses due yet in this period';
+
+  @override
+  String plannedGivenShare(int given, int total) {
+    return '$given of $total planned doses given';
+  }
+
+  @override
+  String dayBarLabel(String day, int given, int missed, int skipped) {
+    return '$day: $given given, $missed missed, $skipped skipped';
+  }
+
+  @override
+  String asNeededDayLabel(String day, int count) {
+    return '$day: $count as-needed doses';
+  }
+
+  @override
+  String missedCount(int count) {
+    return '$count missed';
+  }
+
+  @override
+  String skippedCount(int count) {
+    return '$count skipped';
+  }
+
+  @override
+  String givenTwiceCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count given twice',
+      one: '1 given twice',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get byTreatmentHint =>
+      'Tap a medicine to see every dose as a calendar.';
+
+  @override
+  String get timeline => 'Timeline';
+
+  @override
+  String get timelineHint =>
+      'Every medicine together, newest day first. Tap a dose for details.';
+
+  @override
+  String gridIntro(String child) {
+    return 'Days are rows and dose times are columns, in $child\'s time zone. Tap a dose to see who gave it and when.';
+  }
+
+  @override
+  String cellLabel(String day, String time, String status) {
+    return '$day, $time: $status';
+  }
+
+  @override
+  String get familyOverview => 'Family';
+
+  @override
+  String lastSevenDays(String percent) {
+    return 'Last 7 days: $percent';
+  }
+
+  @override
+  String todayCount(int count, String status) {
+    return '$count $status';
+  }
+
+  @override
+  String reminderDoseTitle(String child, String medicine) {
+    return '$child: $medicine';
+  }
+
+  @override
+  String reminderDoseBody(String dose, String time) {
+    return '$dose at $time';
+  }
+
+  @override
+  String reminderFollowUpTitle(String child, String medicine) {
+    return 'Still due: $medicine for $child';
+  }
+
+  @override
+  String reminderFollowUpBody(String time) {
+    return 'Planned for $time and not logged yet.';
+  }
+
+  @override
+  String reminderMissedTitle(String child, String medicine) {
+    return 'Not logged: $medicine for $child';
+  }
+
+  @override
+  String reminderMissedBody(String time) {
+    return 'The $time dose isn\'t logged. Open ZT Meds to check before giving it.';
+  }
+
+  @override
+  String reminderLastDayTitle(String child, String medicine) {
+    return 'Last day of $medicine for $child';
+  }
+
+  @override
+  String get reminderLastDayBody => 'Today is the last day of this course.';
+
+  @override
+  String get reminderPrivateTitle => 'Medicine reminder';
+
+  @override
+  String get reminderPrivateBody => 'Open ZT Meds to see which dose.';
+
+  @override
+  String get reminderChannel => 'Dose reminders';
+
+  @override
+  String get reminderChannelHint =>
+      'When your children\'s doses are due or missed';
+
+  @override
+  String get remindersTitle => 'Reminders';
+
+  @override
+  String get remindersHint => 'When doses are due, follow-ups and missed doses';
+
+  @override
+  String get remindersOn => 'Dose reminders';
+
+  @override
+  String get remindersOnHint => 'At each planned dose time';
+
+  @override
+  String get followUp => 'Follow-up';
+
+  @override
+  String get followUpHint => 'Again if a dose isn\'t logged yet';
+
+  @override
+  String get followUpOff => 'Off';
+
+  @override
+  String followUpAfter(int minutes) {
+    return '$minutes minutes later';
+  }
+
+  @override
+  String get missedAlerts => 'Missed-dose alert';
+
+  @override
+  String get missedAlertsHint =>
+      'When a dose passes the child\'s \"missed after\" time';
+
+  @override
+  String get lastDayNotice => 'Last-day notice';
+
+  @override
+  String get lastDayNoticeHint => 'At 9:00 on the last day of a course';
+
+  @override
+  String get showNamesInReminders => 'Names in reminders';
+
+  @override
+  String get showNamesInRemindersHint =>
+      'Off: reminders only say \"Medicine reminder\". The lock screen never shows the text.';
+
+  @override
+  String get remindersForChildren => 'Remind me about';
+
+  @override
+  String get remindersHowTheyWork =>
+      'Reminders are set on this phone and need no internet. A dose logged on another phone cancels them here when this phone syncs, which happens while ZT Meds is open. Every caregiver sets their own reminders.';
+
+  @override
+  String get reminderDoseGone => 'That dose isn\'t planned any more.';
+
+  @override
+  String get quietHours => 'Quiet hours';
+
+  @override
+  String get quietHoursOff => 'Off';
+
+  @override
+  String quietHoursRange(String from, String until) {
+    return '$from to $until: dose reminders without sound, no follow-ups or alerts';
+  }
+
+  @override
+  String get quietHoursFrom => 'Starts';
+
+  @override
+  String get quietHoursUntil => 'Ends';
 }

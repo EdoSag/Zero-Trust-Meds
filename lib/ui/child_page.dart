@@ -8,6 +8,7 @@ import 'package:zero_trust_core/zero_trust_core.dart';
 import '../data/meds_data.dart';
 import '../logic/dose_logic.dart';
 import '../model/models.dart';
+import 'charts_page.dart';
 import 'child_editor.dart';
 import 'common.dart';
 import 'home_page.dart';
@@ -40,6 +41,15 @@ class ChildPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(c.child.name),
         actions: [
+          IconButton(
+            tooltip: l.charts,
+            icon: const Icon(Icons.insights_outlined),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => ChartsPage(spaceId: c.spaceId),
+              ),
+            ),
+          ),
           if (c.isAdmin)
             IconButton(
               tooltip: l.editChild,
