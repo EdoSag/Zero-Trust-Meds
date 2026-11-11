@@ -18,6 +18,9 @@ Future<void> giveDose(
   DateTime? at,
 }) async {
   final when = (at ?? DateTime.now()).toUtc();
+  // The caller's [c] is from when its sheet or picker opened. A dose another
+  // caregiver logged since then must still warn, so check the newest records.
+  c = ref.read(familyProvider).value?.child(c.spaceId) ?? c;
   final warnings = DoseGuard.beforeGiving(
     t: treatment,
     logs: c.logsOf(treatment.id),
