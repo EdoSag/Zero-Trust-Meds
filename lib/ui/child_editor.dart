@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../data/meds_data.dart';
+import '../logic/photo.dart';
 import '../model/models.dart';
 import 'child_page.dart';
 import 'common.dart';
@@ -38,6 +42,9 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
   late int _color = widget.existing?.child.color ?? childColors.first;
   String? _zone;
   late int _missed = widget.existing?.child.missedAfterMinutes ?? 120;
+
+  /// Small JPEG, base64; encrypted with the rest of the child's profile.
+  late String? _photo = widget.existing?.child.photo;
   bool _saving = false;
 
   bool get _isNew => widget.existing == null;
@@ -75,13 +82,12 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
     if (!_form.currentState!.validate() || _zone == null) return;
     setState(() => _saving = true);
     final actions = ref.read(medsActionsProvider);
-    final base = widget.existing?.child ?? Child(name: '', timeZone: _zone!);
     final child = Child(
       name: _name.text.trim(),
       timeZone: _zone!,
       birthDate: _birth,
       color: _color,
-      photo: base.photo,
+      photo: _photo,
       missedAfterMinutes: _missed,
     );
     try {
@@ -124,6 +130,18 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
+            Center(
+              child: _PhotoPicker(
+                child: Child(
+                  name: _name.text,
+                  timeZone: _zone ?? 'UTC',
+                  color: _color,
+                  photo: _photo,
+                ),
+                onChanged: (p) => setState(() => _photo = p),
+              ),
+            ),
+            const SizedBox(height: 16),
             TextFormField(
               controller: _name,
               autofocus: _isNew,
@@ -285,6 +303,65 @@ class _ZonePickerState extends State<_ZonePicker> {
           onTap: () => Navigator.of(context).pop(shown[i]),
         ),
       ),
+    );
+  }
+}
+
+/// The child's photo: taken or picked on the phone, shrunk to a small
+/// JPEG, and stored only inside the encrypted profile.
+class _PhotoPicker extends StatelessWidget {
+  const _PhotoPicker({required this.child, required this.onChanged});
+  final Child child;
+  final ValueChanged<String?> onChanged;
+
+  Future<void> _pick(BuildContext context, ImageSource source) async {
+    try {
+      final file = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 256,
+        maxHeight: 256,
+        imageQuality: 80,
+        requestFullMetadata: false,
+      );
+      if (file == null) return;
+      // The picker's resize keeps EXIF (GPS included) on Android, so the
+      // pixels are re-encoded here without any metadata.
+      final clean = cleanPhoto(await file.readAsBytes());
+      if (clean == null) throw const FormatException('not an image');
+      onChanged(base64Encode(clean));
+    } on Object {
+      if (context.mounted) showSnack(context, context.l.photoFailed);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l;
+    return Column(
+      children: [
+        ChildAvatar(child, radius: 44),
+        Wrap(
+          alignment: WrapAlignment.center,
+          children: [
+            TextButton.icon(
+              onPressed: () => _pick(context, ImageSource.camera),
+              icon: const Icon(Icons.photo_camera_outlined),
+              label: Text(l.takePhoto),
+            ),
+            TextButton.icon(
+              onPressed: () => _pick(context, ImageSource.gallery),
+              icon: const Icon(Icons.photo_library_outlined),
+              label: Text(l.choosePhoto),
+            ),
+            if (child.photo != null)
+              TextButton.icon(
+                onPressed: () => onChanged(null),
+                icon: const Icon(Icons.delete_outline),
+                label: Text(l.removePhoto),
+              ),
+          ],
+        ),
+      ],
     );
   }
 }

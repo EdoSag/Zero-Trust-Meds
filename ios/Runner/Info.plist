@@ -67,6 +67,8 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>NSCameraUsageDescription</key>
-	<string>Scan a caregiver invite QR code.</string>
+	<string>Scan a caregiver invite QR code, or take a photo of your child for their profile.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Choose a photo of your child for their profile. It is stored encrypted.</string>
 </dict>
 </plist>

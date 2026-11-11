@@ -723,6 +723,18 @@ class AppL10nEn extends AppL10n {
   String get atLeastOne => 'At least 1';
 
   @override
+  String get takePhoto => 'Take photo';
+
+  @override
+  String get choosePhoto => 'Choose photo';
+
+  @override
+  String get removePhoto => 'Remove';
+
+  @override
+  String get photoFailed => 'Couldn\'t get the photo. Try again.';
+
+  @override
   String get charts => 'Charts';
 
   @override

@@ -1221,6 +1221,30 @@ abstract class AppL10n {
   /// **'At least 1'**
   String get atLeastOne;
 
+  /// No description provided for @takePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Take photo'**
+  String get takePhoto;
+
+  /// No description provided for @choosePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose photo'**
+  String get choosePhoto;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removePhoto;
+
+  /// No description provided for @photoFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t get the photo. Try again.'**
+  String get photoFailed;
+
   /// No description provided for @charts.
   ///
   /// In en, this message translates to:
