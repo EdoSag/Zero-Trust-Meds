@@ -1,0 +1,28 @@
+Did someone already give the antibiotic this morning? Zero-Trust Meds lets parents, grandparents and babysitters share one record of every dose a child gets, with reminders, and keeps it end-to-end encrypted between you.
+
+WHAT IT DOES
+• A profile per child, shared with every caregiver by link or QR code.
+• Admins manage medicines and treatments; caregivers see everything and log doses.
+• Treatments at set times each day for a number of days, or "as needed" with a minimum gap and a daily most.
+• Today's doses per child: Given, Due, Missed, Upcoming, Skipped or Paused, always with an icon and a label.
+• One tap logs who gave a dose and when; change the time, skip with a reason, or undo.
+• Warnings before a double dose, or an as-needed dose too soon or above the daily most.
+• Reminders with a "Mark as given" button, a follow-up, a missed alert and quiet hours.
+• Charts per medicine and per child over 7, 30 or 90 days, plus a family overview.
+• Dose times follow the child's time zone, so trips and clock changes just work.
+• Removing a caregiver changes the child's key, so they can't read anything new.
+
+WHY ZERO-TRUST
+• End-to-end encrypted: everything is encrypted on your phone before it syncs. We can't read it, and neither can anyone who breaks into the server.
+• One private account for every Zero-Trust app, unlocked with your fingerprint or face.
+• Works offline and syncs across your devices when you're back online.
+• No ads, no trackers, no analytics, no data sold. Ever.
+• Open source (AGPL-3.0), so anyone can check what the app does.
+• English and Hebrew, with full right-to-left support.
+
+Zero-Trust Meds helps you remember and record medicines. It does not give medical advice, check doses or check for interactions, and it is not a medical device. Always follow your doctor, your pharmacist and the label.
+
+Part of the Zero-Trust suite: Notes, Tasks, Calendar, Contacts, Phone, Fitness, Meds, Time and Browser. One account opens them all.
+
+Privacy policy: https://zerotrust.bz/privacy/
+Support: support@zerotrust.bz
