@@ -52,6 +52,7 @@ class ChildCharts {
     required this.overall,
     required this.treatments,
     required this.asNeeded,
+    this.oneTime = const [],
   });
 
   factory ChildCharts.of(ChildData c, DateTime nowUtc, {int days = 7}) {
@@ -117,6 +118,20 @@ class ChildCharts {
       ),
     );
     asNeeded.sort((a, b) => b.given.compareTo(a.given));
+
+    final oneTimeByName = <String, (Medication, int)>{};
+    for (final l in c.oneTimeLogs) {
+      final day = c.today(l.at);
+      if (day.isBefore(from) || day.isAfter(to)) continue;
+      final key = l.medication!.name.trim().toLowerCase();
+      final seen = oneTimeByName[key];
+      // Newest first, so the first seen names the medicine.
+      oneTimeByName[key] = (seen?.$1 ?? l.medication!, (seen?.$2 ?? 0) + 1);
+    }
+    final oneTime = [
+      for (final e in oneTimeByName.values) OneTimeStats(e.$1, e.$2),
+    ]..sort((a, b) => b.given.compareTo(a.given));
+
     return ChildCharts(
       from: from,
       to: to,
@@ -128,6 +143,7 @@ class ChildCharts {
       ),
       treatments: perTreatment,
       asNeeded: asNeeded,
+      oneTime: oneTime,
     );
   }
 
@@ -140,13 +156,27 @@ class ChildCharts {
   final List<TreatmentStats> treatments;
   final List<AsNeededStats> asNeeded;
 
+  /// Medicines given once, outside any treatment, most given first.
+  final List<OneTimeStats> oneTime;
+
   /// The tallest day, for scaling the bars.
   int get mostInADay => days.fold(0, (m, d) => d.total > m ? d.total : m);
 
   int get mostAsNeededInADay =>
       days.fold(0, (m, d) => d.asNeeded > m ? d.asNeeded : m);
 
-  bool get isEmpty => overall.counted == 0 && asNeeded.isEmpty;
+  bool get isEmpty =>
+      overall.counted == 0 && asNeeded.isEmpty && oneTime.isEmpty;
+}
+
+/// One-time doses of one medicine (by name) over the period.
+@immutable
+class OneTimeStats {
+  const OneTimeStats(this.medication, this.given);
+
+  /// The newest dose's medicine.
+  final Medication medication;
+  final int given;
 }
 
 /// One day of a fixed-time treatment's grid: a cell per dose time.
@@ -203,7 +233,7 @@ class TreatmentGrid {
 }
 
 /// One line of a child's combined timeline: a planned dose with its
-/// status, or an as-needed dose given.
+/// status, an as-needed dose given, or a one-time dose given.
 @immutable
 class TimelineEntry {
   const TimelineEntry.planned(DoseStatus this.status)
@@ -211,14 +241,27 @@ class TimelineEntry {
       log = null;
   const TimelineEntry.asNeeded(Treatment this.treatment, DoseLog this.log)
     : status = null;
+  const TimelineEntry.oneTime(DoseLog this.log)
+    : status = null,
+      treatment = null;
 
   final DoseStatus? status;
   final Treatment? treatment;
   final DoseLog? log;
 
+  /// Given once, outside any treatment.
+  bool get isOneTime => status == null && treatment == null;
+
+  /// The treatment of a planned or as-needed dose (not for a one-time
+  /// dose, which has none).
   Treatment get medicine => status?.dose.treatment ?? treatment!;
 
-  /// When it was planned, or when the as-needed dose was given (UTC).
+  Medication get medication =>
+      status?.dose.treatment.medication ??
+      treatment?.medication ??
+      log!.medication!;
+
+  /// When it was planned, or when the dose was given (UTC).
   DateTime get at => status?.dose.at ?? log!.at;
 }
 
@@ -255,6 +298,11 @@ abstract final class ChildTimeline {
           (byDay[s.dose.date] ??= []).add(TimelineEntry.planned(s));
         }
       }
+    }
+    for (final l in c.oneTimeLogs) {
+      final day = c.today(l.at);
+      if (day.isBefore(from) || day.isAfter(to)) continue;
+      (byDay[day] ??= []).add(TimelineEntry.oneTime(l));
     }
     return [
       for (var d = to; !d.isBefore(from); d = d.addDays(-1))

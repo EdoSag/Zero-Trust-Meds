@@ -975,4 +975,66 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get quietHoursUntil => 'Ends';
+
+  @override
+  String get logOneTimeDose => 'Log a one-time dose';
+
+  @override
+  String get logOneTimeDoseHint =>
+      'A medicine given once, like a fever reducer. No treatment or schedule is set up.';
+
+  @override
+  String get oneTimeDoseTitle => 'One-time dose';
+
+  @override
+  String get oneTime => 'One-time';
+
+  @override
+  String get doseFor => 'Given to';
+
+  @override
+  String get givenAtTime => 'Given at';
+
+  @override
+  String get givenNow => 'Now';
+
+  @override
+  String get doseReason => 'Reason or note (optional)';
+
+  @override
+  String get reasonFever => 'Fever';
+
+  @override
+  String get reasonPain => 'Pain';
+
+  @override
+  String get reasonCold => 'Cold';
+
+  @override
+  String get logDose => 'Log dose';
+
+  @override
+  String lastGivenNamed(String medicine, String name, String when) {
+    return '$medicine was already given in the last 24 hours: by $name at $when. Check before giving more.';
+  }
+
+  @override
+  String get oneTimeDosesToday => 'One-time doses';
+
+  @override
+  String get oneTimeGiven => 'One-time doses given';
+
+  @override
+  String oneTimeSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Given $count times',
+      one: 'Given once',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nothingPlannedToday => 'No planned doses today';
 }

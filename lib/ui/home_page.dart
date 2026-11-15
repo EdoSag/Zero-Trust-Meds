@@ -12,6 +12,7 @@ import 'child_page.dart';
 import 'common.dart';
 import 'dose_actions.dart';
 import 'family_overview.dart';
+import 'one_time_dose.dart';
 import 'settings_page.dart';
 import 'sharing_pages.dart';
 
@@ -239,6 +240,7 @@ class _ChildToday extends ConsumerWidget {
     final today = c.today(now);
     final doses = c.doses(today, now);
     final asNeeded = c.asNeeded(now);
+    final oneTime = c.oneTimeOn(today);
     final given = doses.where((d) => d.state == DoseState.given).length;
     final bySlot = <TimeSlot, List<DoseStatus>>{};
     for (final d in doses) {
@@ -257,9 +259,11 @@ class _ChildToday extends ConsumerWidget {
               style: Theme.of(context).textTheme.titleMedium,
             ),
             subtitle: Text(
-              doses.isEmpty && asNeeded.isEmpty
+              doses.isNotEmpty
+                  ? l.givenOfToday(given, doses.length)
+                  : asNeeded.isEmpty && oneTime.isEmpty
                   ? l.nothingToday
-                  : l.givenOfToday(given, doses.length),
+                  : l.nothingPlannedToday,
             ),
             trailing: const Icon(Icons.chevron_right),
             onTap: () => Navigator.of(context).push(
@@ -280,7 +284,26 @@ class _ChildToday extends ConsumerWidget {
               for (final d in list) DoseRow(c, d),
             ],
           for (final t in asNeeded) AsNeededRow(c, t, now: now),
-          const SizedBox(height: 8),
+          if (oneTime.isNotEmpty)
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(16, 8, 16, 0),
+              child: Text(
+                l.oneTimeDosesToday,
+                style: Theme.of(context).textTheme.labelLarge,
+              ),
+            ),
+          for (final log in oneTime) OneTimeDoseRow(c, log),
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: TextButton.icon(
+                onPressed: () => openOneTimeDose(context, spaceId: c.spaceId),
+                icon: const Icon(Icons.add_circle_outline),
+                label: Text(l.logOneTimeDose),
+              ),
+            ),
+          ),
         ],
       ),
     );
