@@ -106,6 +106,20 @@ class _ChartsPageState extends ConsumerState<ChartsPage> {
                   onTap: () => _openGrid(context, c, a.treatment),
                 ),
             ],
+            if (charts.oneTime.isNotEmpty) ...[
+              const SizedBox(height: 24),
+              Text(
+                l.oneTimeGiven,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              for (final o in charts.oneTime)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: const Icon(Icons.medication_outlined),
+                  title: Text(o.medication.name),
+                  subtitle: Text(l.oneTimeSummary(o.given)),
+                ),
+            ],
             const SizedBox(height: 24),
             Text(l.timeline, style: Theme.of(context).textTheme.titleMedium),
             Text(l.timelineHint, style: Theme.of(context).textTheme.bodySmall),
@@ -399,10 +413,11 @@ class _TimelineTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l;
-    final m = e.medicine.medication;
+    final m = e.medication;
     final s = e.status;
-    final title =
-        '${formatTime(context, e.at)} · ${m.name} · ${doseText(context, m)}';
+    final title = m.amount == null && m.unit.isEmpty && e.isOneTime
+        ? '${formatTime(context, e.at)} · ${m.name}'
+        : '${formatTime(context, e.at)} · ${m.name} · ${doseText(context, m)}';
     if (s == null) {
       final log = e.log!;
       return ListTile(
@@ -411,7 +426,11 @@ class _TimelineTile extends ConsumerWidget {
         leading: const Icon(Icons.check_circle, color: Color(0xFF22C55E)),
         title: Text(title),
         subtitle: Text(
-          '${l.asNeeded} · ${l.givenBy(c.nameOf(log.byUserId), formatWhen(context, log.at))}',
+          [
+            e.isOneTime ? l.oneTime : l.asNeeded,
+            l.givenBy(c.nameOf(log.byUserId), formatWhen(context, log.at)),
+            if (e.isOneTime && log.reason.isNotEmpty) log.reason,
+          ].join(' · '),
         ),
       );
     }

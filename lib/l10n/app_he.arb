@@ -250,5 +250,22 @@
   "quietHoursOff": "כבוי",
   "quietHoursRange": "{from} עד {until}: תזכורות למנות בלי צליל, בלי תזכורות חוזרות או התראות",
   "quietHoursFrom": "התחלה",
-  "quietHoursUntil": "סיום"
+  "quietHoursUntil": "סיום",
+  "logOneTimeDose": "רישום מנה חד-פעמית",
+  "logOneTimeDoseHint": "תרופה שניתנת פעם אחת, כמו מוריד חום. לא נוצר טיפול או לוח זמנים.",
+  "oneTimeDoseTitle": "מנה חד-פעמית",
+  "oneTime": "חד-פעמי",
+  "doseFor": "ניתן ל",
+  "givenAtTime": "מתי ניתן",
+  "givenNow": "עכשיו",
+  "doseReason": "סיבה או הערה (לא חובה)",
+  "reasonFever": "חום",
+  "reasonPain": "כאב",
+  "reasonCold": "הצטננות",
+  "logDose": "רישום מנה",
+  "lastGivenNamed": "{medicine} כבר ניתן ב-24 השעות האחרונות: על ידי {name} ב-{when}. כדאי לבדוק לפני שנותנים עוד.",
+  "oneTimeDosesToday": "מנות חד-פעמיות",
+  "oneTimeGiven": "מנות חד-פעמיות שניתנו",
+  "oneTimeSummary": "{count, plural, =1{ניתן פעם אחת} other{ניתן {count} פעמים}}",
+  "nothingPlannedToday": "אין היום מנות מתוכננות"
 }

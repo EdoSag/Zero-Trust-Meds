@@ -23,7 +23,7 @@ Future<void> giveDose(
   c = ref.read(familyProvider).value?.child(c.spaceId) ?? c;
   final warnings = DoseGuard.beforeGiving(
     t: treatment,
-    logs: c.logsOf(treatment.id),
+    logs: c.guardLogsOf(treatment),
     at: when,
     slot: slot,
   );

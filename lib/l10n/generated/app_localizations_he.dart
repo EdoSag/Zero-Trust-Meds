@@ -968,4 +968,66 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get quietHoursUntil => 'סיום';
+
+  @override
+  String get logOneTimeDose => 'רישום מנה חד-פעמית';
+
+  @override
+  String get logOneTimeDoseHint =>
+      'תרופה שניתנת פעם אחת, כמו מוריד חום. לא נוצר טיפול או לוח זמנים.';
+
+  @override
+  String get oneTimeDoseTitle => 'מנה חד-פעמית';
+
+  @override
+  String get oneTime => 'חד-פעמי';
+
+  @override
+  String get doseFor => 'ניתן ל';
+
+  @override
+  String get givenAtTime => 'מתי ניתן';
+
+  @override
+  String get givenNow => 'עכשיו';
+
+  @override
+  String get doseReason => 'סיבה או הערה (לא חובה)';
+
+  @override
+  String get reasonFever => 'חום';
+
+  @override
+  String get reasonPain => 'כאב';
+
+  @override
+  String get reasonCold => 'הצטננות';
+
+  @override
+  String get logDose => 'רישום מנה';
+
+  @override
+  String lastGivenNamed(String medicine, String name, String when) {
+    return '$medicine כבר ניתן ב-24 השעות האחרונות: על ידי $name ב-$when. כדאי לבדוק לפני שנותנים עוד.';
+  }
+
+  @override
+  String get oneTimeDosesToday => 'מנות חד-פעמיות';
+
+  @override
+  String get oneTimeGiven => 'מנות חד-פעמיות שניתנו';
+
+  @override
+  String oneTimeSummary(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'ניתן $count פעמים',
+      one: 'ניתן פעם אחת',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get nothingPlannedToday => 'אין היום מנות מתוכננות';
 }

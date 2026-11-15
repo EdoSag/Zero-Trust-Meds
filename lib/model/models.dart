@@ -240,6 +240,11 @@ class Medication {
   String get sameKey =>
       '${name.trim().toLowerCase()}|$amount|$unit|${form.name}';
 
+  /// The same medicine by name, whatever the amount: a one-time dose of
+  /// it counts towards an as-needed treatment's gap and daily most.
+  bool sameNameAs(Medication other) =>
+      name.trim().toLowerCase() == other.name.trim().toLowerCase();
+
   Map<String, Object?> toJson() => {
     'kind': kind,
     'name': name,
@@ -425,6 +430,10 @@ enum DoseAction { given, skipped }
 
 /// One caregiver's record of a dose: given (when) or skipped (why).
 ///
+/// A one-time dose (Nurofen once for a fever) belongs to no treatment: its
+/// [treatmentId] is empty and it carries its own [medication]. Older app
+/// versions read it as a record of a deleted treatment and skip it.
+///
 /// Every record is its own item, never merged into another, so two
 /// caregivers who both give the same dose (offline, at the same time) leave
 /// two records, and the app says "given twice" instead of hiding one.
@@ -440,6 +449,7 @@ class DoseLog {
     this.slotTime,
     this.reason = '',
     this.loggedAt,
+    this.medication,
   });
 
   factory DoseLog.fromJson(String id, Map<String, Object?> j) => DoseLog(
@@ -458,6 +468,12 @@ class DoseLog {
     loggedAt: j['loggedAt'] == null
         ? null
         : DateTime.parse(j['loggedAt'] as String).toUtc(),
+    medication: j['medication'] is Map
+        ? Medication.fromJson(
+            j['medicationId'] as String? ?? '',
+            (j['medication'] as Map).cast<String, Object?>(),
+          )
+        : null,
   );
 
   static const kind = 'dose';
@@ -477,11 +493,18 @@ class DoseLog {
   final LocalDate? slotDate;
   final TimeOfDose? slotTime;
 
-  /// Why it was skipped.
+  /// Why it was skipped, or for a one-time dose why it was given ("Fever").
   final String reason;
 
   /// When the record was made, UTC (differs from [at] when back-dated).
   final DateTime? loggedAt;
+
+  /// The medicine of a one-time dose, as it was given. Null for a dose of
+  /// a treatment (the treatment has the medicine).
+  final Medication? medication;
+
+  /// Given once, outside any treatment.
+  bool get isOneTime => treatmentId.isEmpty && medication != null;
 
   bool get given => action == DoseAction.given;
 
@@ -499,6 +522,7 @@ class DoseLog {
         slotTime: slotTime,
         reason: reason ?? this.reason,
         loggedAt: loggedAt,
+        medication: medication,
       );
 
   Map<String, Object?> toJson() => {
@@ -511,5 +535,9 @@ class DoseLog {
     'slotTime': slotTime?.toString(),
     'reason': reason,
     'loggedAt': loggedAt?.toUtc().toIso8601String(),
+    if (medication != null) ...{
+      'medicationId': medication!.id,
+      'medication': medication!.toJson()..remove('kind'),
+    },
   };
 }

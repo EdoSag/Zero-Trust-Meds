@@ -12,6 +12,7 @@ import 'charts_page.dart';
 import 'child_editor.dart';
 import 'common.dart';
 import 'home_page.dart';
+import 'one_time_dose.dart';
 import 'sharing_pages.dart';
 import 'treatment_editor.dart';
 
@@ -105,11 +106,21 @@ class ChildPage extends ConsumerWidget {
               ].join(' · '),
             ),
           ),
-          SectionHeader(l.today),
-          if (doses.isEmpty && c.asNeeded(now).isEmpty)
+          SectionHeader(
+            l.today,
+            trailing: TextButton.icon(
+              onPressed: () => openOneTimeDose(context, spaceId: c.spaceId),
+              icon: const Icon(Icons.add_circle_outline),
+              label: Text(l.logOneTimeDose),
+            ),
+          ),
+          if (doses.isEmpty &&
+              c.asNeeded(now).isEmpty &&
+              c.oneTimeOn(today).isEmpty)
             ListTile(title: Text(l.nothingToday)),
           for (final d in doses) DoseRow(c, d),
           for (final t in c.asNeeded(now)) AsNeededRow(c, t, now: now),
+          for (final log in c.oneTimeOn(today)) OneTimeDoseRow(c, log),
           SectionHeader(l.treatments),
           if (active.isEmpty) ListTile(title: Text(l.noTreatments)),
           for (final t in active) _TreatmentTile(c, t, now: now),
@@ -129,7 +140,10 @@ class ChildPage extends ConsumerWidget {
           ),
           for (final m in c.caregivers) _MemberTile(c, m, me: m.userId == myId),
           if (recent.isNotEmpty) SectionHeader(l.recentRecords),
-          for (final log in recent.take(20)) _LogTile(c, log),
+          for (final log in recent.take(20))
+            log.isOneTime
+                ? OneTimeDoseRow(c, log, showDay: true)
+                : _LogTile(c, log),
           if (history.isNotEmpty) SectionHeader(l.history),
           for (final t in history) _TreatmentTile(c, t, now: now),
         ],

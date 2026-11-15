@@ -190,7 +190,8 @@ class MaxReached extends DoseWarning {
 
 abstract final class DoseGuard {
   /// Warnings before logging [t] as given at [at] (for [slot] when it is a
-  /// planned dose). Empty: go ahead.
+  /// planned dose). Empty: go ahead. One-time doses of the same medicine
+  /// count towards an as-needed gap and daily most.
   static List<DoseWarning> beforeGiving({
     required Treatment t,
     required Iterable<DoseLog> logs,
@@ -199,7 +200,10 @@ abstract final class DoseGuard {
   }) {
     final given = [
       for (final l in logs)
-        if (l.treatmentId == t.id && l.given) l,
+        if (l.given &&
+            (l.treatmentId == t.id ||
+                (l.isOneTime && l.medication!.sameNameAs(t.medication))))
+          l,
     ]..sort((a, b) => a.at.compareTo(b.at));
     final out = <DoseWarning>[];
     if (slot != null) {
