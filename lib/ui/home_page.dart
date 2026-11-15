@@ -364,7 +364,8 @@ class AsNeededRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l;
-    final logs = c.logsOf(t.id).where((x) => x.given).toList()
+    // One-time doses of the same medicine count too.
+    final logs = c.guardLogsOf(t).where((x) => x.given).toList()
       ..sort((a, b) => a.at.compareTo(b.at));
     final next = DoseGuard.nextAllowed(t, logs, now);
     final last = logs.isEmpty ? null : logs.last;

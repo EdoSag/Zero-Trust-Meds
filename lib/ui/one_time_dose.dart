@@ -57,9 +57,13 @@ class _OneTimeDosePageState extends ConsumerState<OneTimeDosePage> {
     _medId = m.id;
     _name.text = m.name;
     _formKind = m.form;
-    _amount.text = m.amount == null ? '' : formatAmount(context, m.amount);
+    // Plain digits, no grouping: "1,000" would be read back as 1.
+    _amount.text = m.amount == null ? '' : _plain(m.amount!);
     _unit.text = m.unit;
   });
+
+  static String _plain(double v) =>
+      v == v.roundToDouble() ? v.toInt().toString() : v.toString();
 
   /// Medicines to pick from: the family list, this person's medicines and
   /// those given once before, each once.
@@ -123,7 +127,11 @@ class _OneTimeDosePageState extends ConsumerState<OneTimeDosePage> {
     final l = context.l;
     final family = ref.watch(familyProvider).value;
     final children = family?.children ?? const <ChildData>[];
-    final c = family?.child(_spaceId ?? '') ?? children.firstOrNull;
+    // A person picked (or passed in) who is gone now: never fall back to
+    // someone else, or the dose would land in their history.
+    final c = _spaceId == null
+        ? children.firstOrNull
+        : family?.child(_spaceId!);
     if (family == null || c == null) {
       return Scaffold(
         appBar: AppBar(),

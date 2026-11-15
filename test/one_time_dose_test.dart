@@ -6,6 +6,7 @@ import 'package:zero_trust_core/zero_trust_core.dart';
 import 'package:zerotrust_meds/data/meds_data.dart';
 import 'package:zerotrust_meds/l10n/generated/app_localizations.dart';
 import 'package:zerotrust_meds/logic/charts.dart';
+import 'package:zerotrust_meds/logic/dose_logic.dart';
 import 'package:zerotrust_meds/model/models.dart';
 import 'package:zerotrust_meds/ui/home_page.dart';
 import 'package:zerotrust_meds/ui/one_time_dose.dart';
@@ -163,6 +164,58 @@ void main() {
     });
   });
 
+  group('as-needed safety checks', () {
+    final ibuprofen = Treatment(
+      id: 'p1',
+      medication: const Medication(id: 'm', name: 'Nurofen', amount: 5),
+      schedule: const AsNeeded(minIntervalMinutes: 360, maxPer24h: 1),
+      startDate: LocalDate.parse('2026-01-01'),
+    );
+
+    test('a one-time dose of the same medicine counts towards the gap and '
+        'the daily most', () {
+      final noa = _bare(
+        treatments: [ibuprofen],
+        logs: [oneTime('dose/n1', DateTime.utc(2026, 1, 12, 15))],
+      );
+      final at = DateTime.utc(2026, 1, 12, 16);
+      final logs = noa.guardLogsOf(ibuprofen);
+      expect(logs.single.id, 'dose/n1');
+      final warnings = DoseGuard.beforeGiving(t: ibuprofen, logs: logs, at: at);
+      expect(warnings.whereType<TooSoon>(), hasLength(1));
+      expect(warnings.whereType<MaxReached>(), hasLength(1));
+      expect(
+        DoseGuard.nextAllowed(ibuprofen, logs, at),
+        DateTime.utc(2026, 1, 13, 15),
+      );
+    });
+
+    test('a one-time dose of another medicine does not', () {
+      final noa = _bare(
+        treatments: [ibuprofen],
+        logs: [
+          DoseLog(
+            id: 'dose/c',
+            treatmentId: '',
+            action: DoseAction.given,
+            at: DateTime.utc(2026, 1, 12, 15),
+            byUserId: mum,
+            medication: const Medication(id: '', name: 'Calpol'),
+          ),
+        ],
+      );
+      expect(noa.guardLogsOf(ibuprofen), isEmpty);
+      expect(
+        DoseGuard.beforeGiving(
+          t: ibuprofen,
+          logs: noa.logs,
+          at: DateTime.utc(2026, 1, 12, 16),
+        ),
+        isEmpty,
+      );
+    });
+  });
+
   group('home screen', () {
     testWidgets('a one-time dose shows in the person\'s card with who gave '
         'it and why, under the planned doses, with a button to log one', (
@@ -229,6 +282,8 @@ void main() {
   });
 
   group('the form', () {
+    _moreFormTests();
+
     testWidgets('needs a name, warns about a recent dose of the same '
         'medicine, and logs for the chosen person', (tester) async {
       final [noa, tom] = await _family(tester, [
@@ -339,6 +394,83 @@ void main() {
       expect(bar.duration, const Duration(seconds: 6));
       expect(find.text('Nurofen logged as given to Noa'), findsOneWidget);
     });
+  });
+}
+
+Future<List<(String, Medication, String)>> _pumpForm(
+  WidgetTester tester,
+  List<ChildData> children,
+  String spaceId,
+) async {
+  final logged = <(String, Medication, String)>[];
+  await tester.binding.setSurfaceSize(const Size(400, 1000));
+  addTearDown(() => tester.binding.setSurfaceSize(null));
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: [
+        familyProvider.overrideWith(
+          (ref) async =>
+              FamilyData(children: children, ready: true, loading: false),
+        ),
+        medsActionsProvider.overrideWith(
+          (ref) => _RecordingActions(ref, logged),
+        ),
+      ],
+      child: MaterialApp(
+        localizationsDelegates: const [
+          AppL10n.delegate,
+          ...ZtLanguages.delegates,
+        ],
+        supportedLocales: ZtLanguages.supported,
+        home: OneTimeDosePage(spaceId: spaceId),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return logged;
+}
+
+void _moreFormTests() {
+  testWidgets('picking a medicine of 1000 units logs 1000, not 1', (
+    tester,
+  ) async {
+    final [noa] = await _family(tester, [
+      (
+        'Noa',
+        [],
+        [
+          DoseLog(
+            id: 'dose/big',
+            treatmentId: '',
+            action: DoseAction.given,
+            at: DateTime.utc(2026, 1, 1),
+            byUserId: mum,
+            medication: const Medication(
+              id: '',
+              name: 'Vitamin D',
+              amount: 1000,
+              unit: 'IU',
+            ),
+          ),
+        ],
+      ),
+    ]);
+    final logged = await _pumpForm(tester, [noa], noa.spaceId);
+    await tester.tap(find.widgetWithText(ChoiceChip, 'Vitamin D · 1,000 IU'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, 'Log dose'));
+    await tester.pumpAndSettle();
+    expect(logged.single.$2.amount, 1000);
+  });
+
+  testWidgets('when the chosen person is gone the form does not switch to '
+      'someone else', (tester) async {
+    final [tom] = await _family(tester, [('Tom', [], [])]);
+    final logged = await _pumpForm(tester, [tom], 'gone-space');
+    expect(find.text('This child is no longer here.'), findsOneWidget);
+    expect(find.text('Tom'), findsNothing);
+    expect(find.text('Log dose'), findsNothing);
+    expect(logged, isEmpty);
   });
 }
 

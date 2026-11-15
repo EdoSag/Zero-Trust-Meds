@@ -240,6 +240,11 @@ class Medication {
   String get sameKey =>
       '${name.trim().toLowerCase()}|$amount|$unit|${form.name}';
 
+  /// The same medicine by name, whatever the amount: a one-time dose of
+  /// it counts towards an as-needed treatment's gap and daily most.
+  bool sameNameAs(Medication other) =>
+      name.trim().toLowerCase() == other.name.trim().toLowerCase();
+
   Map<String, Object?> toJson() => {
     'kind': kind,
     'name': name,

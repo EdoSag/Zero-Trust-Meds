@@ -105,6 +105,15 @@ class ChildData {
     ];
   }
 
+  /// What [DoseGuard] weighs before giving [t]: its own records and
+  /// one-time doses of the same medicine.
+  List<DoseLog> guardLogsOf(Treatment t) => [
+    for (final l in logs)
+      if (l.treatmentId == t.id ||
+          (l.isOneTime && l.medication!.sameNameAs(t.medication)))
+        l,
+  ];
+
   /// One-time doses (given outside any treatment), newest first.
   List<DoseLog> get oneTimeLogs => [
     for (final l in logs)
