@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,7 @@ import 'app/app_gate.dart';
 import 'app/meds_config.dart';
 import 'l10n/generated/app_localizations.dart';
 import 'reminders/reminder_scheduler.dart';
+import 'app/email_links.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,6 +22,7 @@ Future<void> main() async {
     url: dotenv.env['SUPABASE_URL']!,
     publishableKey: dotenv.env['SUPABASE_ANON_KEY']!,
   );
+  unawaited(EmailLinks.listen());
   // Catches the reminder (or "Mark as given") that started the app, before
   // it's unlocked.
   final reminders = platformReminderScheduler();
