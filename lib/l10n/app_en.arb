@@ -761,5 +761,42 @@
     }
   },
   "quietHoursFrom": "Starts",
-  "quietHoursUntil": "Ends"
+  "quietHoursUntil": "Ends",
+  "logOneTimeDose": "Log a one-time dose",
+  "logOneTimeDoseHint": "A medicine given once, like a fever reducer. No treatment or schedule is set up.",
+  "oneTimeDoseTitle": "One-time dose",
+  "oneTime": "One-time",
+  "doseFor": "Given to",
+  "givenAtTime": "Given at",
+  "givenNow": "Now",
+  "doseReason": "Reason or note (optional)",
+  "reasonFever": "Fever",
+  "reasonPain": "Pain",
+  "reasonCold": "Cold",
+  "logDose": "Log dose",
+  "lastGivenNamed": "{medicine} was already given in the last 24 hours: by {name} at {when}. Check before giving more.",
+  "@lastGivenNamed": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      },
+      "name": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "oneTimeDosesToday": "One-time doses",
+  "oneTimeGiven": "One-time doses given",
+  "oneTimeSummary": "{count, plural, =1{Given once} other{Given {count} times}}",
+  "@oneTimeSummary": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "nothingPlannedToday": "No planned doses today"
 }

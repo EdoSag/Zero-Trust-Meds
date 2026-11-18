@@ -1602,6 +1602,108 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Ends'**
   String get quietHoursUntil;
+
+  /// No description provided for @logOneTimeDose.
+  ///
+  /// In en, this message translates to:
+  /// **'Log a one-time dose'**
+  String get logOneTimeDose;
+
+  /// No description provided for @logOneTimeDoseHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A medicine given once, like a fever reducer. No treatment or schedule is set up.'**
+  String get logOneTimeDoseHint;
+
+  /// No description provided for @oneTimeDoseTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time dose'**
+  String get oneTimeDoseTitle;
+
+  /// No description provided for @oneTime.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time'**
+  String get oneTime;
+
+  /// No description provided for @doseFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Given to'**
+  String get doseFor;
+
+  /// No description provided for @givenAtTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Given at'**
+  String get givenAtTime;
+
+  /// No description provided for @givenNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Now'**
+  String get givenNow;
+
+  /// No description provided for @doseReason.
+  ///
+  /// In en, this message translates to:
+  /// **'Reason or note (optional)'**
+  String get doseReason;
+
+  /// No description provided for @reasonFever.
+  ///
+  /// In en, this message translates to:
+  /// **'Fever'**
+  String get reasonFever;
+
+  /// No description provided for @reasonPain.
+  ///
+  /// In en, this message translates to:
+  /// **'Pain'**
+  String get reasonPain;
+
+  /// No description provided for @reasonCold.
+  ///
+  /// In en, this message translates to:
+  /// **'Cold'**
+  String get reasonCold;
+
+  /// No description provided for @logDose.
+  ///
+  /// In en, this message translates to:
+  /// **'Log dose'**
+  String get logDose;
+
+  /// No description provided for @lastGivenNamed.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine} was already given in the last 24 hours: by {name} at {when}. Check before giving more.'**
+  String lastGivenNamed(String medicine, String name, String when);
+
+  /// No description provided for @oneTimeDosesToday.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time doses'**
+  String get oneTimeDosesToday;
+
+  /// No description provided for @oneTimeGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'One-time doses given'**
+  String get oneTimeGiven;
+
+  /// No description provided for @oneTimeSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =1{Given once} other{Given {count} times}}'**
+  String oneTimeSummary(int count);
+
+  /// No description provided for @nothingPlannedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'No planned doses today'**
+  String get nothingPlannedToday;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

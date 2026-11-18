@@ -15,6 +15,7 @@ import '../ui/disclaimer.dart';
 import '../ui/home_page.dart';
 import '../ui/sharing_pages.dart';
 import 'auth_providers.dart';
+import 'email_links.dart';
 
 /// Routes between the shared account screens and Meds.
 ///
@@ -76,7 +77,7 @@ class _AppGateState extends ConsumerState<AppGate> with WidgetsBindingObserver {
   }
 
   void _forgotPassword() => Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => const ZtForgotPasswordScreen()),
+    MaterialPageRoute<void>(builder: (_) => ZtForgotPasswordScreen(redirectTo: EmailLinks.passwordReset)),
   );
 
   @override
@@ -121,6 +122,7 @@ class _AppGateState extends ConsumerState<AppGate> with WidgetsBindingObserver {
     final user = ref.watch(currentUserProvider);
     if (user == null || _signingIn) {
       return ZtSignInScreen(
+        emailRedirectTo: EmailLinks.confirmed,
         onUnlocked: _onUnlocked,
         onForgotPassword: _forgotPassword,
       );

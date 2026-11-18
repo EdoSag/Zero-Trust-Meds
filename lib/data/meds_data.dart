@@ -105,6 +105,52 @@ class ChildData {
     ];
   }
 
+  /// What [DoseGuard] weighs before giving [t]: its own records and
+  /// one-time doses of the same medicine.
+  List<DoseLog> guardLogsOf(Treatment t) => [
+    for (final l in logs)
+      if (l.treatmentId == t.id ||
+          (l.isOneTime && l.medication!.sameNameAs(t.medication)))
+        l,
+  ];
+
+  /// One-time doses (given outside any treatment), newest first.
+  List<DoseLog> get oneTimeLogs => [
+    for (final l in logs)
+      if (l.isOneTime) l,
+  ]..sort((a, b) => b.at.compareTo(a.at));
+
+  /// One-time doses given on [day] in the child's calendar, by time.
+  List<DoseLog> oneTimeOn(LocalDate day) => [
+    for (final l in oneTimeLogs.reversed)
+      if (today(l.at) == day) l,
+  ];
+
+  /// The medicine a record is about: its own for a one-time dose, else its
+  /// treatment's. Null when the treatment was deleted.
+  Medication? medicineOf(DoseLog log) =>
+      log.medication ??
+      treatments.where((t) => t.id == log.treatmentId).firstOrNull?.medication;
+
+  /// The newest dose of a medicine called [name] given in the 24 hours
+  /// before [atUtc], one-time or from a treatment. Shown before logging a
+  /// one-time dose so nobody doubles up by accident.
+  DoseLog? lastGivenNamed(String name, DateTime atUtc) {
+    final key = name.trim().toLowerCase();
+    if (key.isEmpty) return null;
+    DoseLog? best;
+    for (final l in logs) {
+      if (!l.given) continue;
+      if (medicineOf(l)?.name.trim().toLowerCase() != key) continue;
+      if (l.at.isAfter(atUtc.add(const Duration(minutes: 1))) ||
+          atUtc.difference(l.at) > const Duration(hours: 24)) {
+        continue;
+      }
+      if (best == null || l.at.isAfter(best.at)) best = l;
+    }
+    return best;
+  }
+
   /// As-needed treatments running today.
   List<Treatment> asNeeded(DateTime nowUtc) => [
     for (final t in active(nowUtc))
@@ -455,6 +501,37 @@ class MedsActions {
       slotTime: slot?.time,
       reason: reason,
       loggedAt: DateTime.now().toUtc(),
+    );
+    await _spaces.save(c.spaceId, log.id, log.toJson());
+    _changed();
+    unawaited(_spaces.syncNow(c.spaceId).catchError((Object _) {}));
+    return log;
+  }
+
+  /// Records a one-time dose: a medicine given once, outside any
+  /// treatment. Any caregiver may log one.
+  Future<DoseLog> logOneTimeDose(
+    ChildData c, {
+    required Medication medication,
+    required DateTime at,
+    String reason = '',
+  }) async {
+    final log = DoseLog(
+      id: 'dose/${newUuid()}',
+      treatmentId: '',
+      action: DoseAction.given,
+      at: at.toUtc(),
+      byUserId: myUserId,
+      reason: reason.trim(),
+      loggedAt: DateTime.now().toUtc(),
+      medication: Medication(
+        id: medication.id,
+        name: medication.name.trim(),
+        form: medication.form,
+        amount: medication.amount,
+        unit: medication.unit.trim(),
+        notes: medication.notes,
+      ),
     );
     await _spaces.save(c.spaceId, log.id, log.toJson());
     _changed();
