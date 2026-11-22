@@ -1030,4 +1030,42 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get nothingPlannedToday => 'אין היום מנות מתוכננות';
+
+  @override
+  String get insertIntoKeyboard => 'הוספה למקלדת ZT';
+
+  @override
+  String get insertPickMedHint =>
+      'יש להקיש על תרופה ואז על מה להקליד. רק מה שמקישים עליו מוקלד.';
+
+  @override
+  String get insertNoMedicines => 'אין כרגע תרופות פעילות.';
+
+  @override
+  String get insertMedList => 'כל התרופות הפעילות';
+
+  @override
+  String get insertMedName => 'תרופה';
+
+  @override
+  String get insertMedDose => 'תרופה ומינון';
+
+  @override
+  String get insertMedSchedule => 'מינון ושעות';
+
+  @override
+  String insertMedScheduleText(String medicine, String times) {
+    return '$medicine: $times';
+  }
+
+  @override
+  String get insertMedLastGiven => 'ניתנה לאחרונה';
+
+  @override
+  String insertMedLastGivenText(String medicine, String when) {
+    return '$medicine, ניתנה לאחרונה $when';
+  }
+
+  @override
+  String get insertMedNotes => 'הערות';
 }

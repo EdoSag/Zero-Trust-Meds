@@ -6,6 +6,7 @@ import 'package:zero_trust_core/zero_trust_core.dart';
 
 import '../data/meds_data.dart';
 import '../logic/dose_logic.dart';
+import '../platform/keyboard_pick.dart';
 import '../platform/links.dart';
 import '../reminders/reminders.dart';
 import '../ui/child_page.dart';
@@ -13,6 +14,7 @@ import '../ui/common.dart';
 import '../ui/dose_actions.dart';
 import '../ui/disclaimer.dart';
 import '../ui/home_page.dart';
+import '../ui/pick_for_keyboard_page.dart';
 import '../ui/sharing_pages.dart';
 import 'auth_providers.dart';
 import 'email_links.dart';
@@ -171,7 +173,19 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _takeLinks();
       _takeTaps();
+      _takeKeyboardPick();
     });
+  }
+
+  /// ZT Keyboard's "Insert from ZT apps" key: pick a medicine, its dose,
+  /// times or when it was last given, for the keyboard to type. Only
+  /// reached once the vault is unlocked.
+  Future<void> _takeKeyboardPick() async {
+    if (!await KeyboardPick.requested() || !mounted) return;
+    final picked = await Navigator.of(context).push<String>(
+      MaterialPageRoute(builder: (_) => const PickForKeyboardPage()),
+    );
+    await KeyboardPick.finish(picked);
   }
 
   @override

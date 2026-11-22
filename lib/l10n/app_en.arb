@@ -798,5 +798,36 @@
       }
     }
   },
-  "nothingPlannedToday": "No planned doses today"
+  "nothingPlannedToday": "No planned doses today",
+  "insertIntoKeyboard": "Insert into ZT Keyboard",
+  "insertPickMedHint": "Tap a medicine, then what to type. Only what you tap is typed.",
+  "insertNoMedicines": "No medicines are running now.",
+  "insertMedList": "All running medicines",
+  "insertMedName": "Medicine",
+  "insertMedDose": "Medicine and dose",
+  "insertMedSchedule": "Dose and times",
+  "insertMedScheduleText": "{medicine}: {times}",
+  "@insertMedScheduleText": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      },
+      "times": {
+        "type": "String"
+      }
+    }
+  },
+  "insertMedLastGiven": "Last given",
+  "insertMedLastGivenText": "{medicine}, last given {when}",
+  "@insertMedLastGivenText": {
+    "placeholders": {
+      "medicine": {
+        "type": "String"
+      },
+      "when": {
+        "type": "String"
+      }
+    }
+  },
+  "insertMedNotes": "Notes"
 }

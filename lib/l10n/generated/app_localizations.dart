@@ -1704,6 +1704,72 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'No planned doses today'**
   String get nothingPlannedToday;
+
+  /// No description provided for @insertIntoKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert into ZT Keyboard'**
+  String get insertIntoKeyboard;
+
+  /// No description provided for @insertPickMedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a medicine, then what to type. Only what you tap is typed.'**
+  String get insertPickMedHint;
+
+  /// No description provided for @insertNoMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines are running now.'**
+  String get insertNoMedicines;
+
+  /// No description provided for @insertMedList.
+  ///
+  /// In en, this message translates to:
+  /// **'All running medicines'**
+  String get insertMedList;
+
+  /// No description provided for @insertMedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get insertMedName;
+
+  /// No description provided for @insertMedDose.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine and dose'**
+  String get insertMedDose;
+
+  /// No description provided for @insertMedSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose and times'**
+  String get insertMedSchedule;
+
+  /// No description provided for @insertMedScheduleText.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine}: {times}'**
+  String insertMedScheduleText(String medicine, String times);
+
+  /// No description provided for @insertMedLastGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Last given'**
+  String get insertMedLastGiven;
+
+  /// No description provided for @insertMedLastGivenText.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine}, last given {when}'**
+  String insertMedLastGivenText(String medicine, String when);
+
+  /// No description provided for @insertMedNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get insertMedNotes;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
