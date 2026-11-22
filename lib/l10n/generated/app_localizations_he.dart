@@ -1082,4 +1082,77 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get roleOther => 'מישהו אחר';
+
+  @override
+  String get stockTitle => 'כמה נשאר';
+
+  @override
+  String get stockHint => 'סופרים מה שנשאר ומקבלים תזכורת להזמין עוד';
+
+  @override
+  String get stockHowMuch => 'כמה נשאר עכשיו?';
+
+  @override
+  String stockInUnit(String unit) {
+    return 'ביחידות: $unit. מנות שיינתנו מעכשיו יורדו מהכמות לבד.';
+  }
+
+  @override
+  String get stockInDoses =>
+      'במספר מנות. מנות שיינתנו מעכשיו יורדו מהכמות לבד.';
+
+  @override
+  String get stockWarn => 'תזכורת להזמין עוד';
+
+  @override
+  String stockDaysBefore(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days ימים לפני שזה נגמר',
+      one: 'יום אחד לפני שזה נגמר',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockStop => 'הפסקת הספירה';
+
+  @override
+  String stockLeft(String amount) {
+    return 'נשארו בערך $amount';
+  }
+
+  @override
+  String stockRunsOut(String date) {
+    return 'ייגמר בערך ב־$date';
+  }
+
+  @override
+  String get stockOrderMore => 'הגיע הזמן להזמין עוד';
+
+  @override
+  String get stockNoneLeft => 'לא נשאר';
+
+  @override
+  String get stockSaved => 'נשמר. מנות שיינתנו מעכשיו יורדו מהכמות.';
+
+  @override
+  String reminderRefillTitle(String child, String medicine) {
+    return 'להזמין עוד $medicine עבור $child';
+  }
+
+  @override
+  String reminderRefillBody(String date) {
+    return 'זה ייגמר בערך ב־$date.';
+  }
+
+  @override
+  String get reminderRefillOutBody => 'לפי האפליקציה, לא נשאר כלום.';
+
+  @override
+  String get refillNotice => 'להזמין עוד';
+
+  @override
+  String get refillNoticeHint => 'בבוקר, כשתרופה שסופרים עומדת להיגמר';
 }

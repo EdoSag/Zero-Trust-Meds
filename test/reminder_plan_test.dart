@@ -29,6 +29,10 @@ class FakeTexts implements ReminderTexts {
   @override
   String get lastDayBody => 'last day';
   @override
+  String refillTitle(String child, String medicine) => 'order $child $medicine';
+  @override
+  String refillBody(LocalDate? runsOut) => 'runs out $runsOut';
+  @override
   String get privateTitle => 'Medicine reminder';
   @override
   String get privateBody => 'Open the app';

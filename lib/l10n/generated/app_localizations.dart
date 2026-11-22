@@ -1800,6 +1800,114 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Someone else'**
   String get roleOther;
+
+  /// No description provided for @stockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply left'**
+  String get stockTitle;
+
+  /// No description provided for @stockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Count what is left and get a reminder to order more'**
+  String get stockHint;
+
+  /// No description provided for @stockHowMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'How much is left now?'**
+  String get stockHowMuch;
+
+  /// No description provided for @stockInUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unit}. Doses given from now on are taken off by themselves.'**
+  String stockInUnit(String unit);
+
+  /// No description provided for @stockInDoses.
+  ///
+  /// In en, this message translates to:
+  /// **'In doses. Doses given from now on are taken off by themselves.'**
+  String get stockInDoses;
+
+  /// No description provided for @stockWarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to order more'**
+  String get stockWarn;
+
+  /// No description provided for @stockDaysBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day before it runs out} other{{days} days before it runs out}}'**
+  String stockDaysBefore(int days);
+
+  /// No description provided for @stockStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop counting'**
+  String get stockStop;
+
+  /// No description provided for @stockLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} left'**
+  String stockLeft(String amount);
+
+  /// No description provided for @stockRunsOut.
+  ///
+  /// In en, this message translates to:
+  /// **'runs out around {date}'**
+  String stockRunsOut(String date);
+
+  /// No description provided for @stockOrderMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more'**
+  String get stockOrderMore;
+
+  /// No description provided for @stockNoneLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'None left'**
+  String get stockNoneLeft;
+
+  /// No description provided for @stockSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Doses given from now on are taken off.'**
+  String get stockSaved;
+
+  /// No description provided for @reminderRefillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more {medicine} for {child}'**
+  String reminderRefillTitle(String child, String medicine);
+
+  /// No description provided for @reminderRefillBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It runs out around {date}.'**
+  String reminderRefillBody(String date);
+
+  /// No description provided for @reminderRefillOutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'None left, as far as the app knows.'**
+  String get reminderRefillOutBody;
+
+  /// No description provided for @refillNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more'**
+  String get refillNotice;
+
+  /// No description provided for @refillNoticeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In the morning, when a medicine you count is about to run out'**
+  String get refillNoticeHint;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {
