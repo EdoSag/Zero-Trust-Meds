@@ -96,6 +96,7 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
       photo: _photo,
       missedAfterMinutes: _missed,
       role: _role,
+      familyCircle: widget.existing?.child.familyCircle,
       extra: widget.existing?.child.extra ?? const {},
     );
     try {

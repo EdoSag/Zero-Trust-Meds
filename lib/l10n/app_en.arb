@@ -941,5 +941,18 @@
     }
   },
   "editMedicalId": "Edit Medical ID",
-  "shareMedicalId": "Share Medical ID"
+  "shareMedicalId": "Share Medical ID",
+  "familyCircleShow": "Show in ZT Family",
+  "familyCircleOnHint": "Today's doses show in the family hub of {circle}. Everyone in that circle sees the medicine names and times.",
+  "@familyCircleOnHint": {
+    "placeholders": {
+      "circle": {
+        "type": "String"
+      }
+    }
+  },
+  "familyCircleOffHint": "Show today's doses in your ZT Family circle's hub",
+  "familyCircleNone": "Create or join a circle in ZT Family first",
+  "familyCirclePick": "Which circle?",
+  "familyCircleUnnamed": "Family circle"
 }
