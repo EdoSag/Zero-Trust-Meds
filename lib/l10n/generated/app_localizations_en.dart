@@ -1037,4 +1037,42 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get nothingPlannedToday => 'No planned doses today';
+
+  @override
+  String get insertIntoKeyboard => 'Insert into ZT Keyboard';
+
+  @override
+  String get insertPickMedHint =>
+      'Tap a medicine, then what to type. Only what you tap is typed.';
+
+  @override
+  String get insertNoMedicines => 'No medicines are running now.';
+
+  @override
+  String get insertMedList => 'All running medicines';
+
+  @override
+  String get insertMedName => 'Medicine';
+
+  @override
+  String get insertMedDose => 'Medicine and dose';
+
+  @override
+  String get insertMedSchedule => 'Dose and times';
+
+  @override
+  String insertMedScheduleText(String medicine, String times) {
+    return '$medicine: $times';
+  }
+
+  @override
+  String get insertMedLastGiven => 'Last given';
+
+  @override
+  String insertMedLastGivenText(String medicine, String when) {
+    return '$medicine, last given $when';
+  }
+
+  @override
+  String get insertMedNotes => 'Notes';
 }

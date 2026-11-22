@@ -267,5 +267,16 @@
   "oneTimeDosesToday": "מנות חד-פעמיות",
   "oneTimeGiven": "מנות חד-פעמיות שניתנו",
   "oneTimeSummary": "{count, plural, =1{ניתן פעם אחת} other{ניתן {count} פעמים}}",
-  "nothingPlannedToday": "אין היום מנות מתוכננות"
+  "nothingPlannedToday": "אין היום מנות מתוכננות",
+  "insertIntoKeyboard": "הוספה למקלדת ZT",
+  "insertPickMedHint": "יש להקיש על תרופה ואז על מה להקליד. רק מה שמקישים עליו מוקלד.",
+  "insertNoMedicines": "אין כרגע תרופות פעילות.",
+  "insertMedList": "כל התרופות הפעילות",
+  "insertMedName": "תרופה",
+  "insertMedDose": "תרופה ומינון",
+  "insertMedSchedule": "מינון ושעות",
+  "insertMedScheduleText": "{medicine}: {times}",
+  "insertMedLastGiven": "ניתנה לאחרונה",
+  "insertMedLastGivenText": "{medicine}, ניתנה לאחרונה {when}",
+  "insertMedNotes": "הערות"
 }
