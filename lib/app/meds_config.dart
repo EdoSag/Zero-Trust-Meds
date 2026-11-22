@@ -18,10 +18,11 @@ const ZtAppConfig medsAppConfig = ZtAppConfig(
   accent: Color(0xFFF43F5E),
 );
 
-/// Children, medicines and treatments are written by a child's admins only;
-/// caregivers write dose records (enforced by the server too).
+/// Profiles, Medical IDs, medicines and treatments are written by a
+/// person's admins only; caregivers write dose records and supply counts
+/// (enforced by the server too).
 const SpacePolicy medsSpacePolicy = SpacePolicy(
-  adminOnlyKinds: {'child', 'medication', 'treatment'},
+  adminOnlyKinds: {'child', 'medication', 'treatment', 'medical_id'},
 );
 
 /// Missed is amber with an icon, never colour alone.

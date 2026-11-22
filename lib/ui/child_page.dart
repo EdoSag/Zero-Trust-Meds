@@ -12,6 +12,7 @@ import 'charts_page.dart';
 import 'child_editor.dart';
 import 'common.dart';
 import 'home_page.dart';
+import 'medical_id_page.dart';
 import 'one_time_dose.dart';
 import 'sharing_pages.dart';
 import 'stock_sheet.dart';
@@ -109,6 +110,20 @@ class ChildPage extends ConsumerWidget {
               ].join(' · '),
             ),
           ),
+          ListTile(
+            leading: Icon(
+              Icons.medical_information_outlined,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            title: Text(l.medicalId),
+            subtitle: Text(medicalIdSummary(context, c.medicalId)),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => MedicalIdPage(spaceId: c.spaceId),
+              ),
+            ),
+          ),
           SectionHeader(
             l.today,
             trailing: TextButton.icon(
@@ -170,6 +185,7 @@ class ChildPage extends ConsumerWidget {
         for (final l in c.logs) {...l.toJson(), 'byName': c.nameOf(l.byUserId)},
       ],
       'stock': [for (final x in c.stocks) x.toJson()],
+      'medicalId': c.medicalId.toJson(),
     });
     final name = c.child.name.replaceAll(
       RegExp(r'[^\p{L}\p{N}]+', unicode: true),

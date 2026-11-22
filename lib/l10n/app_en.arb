@@ -898,5 +898,48 @@
   "reminderRefillOutBody": "None left, as far as the app knows.",
   "refillNotice": "Order more",
   "refillNoticeHint": "In the morning, when a medicine you count is about to run out",
-  "medicineFromFamilyList": "From your list"
+  "medicineFromFamilyList": "From your list",
+  "medicalId": "Medical ID",
+  "medicalIdEmpty": "Allergies, conditions, blood type and who to call: not filled in yet",
+  "medicalIdFilledIn": "Filled in",
+  "medicalIdIntro": "What a doctor or paramedic should know at once. Only this profile's caregivers can see it, and it is encrypted like everything else.",
+  "medicalIdAllergiesLine": "Allergies: {list}",
+  "@medicalIdAllergiesLine": {
+    "placeholders": {
+      "list": {
+        "type": "String"
+      }
+    }
+  },
+  "medicalIdShareTitle": "Medical ID: {name}",
+  "@medicalIdShareTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "allergies": "Allergies",
+  "conditions": "Conditions",
+  "currentMedicines": "Current medicines",
+  "noneRecorded": "None recorded",
+  "bloodType": "Blood type",
+  "bloodTypeUnknown": "Unknown",
+  "medicalNotes": "Other important information",
+  "medicalNotesHint": "A pacemaker, an implant, where the EpiPen is kept",
+  "emergencyContacts": "Emergency contacts",
+  "addEmergencyContact": "Add a contact",
+  "contactName": "Name",
+  "contactPhone": "Phone",
+  "onePerLine": "One per line",
+  "callContact": "Call {name}",
+  "@callContact": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "editMedicalId": "Edit Medical ID",
+  "shareMedicalId": "Share Medical ID"
 }

@@ -1158,4 +1158,78 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get medicineFromFamilyList => 'מהרשימה שלכם';
+
+  @override
+  String get medicalId => 'כרטיס רפואי';
+
+  @override
+  String get medicalIdEmpty =>
+      'אלרגיות, מצבים רפואיים, סוג דם ולמי להתקשר: עוד לא מולא';
+
+  @override
+  String get medicalIdFilledIn => 'מולא';
+
+  @override
+  String get medicalIdIntro =>
+      'מה שרופא או פרמדיק צריכים לדעת מיד. רק המטפלים בפרופיל הזה רואים אותו, והוא מוצפן כמו כל השאר.';
+
+  @override
+  String medicalIdAllergiesLine(String list) {
+    return 'אלרגיות: $list';
+  }
+
+  @override
+  String medicalIdShareTitle(String name) {
+    return 'כרטיס רפואי: $name';
+  }
+
+  @override
+  String get allergies => 'אלרגיות';
+
+  @override
+  String get conditions => 'מצבים רפואיים';
+
+  @override
+  String get currentMedicines => 'תרופות נוכחיות';
+
+  @override
+  String get noneRecorded => 'לא נרשם דבר';
+
+  @override
+  String get bloodType => 'סוג דם';
+
+  @override
+  String get bloodTypeUnknown => 'לא ידוע';
+
+  @override
+  String get medicalNotes => 'מידע חשוב נוסף';
+
+  @override
+  String get medicalNotesHint => 'קוצב לב, שתל, איפה נמצא האפיפן';
+
+  @override
+  String get emergencyContacts => 'אנשי קשר לחירום';
+
+  @override
+  String get addEmergencyContact => 'הוספת איש קשר';
+
+  @override
+  String get contactName => 'שם';
+
+  @override
+  String get contactPhone => 'טלפון';
+
+  @override
+  String get onePerLine => 'אחד בכל שורה';
+
+  @override
+  String callContact(String name) {
+    return 'להתקשר אל $name';
+  }
+
+  @override
+  String get editMedicalId => 'עריכת הכרטיס הרפואי';
+
+  @override
+  String get shareMedicalId => 'שיתוף הכרטיס הרפואי';
 }

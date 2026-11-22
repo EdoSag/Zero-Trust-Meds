@@ -30,6 +30,7 @@ class ChildData {
     required this.logs,
     required this.zone,
     this.stocks = const [],
+    this.medicalId = const MedicalId(),
   });
 
   final SpaceEntry entry;
@@ -44,6 +45,9 @@ class ChildData {
   /// Supply counts (see [MedStock]); possibly several per medicine, when
   /// two caregivers counted at once. The newest one counts.
   final List<MedStock> stocks;
+
+  /// Allergies, conditions, blood type and emergency contacts.
+  final MedicalId medicalId;
 
   String get spaceId => entry.info.id;
   SharedSpace get space => entry.space!;
@@ -271,6 +275,7 @@ Future<ChildData?> readChild(SpaceEntry e) async {
   final treatments = <Treatment>[];
   final logs = <DoseLog>[];
   final stocks = <MedStock>[];
+  var medicalId = const MedicalId();
   for (final item in await space.store.all()) {
     final j = item.json;
     if (item.deleted || j == null) continue;
@@ -286,6 +291,8 @@ Future<ChildData?> readChild(SpaceEntry e) async {
           logs.add(DoseLog.fromJson(item.itemId, j));
         case MedStock.kind:
           stocks.add(MedStock.fromJson(item.itemId, j));
+        case MedicalId.kind:
+          medicalId = MedicalId.fromJson(j);
       }
     } on Object {
       // A record from a newer version of the app: skipped, not fatal.
@@ -300,6 +307,7 @@ Future<ChildData?> readChild(SpaceEntry e) async {
     logs: logs,
     zone: zoneOf(child.timeZone),
     stocks: stocks,
+    medicalId: medicalId,
   );
 }
 
@@ -391,6 +399,11 @@ class MedsActions {
 
   Future<void> saveChild(String spaceId, Child child) async {
     await _spaces.save(spaceId, Child.itemId, child.toJson());
+    _changed();
+  }
+
+  Future<void> saveMedicalId(String spaceId, MedicalId id) async {
+    await _spaces.save(spaceId, MedicalId.itemId, id.toJson());
     _changed();
   }
 

@@ -1914,6 +1914,138 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'From your list'**
   String get medicineFromFamilyList;
+
+  /// No description provided for @medicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical ID'**
+  String get medicalId;
+
+  /// No description provided for @medicalIdEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies, conditions, blood type and who to call: not filled in yet'**
+  String get medicalIdEmpty;
+
+  /// No description provided for @medicalIdFilledIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in'**
+  String get medicalIdFilledIn;
+
+  /// No description provided for @medicalIdIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What a doctor or paramedic should know at once. Only this profile\'s caregivers can see it, and it is encrypted like everything else.'**
+  String get medicalIdIntro;
+
+  /// No description provided for @medicalIdAllergiesLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies: {list}'**
+  String medicalIdAllergiesLine(String list);
+
+  /// No description provided for @medicalIdShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical ID: {name}'**
+  String medicalIdShareTitle(String name);
+
+  /// No description provided for @allergies.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies'**
+  String get allergies;
+
+  /// No description provided for @conditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Conditions'**
+  String get conditions;
+
+  /// No description provided for @currentMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Current medicines'**
+  String get currentMedicines;
+
+  /// No description provided for @noneRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'None recorded'**
+  String get noneRecorded;
+
+  /// No description provided for @bloodType.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood type'**
+  String get bloodType;
+
+  /// No description provided for @bloodTypeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get bloodTypeUnknown;
+
+  /// No description provided for @medicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Other important information'**
+  String get medicalNotes;
+
+  /// No description provided for @medicalNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A pacemaker, an implant, where the EpiPen is kept'**
+  String get medicalNotesHint;
+
+  /// No description provided for @emergencyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contacts'**
+  String get emergencyContacts;
+
+  /// No description provided for @addEmergencyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact'**
+  String get addEmergencyContact;
+
+  /// No description provided for @contactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get contactName;
+
+  /// No description provided for @contactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get contactPhone;
+
+  /// No description provided for @onePerLine.
+  ///
+  /// In en, this message translates to:
+  /// **'One per line'**
+  String get onePerLine;
+
+  /// No description provided for @callContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {name}'**
+  String callContact(String name);
+
+  /// No description provided for @editMedicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Medical ID'**
+  String get editMedicalId;
+
+  /// No description provided for @shareMedicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Medical ID'**
+  String get shareMedicalId;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

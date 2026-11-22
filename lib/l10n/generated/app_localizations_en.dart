@@ -1166,4 +1166,79 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get medicineFromFamilyList => 'From your list';
+
+  @override
+  String get medicalId => 'Medical ID';
+
+  @override
+  String get medicalIdEmpty =>
+      'Allergies, conditions, blood type and who to call: not filled in yet';
+
+  @override
+  String get medicalIdFilledIn => 'Filled in';
+
+  @override
+  String get medicalIdIntro =>
+      'What a doctor or paramedic should know at once. Only this profile\'s caregivers can see it, and it is encrypted like everything else.';
+
+  @override
+  String medicalIdAllergiesLine(String list) {
+    return 'Allergies: $list';
+  }
+
+  @override
+  String medicalIdShareTitle(String name) {
+    return 'Medical ID: $name';
+  }
+
+  @override
+  String get allergies => 'Allergies';
+
+  @override
+  String get conditions => 'Conditions';
+
+  @override
+  String get currentMedicines => 'Current medicines';
+
+  @override
+  String get noneRecorded => 'None recorded';
+
+  @override
+  String get bloodType => 'Blood type';
+
+  @override
+  String get bloodTypeUnknown => 'Unknown';
+
+  @override
+  String get medicalNotes => 'Other important information';
+
+  @override
+  String get medicalNotesHint =>
+      'A pacemaker, an implant, where the EpiPen is kept';
+
+  @override
+  String get emergencyContacts => 'Emergency contacts';
+
+  @override
+  String get addEmergencyContact => 'Add a contact';
+
+  @override
+  String get contactName => 'Name';
+
+  @override
+  String get contactPhone => 'Phone';
+
+  @override
+  String get onePerLine => 'One per line';
+
+  @override
+  String callContact(String name) {
+    return 'Call $name';
+  }
+
+  @override
+  String get editMedicalId => 'Edit Medical ID';
+
+  @override
+  String get shareMedicalId => 'Share Medical ID';
 }
