@@ -652,3 +652,96 @@ class MedStock {
     'by': byUserId,
   };
 }
+
+/// Someone to call in an emergency.
+@immutable
+class EmergencyContact {
+  const EmergencyContact({required this.name, required this.phone});
+
+  factory EmergencyContact.fromJson(Map<String, Object?> j) => EmergencyContact(
+    name: j['name'] as String? ?? '',
+    phone: j['phone'] as String? ?? '',
+  );
+
+  final String name;
+  final String phone;
+
+  Map<String, Object?> toJson() => {'name': name, 'phone': phone};
+}
+
+/// A person's Medical ID: what a doctor or paramedic should know at once.
+/// One per space (item id `medical_id`), written by admins only, encrypted
+/// like everything else. Current medicines aren't stored here: the card
+/// shows the running treatments.
+@immutable
+class MedicalId {
+  const MedicalId({
+    this.bloodType = '',
+    this.allergies = const [],
+    this.conditions = const [],
+    this.notes = '',
+    this.contacts = const [],
+    this.extra = const {},
+  });
+
+  factory MedicalId.fromJson(Map<String, Object?> j) => MedicalId(
+    bloodType: j['bloodType'] as String? ?? '',
+    allergies: _strings(j['allergies']),
+    conditions: _strings(j['conditions']),
+    notes: j['notes'] as String? ?? '',
+    contacts: [
+      for (final c in (j['contacts'] as List? ?? const []))
+        if (c is Map) EmergencyContact.fromJson(c.cast<String, Object?>()),
+    ],
+    extra: {
+      for (final e in j.entries)
+        if (!_known.contains(e.key)) e.key: e.value,
+    },
+  );
+
+  static List<String> _strings(Object? v) => [
+    for (final s in (v as List? ?? const []))
+      if (s is String && s.trim().isNotEmpty) s.trim(),
+  ];
+
+  static const kind = 'medical_id';
+  static const itemId = 'medical_id';
+  static const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  static const _known = {
+    'kind',
+    'bloodType',
+    'allergies',
+    'conditions',
+    'notes',
+    'contacts',
+  };
+
+  /// "A+" etc., or empty when unknown.
+  final String bloodType;
+  final List<String> allergies;
+  final List<String> conditions;
+
+  /// "Has a pacemaker", "Carries an EpiPen in the blue bag".
+  final String notes;
+  final List<EmergencyContact> contacts;
+
+  /// Fields from a newer version, kept on save.
+  final Map<String, Object?> extra;
+
+  bool get isEmpty =>
+      bloodType.isEmpty &&
+      allergies.isEmpty &&
+      conditions.isEmpty &&
+      notes.trim().isEmpty &&
+      contacts.isEmpty;
+
+  Map<String, Object?> toJson() => {
+    ...extra,
+    'kind': kind,
+    'bloodType': bloodType,
+    'allergies': allergies,
+    'conditions': conditions,
+    'notes': notes,
+    'contacts': [for (final c in contacts) c.toJson()],
+  };
+}
