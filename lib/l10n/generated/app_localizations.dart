@@ -1908,6 +1908,12 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'In the morning, when a medicine you count is about to run out'**
   String get refillNoticeHint;
+
+  /// No description provided for @medicineFromFamilyList.
+  ///
+  /// In en, this message translates to:
+  /// **'From your list'**
+  String get medicineFromFamilyList;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

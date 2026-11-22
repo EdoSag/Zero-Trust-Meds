@@ -1163,4 +1163,7 @@ class AppL10nEn extends AppL10n {
   @override
   String get refillNoticeHint =>
       'In the morning, when a medicine you count is about to run out';
+
+  @override
+  String get medicineFromFamilyList => 'From your list';
 }

@@ -897,5 +897,6 @@
   },
   "reminderRefillOutBody": "None left, as far as the app knows.",
   "refillNotice": "Order more",
-  "refillNoticeHint": "In the morning, when a medicine you count is about to run out"
+  "refillNoticeHint": "In the morning, when a medicine you count is about to run out",
+  "medicineFromFamilyList": "From your list"
 }

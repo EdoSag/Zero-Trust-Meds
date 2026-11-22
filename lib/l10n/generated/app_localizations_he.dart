@@ -1155,4 +1155,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get refillNoticeHint => 'בבוקר, כשתרופה שסופרים עומדת להיגמר';
+
+  @override
+  String get medicineFromFamilyList => 'מהרשימה שלכם';
 }
