@@ -26,14 +26,28 @@ DoseLog? lastGiven(ChildData c, Treatment t) {
 }
 
 /// What one treatment can hand to the keyboard.
-List<PickValue> treatmentValues(BuildContext context, ChildData c, Treatment t) {
+List<PickValue> treatmentValues(
+  BuildContext context,
+  ChildData c,
+  Treatment t,
+) {
   final l = context.l;
   final m = t.medication;
   final withDose = medicineWithDose(context, m);
   final last = lastGiven(c, t);
   return [
-    if (m.name.trim().isNotEmpty) (icon: Icons.medication_outlined, label: l.insertMedName, text: m.name.trim()),
-    if (withDose != m.name.trim()) (icon: Icons.medication_liquid_outlined, label: l.insertMedDose, text: withDose),
+    if (m.name.trim().isNotEmpty)
+      (
+        icon: Icons.medication_outlined,
+        label: l.insertMedName,
+        text: m.name.trim(),
+      ),
+    if (withDose != m.name.trim())
+      (
+        icon: Icons.medication_liquid_outlined,
+        label: l.insertMedDose,
+        text: withDose,
+      ),
     (
       icon: Icons.schedule,
       label: l.insertMedSchedule,
@@ -45,7 +59,8 @@ List<PickValue> treatmentValues(BuildContext context, ChildData c, Treatment t) 
         label: l.insertMedLastGiven,
         text: l.insertMedLastGivenText(withDose, formatWhen(context, last.at)),
       ),
-    if (m.notes.trim().isNotEmpty) (icon: Icons.notes, label: l.insertMedNotes, text: m.notes.trim()),
+    if (m.notes.trim().isNotEmpty)
+      (icon: Icons.notes, label: l.insertMedNotes, text: m.notes.trim()),
   ];
 }
 
@@ -63,7 +78,10 @@ List<Treatment> running(ChildData c, DateTime nowUtc) {
 /// for a form or a message to the doctor.
 String medicineList(BuildContext context, ChildData c, DateTime nowUtc) => [
   for (final t in running(c, nowUtc))
-    context.l.insertMedScheduleText(medicineWithDose(context, t.medication), scheduleText(context, t)),
+    context.l.insertMedScheduleText(
+      medicineWithDose(context, t.medication),
+      scheduleText(context, t),
+    ),
 ].join('\n');
 
 /// Opened by ZT Keyboard's "Insert from ZT apps" key, once the vault is
@@ -77,7 +95,8 @@ class PickForKeyboardPage extends ConsumerStatefulWidget {
   final DateTime? now;
 
   @override
-  ConsumerState<PickForKeyboardPage> createState() => _PickForKeyboardPageState();
+  ConsumerState<PickForKeyboardPage> createState() =>
+      _PickForKeyboardPageState();
 }
 
 class _PickForKeyboardPageState extends ConsumerState<PickForKeyboardPage> {
@@ -92,14 +111,20 @@ class _PickForKeyboardPageState extends ConsumerState<PickForKeyboardPage> {
       isScrollControlled: true,
       builder: (sheet) => SafeArea(
         child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(sheet).size.height * 0.7),
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(sheet).size.height * 0.7,
+          ),
           child: ListView(
             shrinkWrap: true,
             children: [
               for (final v in values)
                 ListTile(
                   leading: Icon(v.icon),
-                  title: Text(v.text, maxLines: 4, overflow: TextOverflow.ellipsis),
+                  title: Text(
+                    v.text,
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   subtitle: Text(v.label),
                   onTap: () => Navigator.of(sheet).pop(v.text),
                 ),
@@ -134,7 +159,12 @@ class _PickForKeyboardPageState extends ConsumerState<PickForKeyboardPage> {
                 if (withMeds.isEmpty)
                   Padding(
                     padding: const EdgeInsets.all(24),
-                    child: Center(child: Text(l.insertNoMedicines, textAlign: TextAlign.center)),
+                    child: Center(
+                      child: Text(
+                        l.insertNoMedicines,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 for (final c in withMeds) ...[
                   ListTile(
@@ -157,7 +187,11 @@ class _PickForKeyboardPageState extends ConsumerState<PickForKeyboardPage> {
                     ListTile(
                       leading: const Icon(Icons.medication_outlined),
                       title: Text(medicineWithDose(context, t.medication)),
-                      subtitle: Text(scheduleText(context, t), maxLines: 1, overflow: TextOverflow.ellipsis),
+                      subtitle: Text(
+                        scheduleText(context, t),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       onTap: () => _choose(treatmentValues(context, c, t)),
                     ),
                   const Divider(),

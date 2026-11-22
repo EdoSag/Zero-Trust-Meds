@@ -50,6 +50,13 @@ String doseText(BuildContext context, Medication m) {
 
 String formLabel(BuildContext context, MedForm f) => context.l.form(f.name);
 
+String roleLabel(AppL10n l, PersonRole r) => switch (r) {
+  PersonRole.self => l.roleSelf,
+  PersonRole.child => l.roleChild,
+  PersonRole.parent => l.roleParent,
+  PersonRole.other => l.roleOther,
+};
+
 /// A status is never shown by colour alone: each has an icon and a label.
 class StatusLook {
   const StatusLook(this.icon, this.color, this.label);

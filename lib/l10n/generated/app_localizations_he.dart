@@ -19,35 +19,35 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get loadError =>
-      'לא ניתן היה לטעון את הילדים. אפשר למשוך למטה כדי לנסות שוב.';
+      'לא ניתן היה לטעון את התרופות של המשפחה. אפשר למשוך למטה כדי לנסות שוב.';
 
   @override
   String get addChildOrJoin => 'הוספה או הצטרפות';
 
   @override
-  String get addChild => 'הוספת ילד או ילדה';
+  String get addChild => 'הוספת בן או בת משפחה';
 
   @override
-  String get addChildHint => 'את התרופות מנהלים אתם, ומזמינים את המטפלים';
+  String get addChildHint => 'את עצמכם, ילד או הורה. אפשר להזמין מטפלים';
 
   @override
   String get joinWithInvite => 'הצטרפות עם הזמנה';
 
   @override
-  String get joinWithInviteHint => 'סריקה או הדבקה של ההזמנה ששלח לכם הורה אחר';
+  String get joinWithInviteHint => 'סריקה או הדבקה של ההזמנה ששלח לכם בן משפחה';
 
   @override
-  String get emptyTitle => 'מעקב משותף אחרי התרופות של הילדים';
+  String get emptyTitle => 'מעקב משותף אחרי התרופות של המשפחה';
 
   @override
   String get emptyBody =>
-      'מוסיפים ילד או ילדה, מגדירים את הטיפולים ומזמינים את כל מי שנותן להם תרופות. הכול מוצפן מקצה לקצה.';
+      'מוסיפים את עצמכם, ילד או הורה מבוגר, מגדירים את הטיפולים ומזמינים את כל מי שעוזר. הכול מוצפן מקצה לקצה.';
 
   @override
   String get waitingForAdmin => 'ממתינים שהמנהל יאשר את הכניסה';
 
   @override
-  String get waitingForSync => 'אושר. פרטי הילד יופיעו בעוד רגע.';
+  String get waitingForSync => 'אושר. הפרטים יופיעו בעוד רגע.';
 
   @override
   String waitingCode(String code) {
@@ -272,10 +272,10 @@ class AppL10nHe extends AppL10n {
   String get recordRemoved => 'הרישום הוסר';
 
   @override
-  String get childGone => 'הילד או הילדה כבר לא כאן.';
+  String get childGone => 'הפרופיל הזה כבר לא כאן.';
 
   @override
-  String get editChild => 'עריכת פרטי הילד';
+  String get editChild => 'עריכת פרטים';
 
   @override
   String get exportChild => 'ייצוא הרישומים';
@@ -284,7 +284,7 @@ class AppL10nHe extends AppL10n {
   String get leaveChild => 'הפסקת הטיפול';
 
   @override
-  String get deleteChild => 'מחיקת הילד';
+  String get deleteChild => 'מחיקת הפרופיל';
 
   @override
   String get addTreatment => 'הוספת טיפול';
@@ -339,7 +339,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get deleteChildBody =>
-      'הילד, כל הטיפולים וכל רישומי המנות יימחקו אצל כל המטפלים. אי אפשר לבטל את זה. כדי לשמור את הרישומים, כדאי לייצא אותם קודם.';
+      'הפרופיל, כל הטיפולים וכל רישומי המנות יימחקו אצל כל המטפלים. אי אפשר לבטל את זה. כדי לשמור את הרישומים, כדאי לייצא אותם קודם.';
 
   @override
   String get delete => 'מחיקה';
@@ -410,7 +410,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get removeCaregiverBody =>
-      'הגישה נחסמת מיד. המפתח של הילד מוחלף, כך שאי אפשר לקרוא שום דבר שייכתב מעכשיו עם המפתח הישן.';
+      'הגישה נחסמת מיד. המפתח של הפרופיל מוחלף, כך שאי אפשר לקרוא שום דבר שייכתב מעכשיו עם המפתח הישן.';
 
   @override
   String get remove => 'הסרה';
@@ -435,7 +435,7 @@ class AppL10nHe extends AppL10n {
   String get save => 'שמירה';
 
   @override
-  String get childName => 'שם הילד';
+  String get childName => 'שם';
 
   @override
   String get required => 'שדה חובה';
@@ -479,7 +479,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get addChildPrivacy =>
-      'רק אנשים שתזמינו יכולים לראות את הילד. שמות, תרופות ומנות מוצפנים בטלפון הזה לפני שהם נשלחים.';
+      'רק אנשים שתזמינו יכולים לראות את הפרופיל. שמות, תרופות ומנות מוצפנים בטלפון הזה לפני שהם נשלחים.';
 
   @override
   String get searchZone => 'חיפוש עיר או אזור';
@@ -572,7 +572,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get inviteIntro =>
-      'אפשר להזמין הורה, סבא, סבתא או בייביסיטר. צריך חשבון Zero-Trust. ההזמנה עובדת פעם אחת ותוקפה פג אחרי 7 ימים.';
+      'אפשר להזמין בני משפחה, בייביסיטר או מטפל. צריך חשבון Zero-Trust. ההזמנה עובדת פעם אחת ותוקפה פג אחרי 7 ימים.';
 
   @override
   String get createInvite => 'יצירת הזמנה';
@@ -646,14 +646,14 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get joinCodeBody =>
-      'המנהל משווה אותו לקוד שבטלפון שלו ומאשר את הכניסה. הילד יופיע כאן אחרי האישור.';
+      'המנהל משווה אותו לקוד שבטלפון שלו ומאשר את הכניסה. הפרופיל יופיע כאן אחרי האישור.';
 
   @override
   String get done => 'סיום';
 
   @override
   String get joinIntro =>
-      'אפשר להדביק את קישור ההזמנה שקיבלתם, או לסרוק את קוד ה־QR בטלפון של ההורה השני.';
+      'אפשר להדביק את קישור ההזמנה שקיבלתם, או לסרוק את קוד ה־QR בטלפון של מי ששלח אותה.';
 
   @override
   String get inviteLink => 'קישור הזמנה';
@@ -671,7 +671,7 @@ class AppL10nHe extends AppL10n {
   String get medicineList => 'תרופות';
 
   @override
-  String get medicineListHint => 'הרשימה המשפחתית, לשימוש חוזר בין הילדים';
+  String get medicineListHint => 'הרשימה המשפחתית, לשימוש חוזר לכולם';
 
   @override
   String get medicineListEmpty =>
@@ -693,7 +693,7 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get disclaimerBody1 =>
-      'ZT Meds עוזרת לזכור ולתעד את התרופות שהילדים מקבלים. היא לא נותנת ייעוץ רפואי, לא בודקת מינונים ולא בודקת אינטראקציות בין תרופות.';
+      'ZT Meds עוזרת לזכור ולתעד את התרופות שאתם ובני המשפחה מקבלים. היא לא נותנת ייעוץ רפואי, לא בודקת מינונים ולא בודקת אינטראקציות בין תרופות.';
 
   @override
   String get disclaimerBody2 =>
@@ -894,8 +894,7 @@ class AppL10nHe extends AppL10n {
   String get reminderChannel => 'תזכורות למנות';
 
   @override
-  String get reminderChannelHint =>
-      'כשמגיע הזמן של מנות הילדים או כשהן מוחמצות';
+  String get reminderChannelHint => 'כשמגיע הזמן של מנה או כשהיא מוחמצת';
 
   @override
   String get remindersTitle => 'תזכורות';
@@ -927,7 +926,7 @@ class AppL10nHe extends AppL10n {
   String get missedAlerts => 'התראה על מנה שהוחמצה';
 
   @override
-  String get missedAlertsHint => 'כשמנה עוברת את זמן ה״הוחמץ אחרי״ של הילד';
+  String get missedAlertsHint => 'כשמנה עוברת את זמן ה״הוחמץ אחרי״ שלה';
 
   @override
   String get lastDayNotice => 'הודעת יום אחרון';
@@ -1068,4 +1067,19 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get insertMedNotes => 'הערות';
+
+  @override
+  String get personRole => 'מי זה?';
+
+  @override
+  String get roleSelf => 'אני';
+
+  @override
+  String get roleChild => 'ילד או ילדה שלי';
+
+  @override
+  String get roleParent => 'הורה שלי';
+
+  @override
+  String get roleOther => 'מישהו אחר';
 }
