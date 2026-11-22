@@ -301,5 +301,6 @@
   "reminderRefillBody": "זה ייגמר בערך ב־{date}.",
   "reminderRefillOutBody": "לפי האפליקציה, לא נשאר כלום.",
   "refillNotice": "להזמין עוד",
-  "refillNoticeHint": "בבוקר, כשתרופה שסופרים עומדת להיגמר"
+  "refillNoticeHint": "בבוקר, כשתרופה שסופרים עומדת להיגמר",
+  "medicineFromFamilyList": "מהרשימה שלכם"
 }

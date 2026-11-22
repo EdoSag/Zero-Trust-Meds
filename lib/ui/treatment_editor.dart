@@ -9,6 +9,7 @@ import '../logic/dose_logic.dart';
 import '../model/models.dart';
 import '../reminders/reminders.dart';
 import 'common.dart';
+import 'medicine_name_field.dart';
 import 'home_page.dart';
 
 /// Sets up (or changes) a course of one medicine for a child: which
@@ -190,13 +191,11 @@ class _TreatmentEditorPageState extends ConsumerState<TreatmentEditorPage> {
               ),
               const SizedBox(height: 12),
             ],
-            TextFormField(
+            MedicineNameField(
               controller: _medName,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(labelText: l.medicineName),
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? l.required : null,
-              onChanged: (_) => setState(() {}),
+              family: meds,
+              onChanged: () => setState(() {}),
+              onSaved: _pickFromList,
             ),
             const SizedBox(height: 12),
             DropdownButtonFormField<MedForm>(
