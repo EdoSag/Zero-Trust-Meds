@@ -1,12 +1,12 @@
 # Zero-Trust Meds
 
-Track the medicines your children get, shared between every caregiver, end-to-end encrypted. Part of the [Zero-Trust](https://zerotrust.bz) suite. On the phone it is called **ZT Meds**.
+Track the medicines you, your children or your elderly parents take, shared between every caregiver, end-to-end encrypted. Part of the [Zero-Trust](https://zerotrust.bz) suite. On the phone it is called **ZT Meds**.
 
 > ZT Meds helps you remember and record medicines. It does not give medical advice, check doses or check for interactions. Always follow your doctor, your pharmacist and the label.
 
 ## What it does
 
-- **Children and caregivers.** Each child has a profile (name, birth date, colour, time zone for dose times). The parent who adds a child invites the other caregivers with a link or a QR code. Admins manage medicines, treatments and caregivers; caregivers see everything and log doses.
+- **People and caregivers.** Each person has a profile (who it is for: me, my child, my parent or someone else; name, birth date, colour, time zone for dose times). Profiles saved before this have no `relation` and are children. Whoever adds a profile invites the other caregivers with a link or a QR code. Admins manage medicines, treatments and caregivers; caregivers see everything and log doses.
 - **Medicines and treatments.** One family list of medicines, reused across children. A treatment is a medicine for one child at set times each day (morning, noon, evening, night by default) for a number of days, or "as needed" with a minimum gap between doses and a most per 24 hours. Treatments can be edited, paused, ended early, and move to history after their last day.
 - **Today.** Each child's doses for today, grouped by time of day, each marked Given, Due, Missed, Upcoming, Skipped or Paused, always with an icon and a label as well as a colour.
 - **Logging.** One tap logs a dose with who gave it and when. The time can be changed, a dose can be skipped with a reason, and a record can be undone. The app warns before a second dose of the same planned dose, and before an as-needed dose inside its minimum gap or above its daily most. A dose not logged within the child's window (2 hours by default) becomes Missed.

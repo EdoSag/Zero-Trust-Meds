@@ -123,7 +123,24 @@ enum TimeSlot {
 
 TimeOfDose _fromMinutes(int m) => TimeOfDose(m ~/ 60, m % 60);
 
-/// One child. Lives in its own shared space, as the item `child`.
+/// Whose medicines a profile holds. Stored as `relation` in the profile;
+/// profiles from before people other than children could be added have no
+/// `relation` and are children.
+enum PersonRole {
+  self,
+  child,
+  parent,
+  other;
+
+  static PersonRole parse(Object? v) => PersonRole.values.firstWhere(
+    (r) => r.name == v,
+    orElse: () => PersonRole.child,
+  );
+}
+
+/// One person whose medicines are tracked: you, a child, a parent or
+/// someone else you look after. (Named `Child` because the app began with
+/// children; every Z24 space holds one, under the item id `child`.)
 @immutable
 class Child {
   const Child({
@@ -133,6 +150,8 @@ class Child {
     this.color = 0xFFF43F5E,
     this.photo,
     this.missedAfterMinutes = 120,
+    this.role = PersonRole.child,
+    this.extra = const {},
   });
 
   factory Child.fromJson(Map<String, Object?> j) => Child(
@@ -144,10 +163,26 @@ class Child {
     color: (j['color'] as num?)?.toInt() ?? 0xFFF43F5E,
     photo: j['photo'] as String?,
     missedAfterMinutes: (j['missedAfterMinutes'] as num?)?.toInt() ?? 120,
+    role: PersonRole.parse(j['relation']),
+    extra: {
+      for (final e in j.entries)
+        if (!_known.contains(e.key)) e.key: e.value,
+    },
   );
 
   static const kind = 'child';
   static const itemId = 'child';
+
+  static const _known = {
+    'kind',
+    'name',
+    'timeZone',
+    'birthDate',
+    'color',
+    'photo',
+    'missedAfterMinutes',
+    'relation',
+  };
 
   final String name;
 
@@ -163,6 +198,13 @@ class Child {
   /// A dose not logged this long after its time counts as missed.
   final int missedAfterMinutes;
 
+  /// You, a child, a parent or someone else.
+  final PersonRole role;
+
+  /// Fields this version doesn't know (written by a newer version), kept
+  /// so that saving here doesn't drop them.
+  final Map<String, Object?> extra;
+
   Child copyWith({
     String? name,
     String? timeZone,
@@ -171,6 +213,8 @@ class Child {
     String? photo,
     bool clearPhoto = false,
     int? missedAfterMinutes,
+    PersonRole? role,
+    Map<String, Object?>? extra,
   }) => Child(
     name: name ?? this.name,
     timeZone: timeZone ?? this.timeZone,
@@ -178,9 +222,12 @@ class Child {
     color: color ?? this.color,
     photo: clearPhoto ? null : photo ?? this.photo,
     missedAfterMinutes: missedAfterMinutes ?? this.missedAfterMinutes,
+    role: role ?? this.role,
+    extra: extra ?? this.extra,
   );
 
   Map<String, Object?> toJson() => {
+    ...extra,
     'kind': kind,
     'name': name,
     'timeZone': timeZone,
@@ -188,6 +235,9 @@ class Child {
     'color': color,
     'photo': photo,
     'missedAfterMinutes': missedAfterMinutes,
+    // Left out for children, so profiles look exactly as before to older
+    // versions.
+    if (role != PersonRole.child) 'relation': role.name,
   };
 }
 

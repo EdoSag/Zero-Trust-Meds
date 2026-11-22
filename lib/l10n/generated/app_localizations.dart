@@ -118,7 +118,7 @@ abstract class AppL10n {
   /// No description provided for @loadError.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t load your children. Pull down to try again.'**
+  /// **'Couldn\'t load your family\'s medicines. Pull down to try again.'**
   String get loadError;
 
   /// No description provided for @addChildOrJoin.
@@ -130,13 +130,13 @@ abstract class AppL10n {
   /// No description provided for @addChild.
   ///
   /// In en, this message translates to:
-  /// **'Add a child'**
+  /// **'Add a person'**
   String get addChild;
 
   /// No description provided for @addChildHint.
   ///
   /// In en, this message translates to:
-  /// **'You manage their medicines and invite caregivers'**
+  /// **'Yourself, a child or a parent. You can invite caregivers'**
   String get addChildHint;
 
   /// No description provided for @joinWithInvite.
@@ -148,19 +148,19 @@ abstract class AppL10n {
   /// No description provided for @joinWithInviteHint.
   ///
   /// In en, this message translates to:
-  /// **'Scan or paste the invite another parent sent you'**
+  /// **'Scan or paste the invite a family member sent you'**
   String get joinWithInviteHint;
 
   /// No description provided for @emptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Track your children\'s medicines together'**
+  /// **'Track your family\'s medicines together'**
   String get emptyTitle;
 
   /// No description provided for @emptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Add a child, set up their treatments and invite everyone who gives them medicine. Everything is end-to-end encrypted.'**
+  /// **'Add yourself, a child or an elderly parent, set up their treatments and invite everyone who helps. Everything is end-to-end encrypted.'**
   String get emptyBody;
 
   /// No description provided for @waitingForAdmin.
@@ -172,7 +172,7 @@ abstract class AppL10n {
   /// No description provided for @waitingForSync.
   ///
   /// In en, this message translates to:
-  /// **'Confirmed. The child\'s details will appear in a moment.'**
+  /// **'Confirmed. Their details will appear in a moment.'**
   String get waitingForSync;
 
   /// No description provided for @waitingCode.
@@ -472,13 +472,13 @@ abstract class AppL10n {
   /// No description provided for @childGone.
   ///
   /// In en, this message translates to:
-  /// **'This child is no longer here.'**
+  /// **'This profile is no longer here.'**
   String get childGone;
 
   /// No description provided for @editChild.
   ///
   /// In en, this message translates to:
-  /// **'Edit child'**
+  /// **'Edit details'**
   String get editChild;
 
   /// No description provided for @exportChild.
@@ -496,7 +496,7 @@ abstract class AppL10n {
   /// No description provided for @deleteChild.
   ///
   /// In en, this message translates to:
-  /// **'Delete child'**
+  /// **'Delete profile'**
   String get deleteChild;
 
   /// No description provided for @addTreatment.
@@ -586,7 +586,7 @@ abstract class AppL10n {
   /// No description provided for @deleteChildBody.
   ///
   /// In en, this message translates to:
-  /// **'Deletes the child, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.'**
+  /// **'Deletes this profile, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.'**
   String get deleteChildBody;
 
   /// No description provided for @delete.
@@ -700,7 +700,7 @@ abstract class AppL10n {
   /// No description provided for @removeCaregiverBody.
   ///
   /// In en, this message translates to:
-  /// **'They lose access at once. The child\'s key is replaced, so nothing written from now on can be read with their old key.'**
+  /// **'They lose access at once. The profile\'s key is replaced, so nothing written from now on can be read with their old key.'**
   String get removeCaregiverBody;
 
   /// No description provided for @remove.
@@ -748,7 +748,7 @@ abstract class AppL10n {
   /// No description provided for @childName.
   ///
   /// In en, this message translates to:
-  /// **'Child\'s name'**
+  /// **'Name'**
   String get childName;
 
   /// No description provided for @required.
@@ -826,7 +826,7 @@ abstract class AppL10n {
   /// No description provided for @addChildPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Only people you invite can see this child. Names, medicines and doses are encrypted on this phone before they are sent.'**
+  /// **'Only people you invite can see this profile. Names, medicines and doses are encrypted on this phone before they are sent.'**
   String get addChildPrivacy;
 
   /// No description provided for @searchZone.
@@ -976,7 +976,7 @@ abstract class AppL10n {
   /// No description provided for @inviteIntro.
   ///
   /// In en, this message translates to:
-  /// **'Invite a parent, grandparent or babysitter. They need a Zero-Trust account. The invite works once and expires in 7 days.'**
+  /// **'Invite family, a babysitter or a carer. They need a Zero-Trust account. The invite works once and expires in 7 days.'**
   String get inviteIntro;
 
   /// No description provided for @createInvite.
@@ -1102,7 +1102,7 @@ abstract class AppL10n {
   /// No description provided for @joinCodeBody.
   ///
   /// In en, this message translates to:
-  /// **'They compare it with the code on their phone and let you in. The child appears here once they do.'**
+  /// **'They compare it with the code on their phone and let you in. The profile appears here once they do.'**
   String get joinCodeBody;
 
   /// No description provided for @done.
@@ -1114,7 +1114,7 @@ abstract class AppL10n {
   /// No description provided for @joinIntro.
   ///
   /// In en, this message translates to:
-  /// **'Paste the invite link you were sent, or scan the QR code on the other parent\'s phone.'**
+  /// **'Paste the invite link you were sent, or scan the QR code on the other person\'s phone.'**
   String get joinIntro;
 
   /// No description provided for @inviteLink.
@@ -1150,7 +1150,7 @@ abstract class AppL10n {
   /// No description provided for @medicineListHint.
   ///
   /// In en, this message translates to:
-  /// **'The family\'s list, reused across children'**
+  /// **'The family\'s list, reused for everyone'**
   String get medicineListHint;
 
   /// No description provided for @medicineListEmpty.
@@ -1186,7 +1186,7 @@ abstract class AppL10n {
   /// No description provided for @disclaimerBody1.
   ///
   /// In en, this message translates to:
-  /// **'ZT Meds helps you remember and record the medicines your children get. It does not give medical advice, check doses or check for interactions.'**
+  /// **'ZT Meds helps you remember and record the medicines you and your family take. It does not give medical advice, check doses or check for interactions.'**
   String get disclaimerBody1;
 
   /// No description provided for @disclaimerBody2.
@@ -1468,7 +1468,7 @@ abstract class AppL10n {
   /// No description provided for @reminderChannelHint.
   ///
   /// In en, this message translates to:
-  /// **'When your children\'s doses are due or missed'**
+  /// **'When doses are due or missed'**
   String get reminderChannelHint;
 
   /// No description provided for @remindersTitle.
@@ -1528,7 +1528,7 @@ abstract class AppL10n {
   /// No description provided for @missedAlertsHint.
   ///
   /// In en, this message translates to:
-  /// **'When a dose passes the child\'s \"missed after\" time'**
+  /// **'When a dose passes its \"missed after\" time'**
   String get missedAlertsHint;
 
   /// No description provided for @lastDayNotice.
@@ -1770,6 +1770,36 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Notes'**
   String get insertMedNotes;
+
+  /// No description provided for @personRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is this?'**
+  String get personRole;
+
+  /// No description provided for @roleSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
+  String get roleSelf;
+
+  /// No description provided for @roleChild.
+  ///
+  /// In en, this message translates to:
+  /// **'My child'**
+  String get roleChild;
+
+  /// No description provided for @roleParent.
+  ///
+  /// In en, this message translates to:
+  /// **'My parent'**
+  String get roleParent;
+
+  /// No description provided for @roleOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else'**
+  String get roleOther;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

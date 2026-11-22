@@ -100,6 +100,8 @@ class ChildPage extends ConsumerWidget {
             ),
             subtitle: Text(
               [
+                if (c.child.role != PersonRole.child)
+                  roleLabel(l, c.child.role),
                 if (c.child.birthDate != null)
                   l.bornOn(formatLocalDate(context, c.child.birthDate!)),
                 l.timesIn(c.child.timeZone),

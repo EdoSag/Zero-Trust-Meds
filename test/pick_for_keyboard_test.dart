@@ -10,13 +10,26 @@ import 'package:zerotrust_meds/ui/pick_for_keyboard_page.dart';
 
 import 'support/phone.dart';
 
-const amox = Medication(id: 'med-1', name: 'Amoxicillin', amount: 5, unit: 'ml', notes: 'Shake well');
-const fever = Medication(id: 'med-2', name: 'Paracetamol', amount: 7.5, unit: 'ml');
+const amox = Medication(
+  id: 'med-1',
+  name: 'Amoxicillin',
+  amount: 5,
+  unit: 'ml',
+  notes: 'Shake well',
+);
+const fever = Medication(
+  id: 'med-2',
+  name: 'Paracetamol',
+  amount: 7.5,
+  unit: 'ml',
+);
 
 void main() {
   setUpAll(tzdata.initializeTimeZones);
 
-  testWidgets('offers running medicines, then what to type of one', (tester) async {
+  testWidgets('offers running medicines, then what to type of one', (
+    tester,
+  ) async {
     final noa = await _noa(tester);
     String? picked = 'unset';
     await tester.binding.setSurfaceSize(const Size(400, 900));
@@ -25,23 +38,33 @@ void main() {
       ProviderScope(
         overrides: [
           familyProvider.overrideWith(
-            (ref) async => FamilyData(children: [noa], ready: true, loading: false),
+            (ref) async =>
+                FamilyData(children: [noa], ready: true, loading: false),
           ),
         ],
         child: MaterialApp(
-          localizationsDelegates: const [AppL10n.delegate, ...ZtLanguages.delegates],
+          localizationsDelegates: const [
+            AppL10n.delegate,
+            ...ZtLanguages.delegates,
+          ],
           supportedLocales: ZtLanguages.supported,
           home: Builder(
             builder: (context) => MediaQuery(
-              data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
+              data: MediaQuery.of(
+                context,
+              ).copyWith(alwaysUse24HourFormat: true),
               child: Scaffold(
                 body: TextButton(
                   onPressed: () async {
                     picked = await Navigator.of(context).push<String>(
                       MaterialPageRoute(
                         builder: (_) => MediaQuery(
-                          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-                          child: PickForKeyboardPage(now: DateTime.utc(2026, 1, 12, 16)),
+                          data: MediaQuery.of(
+                            context,
+                          ).copyWith(alwaysUse24HourFormat: true),
+                          child: PickForKeyboardPage(
+                            now: DateTime.utc(2026, 1, 12, 16),
+                          ),
                         ),
                       ),
                     );
@@ -82,7 +105,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('All running medicines'));
     await tester.pumpAndSettle();
-    expect(picked, startsWith('Amoxicillin 5 ml: 08:00, 13:00, 20:00\nParacetamol 7.5 ml: '));
+    expect(
+      picked,
+      startsWith('Amoxicillin 5 ml: 08:00, 13:00, 20:00\nParacetamol 7.5 ml: '),
+    );
   });
 }
 
@@ -92,13 +118,20 @@ Future<ChildData> _noa(WidgetTester tester) async {
     final server = InMemorySpaceServer();
     final mumPhone = await Phone(server, mum, 1).start();
     final space = await mumPhone.spaces.create(myName: 'Mum');
-    await space.save(Child.itemId, const Child(name: 'Noa', timeZone: 'UTC').toJson());
+    await space.save(
+      Child.itemId,
+      const Child(name: 'Noa', timeZone: 'UTC').toJson(),
+    );
     await space.save(
       't1',
       Treatment(
         id: 't1',
         medication: amox,
-        schedule: const FixedTimes([TimeOfDose(8, 0), TimeOfDose(13, 0), TimeOfDose(20, 0)]),
+        schedule: const FixedTimes([
+          TimeOfDose(8, 0),
+          TimeOfDose(13, 0),
+          TimeOfDose(20, 0),
+        ]),
         startDate: LocalDate.parse('2026-01-10'),
         days: 7,
       ).toJson(),

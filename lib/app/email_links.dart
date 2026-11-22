@@ -52,8 +52,10 @@ abstract final class EmailLinks {
     if (!_used.add(tokenHash)) return;
     try {
       // Signs in for recovery and raises AuthChangeEvent.passwordRecovery.
-      await Supabase.instance.client.auth
-          .verifyOTP(type: OtpType.recovery, tokenHash: tokenHash);
+      await Supabase.instance.client.auth.verifyOTP(
+        type: OtpType.recovery,
+        tokenHash: tokenHash,
+      );
     } on Object catch (e) {
       // Expired or already used: the sign-in screen stays, and Forgot
       // password sends a new link.

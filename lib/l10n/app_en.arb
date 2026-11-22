@@ -3,16 +3,16 @@
   "appTitle": "ZT Meds",
   "todayTitle": "Today",
   "settings": "Settings",
-  "loadError": "Couldn't load your children. Pull down to try again.",
+  "loadError": "Couldn't load your family's medicines. Pull down to try again.",
   "addChildOrJoin": "Add or join",
-  "addChild": "Add a child",
-  "addChildHint": "You manage their medicines and invite caregivers",
+  "addChild": "Add a person",
+  "addChildHint": "Yourself, a child or a parent. You can invite caregivers",
   "joinWithInvite": "Join with an invite",
-  "joinWithInviteHint": "Scan or paste the invite another parent sent you",
-  "emptyTitle": "Track your children's medicines together",
-  "emptyBody": "Add a child, set up their treatments and invite everyone who gives them medicine. Everything is end-to-end encrypted.",
+  "joinWithInviteHint": "Scan or paste the invite a family member sent you",
+  "emptyTitle": "Track your family's medicines together",
+  "emptyBody": "Add yourself, a child or an elderly parent, set up their treatments and invite everyone who helps. Everything is end-to-end encrypted.",
   "waitingForAdmin": "Waiting for the admin to let you in",
-  "waitingForSync": "Confirmed. The child's details will appear in a moment.",
+  "waitingForSync": "Confirmed. Their details will appear in a moment.",
   "waitingCode": "Your code: {code}. The admin checks it on their phone.",
   "@waitingCode": {
     "placeholders": {
@@ -218,11 +218,11 @@
   "changeTime": "Change the time",
   "undoRecord": "Remove this record",
   "recordRemoved": "Record removed",
-  "childGone": "This child is no longer here.",
-  "editChild": "Edit child",
+  "childGone": "This profile is no longer here.",
+  "editChild": "Edit details",
   "exportChild": "Export records",
   "leaveChild": "Stop being a caregiver",
-  "deleteChild": "Delete child",
+  "deleteChild": "Delete profile",
   "addTreatment": "Add treatment",
   "bornOn": "Born {date}",
   "@bornOn": {
@@ -265,7 +265,7 @@
       }
     }
   },
-  "deleteChildBody": "Deletes the child, every treatment and every dose record for all caregivers. This can't be undone. Export the records first if you want to keep them.",
+  "deleteChildBody": "Deletes this profile, every treatment and every dose record for all caregivers. This can't be undone. Export the records first if you want to keep them.",
   "delete": "Delete",
   "fromDate": "From {date}",
   "@fromDate": {
@@ -329,7 +329,7 @@
       }
     }
   },
-  "removeCaregiverBody": "They lose access at once. The child's key is replaced, so nothing written from now on can be read with their old key.",
+  "removeCaregiverBody": "They lose access at once. The profile's key is replaced, so nothing written from now on can be read with their old key.",
   "remove": "Remove",
   "makeAdmin": "Make admin",
   "makeCaregiver": "Make caregiver",
@@ -337,7 +337,7 @@
   "removedTreatment": "Deleted treatment",
   "saveFailedOffline": "Couldn't save. Check your connection and try again.",
   "save": "Save",
-  "childName": "Child's name",
+  "childName": "Name",
   "required": "Required",
   "birthDate": "Birth date",
   "optional": "Optional",
@@ -364,7 +364,7 @@
   },
   "yourName": "Your name",
   "yourNameHint": "Shown to the other caregivers",
-  "addChildPrivacy": "Only people you invite can see this child. Names, medicines and doses are encrypted on this phone before they are sent.",
+  "addChildPrivacy": "Only people you invite can see this profile. Names, medicines and doses are encrypted on this phone before they are sent.",
   "searchZone": "Search city or region",
   "addATime": "Add at least one time",
   "addTreatmentFor": "New treatment for {child}",
@@ -424,7 +424,7 @@
       }
     }
   },
-  "inviteIntro": "Invite a parent, grandparent or babysitter. They need a Zero-Trust account. The invite works once and expires in 7 days.",
+  "inviteIntro": "Invite family, a babysitter or a carer. They need a Zero-Trust account. The invite works once and expires in 7 days.",
   "createInvite": "Create invite",
   "inviteReady": "Let them scan this code, or send them the link.",
   "inviteQr": "Invite QR code",
@@ -472,15 +472,15 @@
   "inviteInvalid": "This isn't a ZT Meds invite link",
   "inviteUsed": "This invite was already used, expired or was withdrawn. Ask for a new one.",
   "joinCodeTitle": "Show this code to the admin",
-  "joinCodeBody": "They compare it with the code on their phone and let you in. The child appears here once they do.",
+  "joinCodeBody": "They compare it with the code on their phone and let you in. The profile appears here once they do.",
   "done": "Done",
-  "joinIntro": "Paste the invite link you were sent, or scan the QR code on the other parent's phone.",
+  "joinIntro": "Paste the invite link you were sent, or scan the QR code on the other person's phone.",
   "inviteLink": "Invite link",
   "scanQr": "Scan QR code",
   "join": "Join",
   "notSet": "Not set",
   "medicineList": "Medicines",
-  "medicineListHint": "The family's list, reused across children",
+  "medicineListHint": "The family's list, reused for everyone",
   "medicineListEmpty": "Medicines you add to treatments appear here, ready to reuse.",
   "deleteMedicineTitle": "Remove {medicine} from the list?",
   "@deleteMedicineTitle": {
@@ -493,7 +493,7 @@
   "deleteMedicineBody": "Running treatments keep their copy of it.",
   "edit": "Edit",
   "disclaimerTitle": "Not medical advice",
-  "disclaimerBody1": "ZT Meds helps you remember and record the medicines your children get. It does not give medical advice, check doses or check for interactions.",
+  "disclaimerBody1": "ZT Meds helps you remember and record the medicines you and your family take. It does not give medical advice, check doses or check for interactions.",
   "disclaimerBody2": "Always follow the instructions from your doctor or pharmacist and on the medicine's label. If you are unsure, ask them.",
   "disclaimerBody3": "Reminders can be late or not show at all, for example when the phone is off, in battery saver or has notifications turned off. Never rely on the app alone.",
   "disclaimerBody4": "In an emergency, call your local emergency number.",
@@ -722,7 +722,7 @@
   "reminderPrivateTitle": "Medicine reminder",
   "reminderPrivateBody": "Open ZT Meds to see which dose.",
   "reminderChannel": "Dose reminders",
-  "reminderChannelHint": "When your children's doses are due or missed",
+  "reminderChannelHint": "When doses are due or missed",
   "remindersTitle": "Reminders",
   "remindersHint": "When doses are due, follow-ups and missed doses",
   "remindersOn": "Dose reminders",
@@ -739,7 +739,7 @@
     }
   },
   "missedAlerts": "Missed-dose alert",
-  "missedAlertsHint": "When a dose passes the child's \"missed after\" time",
+  "missedAlertsHint": "When a dose passes its \"missed after\" time",
   "lastDayNotice": "Last-day notice",
   "lastDayNoticeHint": "At 9:00 on the last day of a course",
   "showNamesInReminders": "Names in reminders",
@@ -829,5 +829,10 @@
       }
     }
   },
-  "insertMedNotes": "Notes"
+  "insertMedNotes": "Notes",
+  "personRole": "Who is this?",
+  "roleSelf": "Me",
+  "roleChild": "My child",
+  "roleParent": "My parent",
+  "roleOther": "Someone else"
 }

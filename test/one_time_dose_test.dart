@@ -467,7 +467,7 @@ void _moreFormTests() {
       'someone else', (tester) async {
     final [tom] = await _family(tester, [('Tom', [], [])]);
     final logged = await _pumpForm(tester, [tom], 'gone-space');
-    expect(find.text('This child is no longer here.'), findsOneWidget);
+    expect(find.text('This profile is no longer here.'), findsOneWidget);
     expect(find.text('Tom'), findsNothing);
     expect(find.text('Log dose'), findsNothing);
     expect(logged, isEmpty);
