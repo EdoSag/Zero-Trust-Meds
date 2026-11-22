@@ -1089,4 +1089,78 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get roleOther => 'Someone else';
+
+  @override
+  String get stockTitle => 'Supply left';
+
+  @override
+  String get stockHint => 'Count what is left and get a reminder to order more';
+
+  @override
+  String get stockHowMuch => 'How much is left now?';
+
+  @override
+  String stockInUnit(String unit) {
+    return 'In $unit. Doses given from now on are taken off by themselves.';
+  }
+
+  @override
+  String get stockInDoses =>
+      'In doses. Doses given from now on are taken off by themselves.';
+
+  @override
+  String get stockWarn => 'Remind me to order more';
+
+  @override
+  String stockDaysBefore(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before it runs out',
+      one: '1 day before it runs out',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockStop => 'Stop counting';
+
+  @override
+  String stockLeft(String amount) {
+    return 'About $amount left';
+  }
+
+  @override
+  String stockRunsOut(String date) {
+    return 'runs out around $date';
+  }
+
+  @override
+  String get stockOrderMore => 'Order more';
+
+  @override
+  String get stockNoneLeft => 'None left';
+
+  @override
+  String get stockSaved => 'Saved. Doses given from now on are taken off.';
+
+  @override
+  String reminderRefillTitle(String child, String medicine) {
+    return 'Order more $medicine for $child';
+  }
+
+  @override
+  String reminderRefillBody(String date) {
+    return 'It runs out around $date.';
+  }
+
+  @override
+  String get reminderRefillOutBody => 'None left, as far as the app knows.';
+
+  @override
+  String get refillNotice => 'Order more';
+
+  @override
+  String get refillNoticeHint =>
+      'In the morning, when a medicine you count is about to run out';
 }

@@ -834,5 +834,68 @@
   "roleSelf": "Me",
   "roleChild": "My child",
   "roleParent": "My parent",
-  "roleOther": "Someone else"
+  "roleOther": "Someone else",
+  "stockTitle": "Supply left",
+  "stockHint": "Count what is left and get a reminder to order more",
+  "stockHowMuch": "How much is left now?",
+  "stockInUnit": "In {unit}. Doses given from now on are taken off by themselves.",
+  "@stockInUnit": {
+    "placeholders": {
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "stockInDoses": "In doses. Doses given from now on are taken off by themselves.",
+  "stockWarn": "Remind me to order more",
+  "stockDaysBefore": "{days, plural, =1{1 day before it runs out} other{{days} days before it runs out}}",
+  "@stockDaysBefore": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+  "stockStop": "Stop counting",
+  "stockLeft": "About {amount} left",
+  "@stockLeft": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "stockRunsOut": "runs out around {date}",
+  "@stockRunsOut": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "stockOrderMore": "Order more",
+  "stockNoneLeft": "None left",
+  "stockSaved": "Saved. Doses given from now on are taken off.",
+  "reminderRefillTitle": "Order more {medicine} for {child}",
+  "@reminderRefillTitle": {
+    "placeholders": {
+      "child": {
+        "type": "String"
+      },
+      "medicine": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderRefillBody": "It runs out around {date}.",
+  "@reminderRefillBody": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "reminderRefillOutBody": "None left, as far as the app knows.",
+  "refillNotice": "Order more",
+  "refillNoticeHint": "In the morning, when a medicine you count is about to run out"
 }

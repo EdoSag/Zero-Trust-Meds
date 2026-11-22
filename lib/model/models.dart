@@ -591,3 +591,64 @@ class DoseLog {
     },
   };
 }
+
+/// How much of a medicine is left, as counted by a caregiver at
+/// [countedAt]. Doses given after that are taken off it as they're logged,
+/// so nobody has to change the number after each dose. Any caregiver may
+/// count (it isn't admin-only); the newest count of a medicine wins.
+///
+/// Stored as its own item (`stock/<uuid>`), with the medicine's name inside
+/// the encrypted record and not in the item id.
+@immutable
+class MedStock {
+  const MedStock({
+    required this.id,
+    required this.medicine,
+    required this.count,
+    required this.countedAt,
+    this.warnDays = 7,
+    this.byUserId = '',
+  });
+
+  factory MedStock.fromJson(String id, Map<String, Object?> j) => MedStock(
+    id: id,
+    medicine: j['medicine'] as String? ?? '',
+    count: (j['count'] as num?)?.toDouble() ?? 0,
+    countedAt: DateTime.parse(j['countedAt'] as String).toUtc(),
+    warnDays: (j['warnDays'] as num?)?.toInt() ?? 7,
+    byUserId: j['by'] as String? ?? '',
+  );
+
+  static const kind = 'stock';
+  static const prefix = 'stock/';
+
+  /// Choices for "remind me to order more", in days before it runs out.
+  static const warnChoices = [3, 5, 7, 10, 14];
+
+  final String id;
+
+  /// The medicine's name; matched without case, like the one-time dose
+  /// checks, so a course edited into a new treatment keeps its count.
+  final String medicine;
+
+  /// In the medicine's unit (tablets, ml) when it has a dose amount, else
+  /// in doses.
+  final double count;
+  final DateTime countedAt;
+
+  /// "Order more" this many days before it runs out.
+  final int warnDays;
+  final String byUserId;
+
+  bool isFor(String name) =>
+      medicine.trim().toLowerCase() == name.trim().toLowerCase();
+
+  Map<String, Object?> toJson() => {
+    'kind': kind,
+    'medicine': medicine,
+    'count': count,
+    'countedAt': countedAt.toUtc().toIso8601String(),
+    'warnDays': warnDays,
+    'by': byUserId,
+  };
+}

@@ -79,6 +79,13 @@ class RemindersPage extends ConsumerWidget {
                 : null,
           ),
           SwitchListTile(
+            secondary: const Icon(Icons.inventory_2_outlined),
+            title: Text(l.refillNotice),
+            subtitle: Text(l.refillNoticeHint),
+            value: prefs.refillNotice,
+            onChanged: on ? (v) => save(prefs.copyWith(refillNotice: v)) : null,
+          ),
+          SwitchListTile(
             secondary: const Icon(Icons.bedtime_outlined),
             title: Text(l.quietHours),
             subtitle: Text(

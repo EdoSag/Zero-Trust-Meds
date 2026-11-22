@@ -14,6 +14,7 @@ import 'common.dart';
 import 'home_page.dart';
 import 'one_time_dose.dart';
 import 'sharing_pages.dart';
+import 'stock_sheet.dart';
 import 'treatment_editor.dart';
 
 class ChildPage extends ConsumerWidget {
@@ -168,6 +169,7 @@ class ChildPage extends ConsumerWidget {
       'doses': [
         for (final l in c.logs) {...l.toJson(), 'byName': c.nameOf(l.byUserId)},
       ],
+      'stock': [for (final x in c.stocks) x.toJson()],
     });
     final name = c.child.name.replaceAll(
       RegExp(r'[^\p{L}\p{N}]+', unicode: true),
@@ -253,18 +255,32 @@ class _TreatmentTile extends ConsumerWidget {
             formatLocalDate(context, last),
           );
     final adherence = Adherence.of(c.dosesOf(t, now));
+    final finished = t.isFinishedBy(c.today(now));
+    final stock = finished ? null : c.stockOf(t.medication.name, now);
+    final text = [
+      scheduleText(context, t),
+      period,
+      if (t.isPaused) l.statusPaused,
+      if (adherence.percent != null) l.adherence(adherence.percent!),
+    ].join(' · ');
     return ListTile(
       leading: Icon(t.isPaused ? Icons.pause_circle_outline : Icons.medication),
       title: Text('${t.medication.name} · ${doseText(context, t.medication)}'),
-      subtitle: Text(
-        [
-          scheduleText(context, t),
-          period,
-          if (t.isPaused) l.statusPaused,
-          if (adherence.percent != null) l.adherence(adherence.percent!),
-        ].join(' · '),
-      ),
-      onTap: c.isAdmin ? () => _actions(context, ref) : null,
+      subtitle: stock == null
+          ? Text(text)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(text),
+                const SizedBox(height: 4),
+                StockLine(stock, t.medication, today: c.today(now)),
+              ],
+            ),
+      onTap: c.isAdmin
+          ? () => _actions(context, ref)
+          : finished
+          ? null
+          : () => openStock(context, ref, c, t.medication),
     );
   }
 
@@ -293,6 +309,16 @@ class _TreatmentTile extends ConsumerWidget {
                 );
               },
             ),
+            if (!finished)
+              ListTile(
+                leading: const Icon(Icons.inventory_2_outlined),
+                title: Text(l.stockTitle),
+                subtitle: Text(l.stockHint),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  openStock(context, ref, c, t.medication);
+                },
+              ),
             if (!finished)
               ListTile(
                 leading: Icon(t.isPaused ? Icons.play_arrow : Icons.pause),
