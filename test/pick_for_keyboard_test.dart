@@ -110,9 +110,36 @@ void main() {
       startsWith('Amoxicillin 5 ml: 08:00, 13:00, 20:00\nParacetamol 7.5 ml: '),
     );
   });
+
+  testWidgets('a later one-time dose of the medicine counts as last given', (
+    tester,
+  ) async {
+    final extra = DoseLog(
+      id: 'dose/2',
+      treatmentId: '',
+      action: DoseAction.given,
+      at: DateTime.utc(2026, 1, 12, 15),
+      byUserId: mum,
+      medication: const Medication(
+        id: 'x',
+        name: 'amoxicillin',
+        amount: 10,
+        unit: 'ml',
+      ),
+    );
+    final noa = await _noa(tester, more: [extra]);
+    final t = noa.treatments.firstWhere((t) => t.id == 't1');
+    expect(lastGiven(noa, t)!.id, 'dose/2');
+    // Only the treatment's own: the 13:05 dose.
+    final without = await _noa(tester);
+    expect(lastGiven(without, t)!.id, 'dose/1');
+  });
 }
 
-Future<ChildData> _noa(WidgetTester tester) async {
+Future<ChildData> _noa(
+  WidgetTester tester, {
+  List<DoseLog> more = const [],
+}) async {
   late ChildData noa;
   await tester.runAsync(() async {
     final server = InMemorySpaceServer();
@@ -166,6 +193,9 @@ Future<ChildData> _noa(WidgetTester tester) async {
         slotTime: const TimeOfDose(13, 0),
       ).toJson(),
     );
+    for (final l in more) {
+      await space.save(l.id, l.toJson());
+    }
     await mumPhone.spaces.sync(space);
     noa = (await mumPhone.child(space.id))!;
   });

@@ -161,26 +161,44 @@ class ChildData {
     return best;
   }
 
-  /// The newest count of the medicine called [name], if anyone counted it.
-  MedStock? stockNamed(String name) {
+  /// The medicine as a record says it was given: a one-time dose's own,
+  /// or the treatment's with the amount and unit logged at the time.
+  Medication? givenAs(DoseLog log) {
+    final m = medicineOf(log);
+    if (m == null || log.isOneTime || log.amount == null) return m;
+    return Medication(
+      id: m.id,
+      name: m.name,
+      form: m.form,
+      amount: log.amount,
+      unit: log.unit ?? m.unit,
+      notes: m.notes,
+    );
+  }
+
+  /// The newest count of [m] (same name and unit), if anyone counted it.
+  MedStock? stockFor(Medication m) {
     MedStock? best;
     for (final s in stocks) {
-      if (!s.isFor(name)) continue;
+      if (!s.isFor(m)) continue;
       if (best == null || s.countedAt.isAfter(best.countedAt)) best = s;
     }
     return best;
   }
 
-  /// How much of the medicine called [name] is left and when it runs out;
-  /// null when nobody counted it.
-  StockStatus? stockOf(String name, DateTime nowUtc) {
-    final stock = stockNamed(name);
+  /// How much of [m] is left and when it runs out; null when nobody
+  /// counted it. Only doses in the count's unit are taken off, each with
+  /// the amount given at the time.
+  StockStatus? stockOf(Medication m, DateTime nowUtc) {
+    final stock = stockFor(m);
     if (stock == null) return null;
-    final key = name.trim().toLowerCase();
+    bool same(Medication x) =>
+        x.name.trim().toLowerCase() == m.name.trim().toLowerCase() &&
+        (stock.unit == null || x.stockUnit == stock.unit);
     final day = today(nowUtc);
     var planned = 0.0;
     for (final t in active(nowUtc)) {
-      if (t.medication.name.trim().toLowerCase() != key) continue;
+      if (!same(t.medication)) continue;
       if (t.isPaused || !t.runsOn(day)) continue;
       final s = t.schedule;
       if (s is FixedTimes) {
@@ -192,9 +210,8 @@ class ChildData {
       given: [
         for (final l in logs)
           if (l.given)
-            if (medicineOf(l) case final m?
-                when m.name.trim().toLowerCase() == key)
-              (at: l.at, amount: m.amount ?? 1),
+            if (givenAs(l) case final g? when same(g))
+              (at: l.at, amount: g.amount ?? 1),
       ],
       plannedPerDay: planned,
       nowUtc: nowUtc,
@@ -565,6 +582,12 @@ class MedsActions {
       slotTime: slot?.time,
       reason: reason,
       loggedAt: DateTime.now().toUtc(),
+      // The dose as it is now; a later edit of the treatment doesn't
+      // change what was given.
+      amount: action == DoseAction.given ? treatment.medication.amount : null,
+      unit: action == DoseAction.given && treatment.medication.amount != null
+          ? treatment.medication.unit.trim()
+          : null,
     );
     await _spaces.save(c.spaceId, log.id, log.toJson());
     _changed();
@@ -612,18 +635,21 @@ class MedsActions {
   /// of it when there is one, so the space keeps one record per medicine.
   Future<void> countStock(
     ChildData c, {
-    required String medicine,
+    required Medication medicine,
     required double count,
     required int warnDays,
   }) async {
-    final old = c.stockNamed(medicine);
+    final old = c.stockFor(medicine);
     final stock = MedStock(
+      // A count from before units were kept is updated in place, and
+      // gets its unit now.
       id: old?.id ?? '${MedStock.prefix}${newUuid()}',
-      medicine: medicine.trim(),
+      medicine: medicine.name.trim(),
       count: count,
       countedAt: DateTime.now().toUtc(),
       warnDays: warnDays,
       byUserId: myUserId,
+      unit: medicine.stockUnit,
     );
     await _spaces.save(c.spaceId, stock.id, stock.toJson());
     _changed();
@@ -631,7 +657,7 @@ class MedsActions {
   }
 
   /// Stops counting a medicine: every count of it is deleted.
-  Future<void> stopCounting(ChildData c, String medicine) async {
+  Future<void> stopCounting(ChildData c, Medication medicine) async {
     for (final s in c.stocks) {
       if (s.isFor(medicine)) await _spaces.delete(c.spaceId, s.id);
     }

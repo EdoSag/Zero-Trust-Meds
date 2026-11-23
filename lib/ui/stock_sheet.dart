@@ -68,7 +68,7 @@ Future<void> openStock(
   Medication medicine,
 ) async {
   final now = DateTime.now().toUtc();
-  final current = c.stockOf(medicine.name, now);
+  final current = c.stockOf(medicine, now);
   final saved = await showDialog<_StockAnswer>(
     context: context,
     builder: (_) => _StockDialog(medicine: medicine, current: current),
@@ -77,11 +77,11 @@ Future<void> openStock(
   final actions = ref.read(medsActionsProvider);
   try {
     if (saved.stop) {
-      await actions.stopCounting(c, medicine.name);
+      await actions.stopCounting(c, medicine);
     } else {
       await actions.countStock(
         c,
-        medicine: medicine.name,
+        medicine: medicine,
         count: saved.count,
         warnDays: saved.warnDays,
       );

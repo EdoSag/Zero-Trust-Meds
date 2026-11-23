@@ -203,7 +203,10 @@ void main() {
       final c = (await mumPhone.child(spaceId))!;
       expect(c.stocks, hasLength(1));
       final now = DateTime.utc(2026, 1, 11, 12);
-      final s = c.stockOf('AMOXICILLIN', now)!;
+      final s = c.stockOf(
+        const Medication(id: 'y', name: 'AMOXICILLIN', amount: 5, unit: 'ml'),
+        now,
+      )!;
       expect(s.left, 85);
       expect(s.perDay, 10);
       expect(s.runsOutOn, LocalDate.parse('2026-01-19'));
@@ -215,13 +218,19 @@ void main() {
         _Texts(),
         now,
       ).where((x) => x.kind == ReminderKind.refill).toList();
-      expect(r, hasLength(1));
-      expect(r.single.at, DateTime.utc(2026, 1, 12, 9));
-      expect(r.single.title, 'order Amoxicillin for Savta');
-      expect(r.single.body, 'runs out 2026-01-19');
-      expect(r.single.offersGiven, isFalse);
+      // Every morning from the order-by day, set ahead so they keep coming
+      // while the app stays closed.
+      expect(r.map((x) => x.at), [
+        for (var d = 12; d < 12 + ReminderPlan.refillMornings; d++)
+          DateTime.utc(2026, 1, d, 9),
+      ]);
+      expect(r.first.title, 'order Amoxicillin for Savta');
+      expect(r.first.body, 'runs out 2026-01-19');
+      expect(r.first.offersGiven, isFalse);
+      expect(r.map((x) => x.notificationId).toSet(), hasLength(r.length));
 
-      // Past the order-by day: the next morning, until someone counts again.
+      // Past the order-by day: from the next morning, until someone counts
+      // again.
       final later = DateTime.utc(2026, 1, 14, 10);
       expect(
         ReminderPlan.plan(
@@ -229,8 +238,8 @@ void main() {
           const ReminderPrefs(),
           _Texts(),
           later,
-        ).where((x) => x.kind == ReminderKind.refill).map((x) => x.at),
-        [DateTime.utc(2026, 1, 15, 9)],
+        ).where((x) => x.kind == ReminderKind.refill).map((x) => x.at).first,
+        DateTime.utc(2026, 1, 15, 9),
       );
 
       // Off in the settings: none.
@@ -262,8 +271,118 @@ void main() {
         );
       }
       final c = (await mumPhone.child(spaceId))!;
-      expect(c.stockNamed('amoxicillin')!.id, 'stock/b');
-      expect(c.stockOf('Amoxicillin', DateTime.utc(2026, 1, 10, 10))!.left, 20);
+      expect(c.stockFor(amox)!.id, 'stock/b');
+      expect(c.stockOf(amox, DateTime.utc(2026, 1, 10, 10))!.left, 20);
+    });
+
+    test('other units never mix, and an edited dose does not change what '
+        'was given', () async {
+      final space = await mumPhone.spaces.open(spaceId);
+      await space.save(
+        'stock/s1',
+        MedStock(
+          id: 'stock/s1',
+          medicine: 'Amoxicillin',
+          count: 100,
+          countedAt: DateTime.utc(2026, 1, 10, 7),
+          unit: 'ml',
+        ).toJson(),
+      );
+      for (final l in [
+        // Given as 5 ml, logged with its amount.
+        DoseLog(
+          id: 'dose/b',
+          treatmentId: 't1',
+          action: DoseAction.given,
+          at: DateTime.utc(2026, 1, 10, 8),
+          byUserId: mum,
+          amount: 5,
+          unit: 'ml',
+        ),
+        // Tablets of the same name: a different count.
+        given(
+          'd',
+          DateTime.utc(2026, 1, 10, 12),
+          oneTime: const Medication(
+            id: 'x',
+            name: 'Amoxicillin',
+            form: MedForm.tablet,
+            amount: 1,
+            unit: 'tablet',
+          ),
+        ),
+      ]) {
+        await space.save(l.id, l.toJson());
+      }
+      // The dose is edited to 10 ml afterwards.
+      await space.save(
+        't1',
+        Treatment(
+          id: 't1',
+          medication: const Medication(
+            id: 'med-1',
+            name: 'Amoxicillin',
+            form: MedForm.liquid,
+            amount: 10,
+            unit: 'ml',
+          ),
+          schedule: const FixedTimes([TimeOfDose(8, 0), TimeOfDose(20, 0)]),
+          startDate: LocalDate.parse('2026-01-10'),
+        ).toJson(),
+      );
+      final c = (await mumPhone.child(spaceId))!;
+      final now = DateTime.utc(2026, 1, 10, 13);
+      expect(c.stockOf(c.treatments.single.medication, now)!.left, 95);
+      const tablets = Medication(
+        id: 'x',
+        name: 'Amoxicillin',
+        form: MedForm.tablet,
+        amount: 1,
+        unit: 'tablet',
+      );
+      expect(c.stockFor(tablets), isNull);
+    });
+
+    test('a medicine counted as empty is due the next morning, even when '
+        'how fast it goes is unknown', () async {
+      final space = await mumPhone.spaces.open(spaceId);
+      const ibu = Medication(
+        id: 'med-2',
+        name: 'Ibuprofen',
+        form: MedForm.liquid,
+        amount: 5,
+        unit: 'ml',
+      );
+      await space.save(
+        't2',
+        Treatment(
+          id: 't2',
+          medication: ibu,
+          schedule: const AsNeeded(minIntervalMinutes: 360),
+          startDate: LocalDate.parse('2026-01-10'),
+        ).toJson(),
+      );
+      await space.save(
+        'stock/i',
+        MedStock(
+          id: 'stock/i',
+          medicine: 'Ibuprofen',
+          count: 0,
+          countedAt: DateTime.utc(2026, 1, 10, 7),
+          unit: 'ml',
+        ).toJson(),
+      );
+      final c = (await mumPhone.child(spaceId))!;
+      final now = DateTime.utc(2026, 1, 10, 12);
+      expect(c.stockOf(ibu, now)!.perDay, isNull);
+      final r = ReminderPlan.plan(
+        [c],
+        const ReminderPrefs(),
+        _Texts(),
+        now,
+      ).where((x) => x.kind == ReminderKind.refill && x.treatmentId == 't2');
+      expect(r.first.at, DateTime.utc(2026, 1, 11, 9));
+      expect(r.first.body, 'runs out null');
     });
   });
 
