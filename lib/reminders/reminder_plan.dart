@@ -448,7 +448,20 @@ abstract final class ReminderPlan {
       if (!ChildClock.instant(c.zone, day, lastDayAt).isAfter(nowUtc)) {
         day = day.addDays(1);
       }
-      final end = t.lastDay;
+      // The last day any course of this medicine (same count) runs; none
+      // when one of them has no end.
+      final courses = [
+        for (final x in c.active(nowUtc))
+          if (x.medication.name.trim().toLowerCase() ==
+                  m.name.trim().toLowerCase() &&
+              x.medication.stockUnit == m.stockUnit)
+            x,
+      ];
+      final end = courses.any((x) => x.lastDay == null)
+          ? null
+          : courses
+                .map((x) => x.lastDay!)
+                .reduce((a, b) => a.isAfter(b) ? a : b);
       for (var n = 0; n < refillMornings; n++, day = day.addDays(1)) {
         if (end != null && day.isAfter(end)) break;
         final at = ChildClock.instant(c.zone, day, lastDayAt);

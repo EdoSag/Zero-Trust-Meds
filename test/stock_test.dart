@@ -343,6 +343,44 @@ void main() {
       expect(c.stockFor(tablets), isNull);
     });
 
+    test('a course ending today does not stop the reminders while another '
+        'course of the medicine goes on', () async {
+      final space = await mumPhone.spaces.open(spaceId);
+      // t1 (listed first) now ends today; another course goes on.
+      for (final (id, days) in [('t1', 1), ('z1', null)]) {
+        await space.save(
+          id,
+          Treatment(
+            id: id,
+            medication: amox,
+            schedule: const FixedTimes([TimeOfDose(8, 0), TimeOfDose(20, 0)]),
+            startDate: LocalDate.parse('2026-01-10'),
+            days: days,
+          ).toJson(),
+        );
+      }
+      await space.save(
+        'stock/s1',
+        MedStock(
+          id: 'stock/s1',
+          medicine: 'Amoxicillin',
+          count: 5,
+          countedAt: DateTime.utc(2026, 1, 10, 7),
+          unit: 'ml',
+        ).toJson(),
+      );
+      final c = (await mumPhone.child(spaceId))!;
+      final now = DateTime.utc(2026, 1, 10, 10);
+      final r = ReminderPlan.plan(
+        [c],
+        const ReminderPrefs(),
+        _Texts(),
+        now,
+      ).where((x) => x.kind == ReminderKind.refill).map((x) => x.at).toList();
+      expect(r, hasLength(ReminderPlan.refillMornings));
+      expect(r.first, DateTime.utc(2026, 1, 11, 9));
+    });
+
     test('a medicine counted as empty is due the next morning, even when '
         'how fast it goes is unknown', () async {
       final space = await mumPhone.spaces.open(spaceId);
