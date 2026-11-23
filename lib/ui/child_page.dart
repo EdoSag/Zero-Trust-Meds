@@ -11,6 +11,7 @@ import '../model/models.dart';
 import 'charts_page.dart';
 import 'child_editor.dart';
 import 'common.dart';
+import 'family_circle_tile.dart';
 import 'home_page.dart';
 import 'medical_id_page.dart';
 import 'one_time_dose.dart';
@@ -124,6 +125,7 @@ class ChildPage extends ConsumerWidget {
               ),
             ),
           ),
+          FamilyCircleTile(c),
           SectionHeader(
             l.today,
             trailing: TextButton.icon(

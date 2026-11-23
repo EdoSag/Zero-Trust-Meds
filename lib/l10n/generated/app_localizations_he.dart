@@ -1232,4 +1232,26 @@ class AppL10nHe extends AppL10n {
 
   @override
   String get shareMedicalId => 'שיתוף הכרטיס הרפואי';
+
+  @override
+  String get familyCircleShow => 'הצגה ב־ZT Family';
+
+  @override
+  String familyCircleOnHint(String circle) {
+    return 'המנות של היום מופיעות במרכז המשפחתי של $circle. כל מי שבמעגל רואה את שמות התרופות והשעות.';
+  }
+
+  @override
+  String get familyCircleOffHint =>
+      'הצגת המנות של היום במרכז המשפחתי של המעגל שלכם ב־ZT Family';
+
+  @override
+  String get familyCircleNone =>
+      'קודם צריך ליצור מעגל ב־ZT Family או להצטרף לאחד';
+
+  @override
+  String get familyCirclePick => 'באיזה מעגל?';
+
+  @override
+  String get familyCircleUnnamed => 'המעגל המשפחתי';
 }

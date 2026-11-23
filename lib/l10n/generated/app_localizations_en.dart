@@ -1241,4 +1241,25 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get shareMedicalId => 'Share Medical ID';
+
+  @override
+  String get familyCircleShow => 'Show in ZT Family';
+
+  @override
+  String familyCircleOnHint(String circle) {
+    return 'Today\'s doses show in the family hub of $circle. Everyone in that circle sees the medicine names and times.';
+  }
+
+  @override
+  String get familyCircleOffHint =>
+      'Show today\'s doses in your ZT Family circle\'s hub';
+
+  @override
+  String get familyCircleNone => 'Create or join a circle in ZT Family first';
+
+  @override
+  String get familyCirclePick => 'Which circle?';
+
+  @override
+  String get familyCircleUnnamed => 'Family circle';
 }

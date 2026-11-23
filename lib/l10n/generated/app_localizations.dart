@@ -2046,6 +2046,42 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'Share Medical ID'**
   String get shareMedicalId;
+
+  /// No description provided for @familyCircleShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in ZT Family'**
+  String get familyCircleShow;
+
+  /// No description provided for @familyCircleOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s doses show in the family hub of {circle}. Everyone in that circle sees the medicine names and times.'**
+  String familyCircleOnHint(String circle);
+
+  /// No description provided for @familyCircleOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show today\'s doses in your ZT Family circle\'s hub'**
+  String get familyCircleOffHint;
+
+  /// No description provided for @familyCircleNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Create or join a circle in ZT Family first'**
+  String get familyCircleNone;
+
+  /// No description provided for @familyCirclePick.
+  ///
+  /// In en, this message translates to:
+  /// **'Which circle?'**
+  String get familyCirclePick;
+
+  /// No description provided for @familyCircleUnnamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Family circle'**
+  String get familyCircleUnnamed;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

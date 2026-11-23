@@ -324,5 +324,11 @@
   "onePerLine": "אחד בכל שורה",
   "callContact": "להתקשר אל {name}",
   "editMedicalId": "עריכת הכרטיס הרפואי",
-  "shareMedicalId": "שיתוף הכרטיס הרפואי"
+  "shareMedicalId": "שיתוף הכרטיס הרפואי",
+  "familyCircleShow": "הצגה ב־ZT Family",
+  "familyCircleOnHint": "המנות של היום מופיעות במרכז המשפחתי של {circle}. כל מי שבמעגל רואה את שמות התרופות והשעות.",
+  "familyCircleOffHint": "הצגת המנות של היום במרכז המשפחתי של המעגל שלכם ב־ZT Family",
+  "familyCircleNone": "קודם צריך ליצור מעגל ב־ZT Family או להצטרף לאחד",
+  "familyCirclePick": "באיזה מעגל?",
+  "familyCircleUnnamed": "המעגל המשפחתי"
 }

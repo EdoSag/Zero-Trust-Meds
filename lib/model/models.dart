@@ -151,6 +151,7 @@ class Child {
     this.photo,
     this.missedAfterMinutes = 120,
     this.role = PersonRole.child,
+    this.familyCircle,
     this.extra = const {},
   });
 
@@ -164,6 +165,7 @@ class Child {
     photo: j['photo'] as String?,
     missedAfterMinutes: (j['missedAfterMinutes'] as num?)?.toInt() ?? 120,
     role: PersonRole.parse(j['relation']),
+    familyCircle: j['familyCircle'] as String?,
     extra: {
       for (final e in j.entries)
         if (!_known.contains(e.key)) e.key: e.value,
@@ -182,6 +184,7 @@ class Child {
     'photo',
     'missedAfterMinutes',
     'relation',
+    'familyCircle',
   };
 
   final String name;
@@ -201,6 +204,10 @@ class Child {
   /// You, a child, a parent or someone else.
   final PersonRole role;
 
+  /// The ZT Family circle (its space id) whose hub shows this person's
+  /// doses (S-10, L-2); null when they're shown nowhere else.
+  final String? familyCircle;
+
   /// Fields this version doesn't know (written by a newer version), kept
   /// so that saving here doesn't drop them.
   final Map<String, Object?> extra;
@@ -214,6 +221,8 @@ class Child {
     bool clearPhoto = false,
     int? missedAfterMinutes,
     PersonRole? role,
+    String? familyCircle,
+    bool clearFamilyCircle = false,
     Map<String, Object?>? extra,
   }) => Child(
     name: name ?? this.name,
@@ -223,6 +232,7 @@ class Child {
     photo: clearPhoto ? null : photo ?? this.photo,
     missedAfterMinutes: missedAfterMinutes ?? this.missedAfterMinutes,
     role: role ?? this.role,
+    familyCircle: clearFamilyCircle ? null : familyCircle ?? this.familyCircle,
     extra: extra ?? this.extra,
   );
 
@@ -238,6 +248,7 @@ class Child {
     // Left out for children, so profiles look exactly as before to older
     // versions.
     if (role != PersonRole.child) 'relation': role.name,
+    if (familyCircle != null) 'familyCircle': familyCircle,
   };
 }
 

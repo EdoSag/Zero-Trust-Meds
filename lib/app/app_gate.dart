@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zero_trust_core/zero_trust_core.dart';
 
+import '../data/family_circle.dart';
 import '../data/meds_data.dart';
 import '../logic/dose_logic.dart';
 import '../platform/keyboard_pick.dart';
@@ -160,6 +161,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
   StreamSubscription<void>? _links;
   StreamSubscription<void>? _taps;
   Timer? _resyncSoon;
+  Timer? _circleSoon;
   Timer? _hourly;
   bool _handlingTaps = false;
 
@@ -172,7 +174,10 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     });
     // Reminders are set 14 days ahead; this keeps the window moving, and
     // drops follow-ups for doses given while the app stayed open.
-    _hourly = Timer.periodic(const Duration(hours: 1), (_) => _resync());
+    _hourly = Timer.periodic(const Duration(hours: 1), (_) {
+      _resync();
+      _syncCircles();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _takeLinks();
       _takeTaps();
@@ -203,6 +208,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     _links?.cancel();
     _taps?.cancel();
     _resyncSoon?.cancel();
+    _circleSoon?.cancel();
     _hourly?.cancel();
     super.dispose();
   }
@@ -229,6 +235,29 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
         await ref.read(reminderSchedulerProvider).sync(plan, texts.channel);
       } on Object {
         // Retried on the next change or within the hour.
+      }
+    });
+  }
+
+  /// Keeps the doses of people shown in a ZT Family circle up to date there
+  /// (see [FamilyCircleDoses]).
+  void _syncCircles() {
+    _circleSoon?.cancel();
+    _circleSoon = Timer(const Duration(seconds: 2), () async {
+      if (!mounted) return;
+      try {
+        final state = ref.read(ztFamilySpacesProvider);
+        if (!state.ready || state.entries.isEmpty) return;
+        final family = await ref.read(familyProvider.future);
+        if (!mounted || family.loading) return;
+        await FamilyCircleDoses.sync(
+          ref.read(ztFamilySpacesProvider.notifier),
+          state,
+          family,
+          DateTime.now().toUtc(),
+        );
+      } on Object {
+        // Tried again on the next change or within the hour.
       }
     });
   }
@@ -316,9 +345,12 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     // Sync for the account's own vault (name, notice) and the children.
     ref.watch(ztSyncControllerProvider);
     ref.watch(ztSpacesProvider);
+    // The ZT Family circles (S-10), for people shown in one.
+    ref.listen(ztFamilySpacesProvider, (_, _) => _syncCircles());
     ref.listen(familyProvider, (_, _) {
       _resync();
       _takeTaps();
+      _syncCircles();
     });
     ref.listen(meProvider, (_, _) => _takeTaps());
     ref.listen(reminderPrefsProvider, (_, _) => _resync());
