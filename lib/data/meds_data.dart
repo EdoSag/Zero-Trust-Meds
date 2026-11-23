@@ -7,6 +7,7 @@ import 'package:zero_trust_core/zero_trust_core.dart';
 import '../logic/dose_logic.dart';
 import '../logic/stock.dart';
 import '../model/models.dart';
+import 'family_circle.dart';
 
 /// Bumped after every local write, so screens update at once even offline
 /// (the sync status, which also refreshes them, changes only on sync).
@@ -426,6 +427,22 @@ class MedsActions {
 
   /// Deletes the child and every record about them, for every caregiver.
   Future<void> deleteChild(String spaceId) async {
+    // Shown in a ZT Family circle: its doses leave the hub first.
+    final family = ref.read(familyProvider).value;
+    final circle = family?.child(spaceId)?.child.familyCircle;
+    if (circle != null) {
+      try {
+        await FamilyCircleDoses.removePerson(
+          ref.read(ztFamilySpacesProvider.notifier),
+          ref.read(ztFamilySpacesProvider),
+          circle,
+          spaceId,
+        );
+      } on Object {
+        // Offline or not in the circle any more: the copies go once they
+        // are past (FamilyCircleDoses.stale).
+      }
+    }
     await _spaces.deleteSpace(spaceId);
     _changed();
   }
