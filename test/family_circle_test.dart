@@ -156,6 +156,81 @@ void main() {
     expect(off.delete, want.keys.toSet());
   });
 
+  test('as-needed doses given today are in the hub too', () async {
+    final phone = await Phone(InMemorySpaceServer(), mum, 1).start();
+    final space = await phone.spaces.create(myName: 'Mum');
+    await space.save(
+      Child.itemId,
+      const Child(
+        name: 'Noa',
+        timeZone: 'UTC',
+        familyCircle: 'circle-1',
+      ).toJson(),
+    );
+    await space.save(
+      'p1',
+      Treatment(
+        id: 'p1',
+        medication: const Medication(
+          id: 'm3',
+          name: 'Ibuprofen',
+          amount: 5,
+          unit: 'ml',
+        ),
+        schedule: const AsNeeded(minIntervalMinutes: 360),
+        startDate: LocalDate.parse('2026-01-01'),
+      ).toJson(),
+    );
+    for (final (id, at) in [
+      ('dose/y', DateTime.utc(2026, 1, 9, 22)), // yesterday: not shown
+      ('dose/z', DateTime.utc(2026, 1, 10, 9)),
+    ]) {
+      await space.save(
+        id,
+        DoseLog(
+          id: id,
+          treatmentId: 'p1',
+          action: DoseAction.given,
+          at: at,
+          byUserId: mum,
+        ).toJson(),
+      );
+    }
+    final c = (await phone.child(space.id))!;
+    final items = FamilyCircleDoses.itemsFor(c, now);
+    expect(items.keys, [FamilyCircleDoses.idFor(c.spaceId, 'given.z')]);
+    final s = ZtFamilySummary.of(items.values.single)!;
+    expect(
+      (s.title, s.at, s.done),
+      ('Noa: Ibuprofen 5 ml', DateTime.utc(2026, 1, 10, 9), true),
+    );
+  });
+
+  test('anyone\'s doses that are long past go, so a deleted person does not '
+      'stay in the hub', () {
+    LocalItem item(String id, DateTime at) => LocalItem(
+      itemId: id,
+      updatedAt: now,
+      json: ZtFamilySummary(
+        title: 'x',
+        kind: 'meds.dose',
+        at: at,
+      ).addTo({'kind': 'meds.dose'}),
+    );
+    final old = FamilyCircleDoses.idFor('gone-space', 't.2026-01-07.0800');
+    final recent = FamilyCircleDoses.idFor('other-space', 't.2026-01-09.2000');
+    final r = FamilyCircleDoses.diff(
+      existing: [
+        item(old, DateTime.utc(2026, 1, 7, 8)),
+        item(recent, DateTime.utc(2026, 1, 9, 20)),
+      ],
+      want: const {},
+      mine: const {},
+      nowUtc: now,
+    );
+    expect(r.delete, {old});
+  });
+
   test('a circle member who is not its admin can write the doses into the '
       'circle, and they read back for the hub', () async {
     final server = InMemorySpaceServer();

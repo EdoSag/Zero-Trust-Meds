@@ -91,6 +91,15 @@ abstract final class FamilyCircleDoses {
         );
       }
     }
+    // As-needed doses of a treatment given today: they have no planned
+    // slot, so c.doses doesn't list them.
+    for (final log in c.logs) {
+      if (!log.given || log.isOneTime || c.today(log.at) != today) continue;
+      final t = c.treatments.where((x) => x.id == log.treatmentId).firstOrNull;
+      if (t == null || t.schedule is! AsNeeded) continue;
+      final id = log.id.startsWith('dose/') ? log.id.substring(5) : log.id;
+      out[idFor(c.spaceId, 'given.$id')] = _item(c, t.medication, log.at, true);
+    }
     for (final log in c.oneTimeOn(today)) {
       final id = log.id.startsWith('dose/') ? log.id.substring(5) : log.id;
       out[idFor(c.spaceId, 'once.$id')] = _item(
@@ -103,20 +112,32 @@ abstract final class FamilyCircleDoses {
     return out;
   }
 
+  /// Doses older than this are past for everyone: any Meds phone in the
+  /// circle removes them, so a person deleted elsewhere doesn't stay in
+  /// the hub.
+  static const stale = Duration(hours: 48);
+
   /// What to save and delete in [circleId]: [want] for the people of this
   /// phone shown there, compared with what the circle holds. Doses of people
   /// this phone knows ([mine], Meds space ids) that aren't wanted any more
-  /// go; other people's are left to their own caregivers.
+  /// go; other people's are left to their own caregivers, unless they are
+  /// [stale].
   static ({Map<String, Map<String, Object?>> save, Set<String> delete}) diff({
     required Iterable<LocalItem> existing,
     required Map<String, Map<String, Object?>> want,
     required Set<String> mine,
+    DateTime? nowUtc,
   }) {
     final have = <String, Map<String, Object?>?>{};
+    final old = <String>{};
     for (final i in existing) {
       if (i.deleted) continue;
       if (spaceOf(i.itemId) == null) continue;
       have[i.itemId] = i.json;
+      final at = ZtFamilySummary.of(i.json)?.at;
+      if (nowUtc != null && at != null && nowUtc.difference(at) > stale) {
+        old.add(i.itemId);
+      }
     }
     final save = <String, Map<String, Object?>>{
       for (final e in want.entries)
@@ -126,9 +147,29 @@ abstract final class FamilyCircleDoses {
     };
     final delete = <String>{
       for (final id in have.keys)
-        if (!want.containsKey(id) && mine.contains(spaceOf(id))) id,
+        if (!want.containsKey(id) &&
+            (mine.contains(spaceOf(id)) || old.contains(id)))
+          id,
     };
     return (save: save, delete: delete);
+  }
+
+  /// Removes [spaceId]'s doses from [circleId], before the person is
+  /// deleted (afterwards nothing would say they were this phone's).
+  static Future<void> removePerson(
+    SpacesController circles,
+    SpacesState state,
+    String circleId,
+    String spaceId,
+  ) async {
+    final entry = state.entries.where((e) => e.info.id == circleId).firstOrNull;
+    final space = entry?.space;
+    if (space == null) return;
+    for (final i in await space.store.all()) {
+      if (!i.deleted && spaceOf(i.itemId) == spaceId) {
+        await circles.delete(circleId, i.itemId);
+      }
+    }
   }
 
   /// Brings every circle this phone is in up to date with [family].
@@ -150,6 +191,7 @@ abstract final class FamilyCircleDoses {
         existing: await space.store.all(),
         want: want,
         mine: mine,
+        nowUtc: nowUtc,
       );
       for (final e in changes.save.entries) {
         await circles.save(entry.info.id, e.key, e.value);
