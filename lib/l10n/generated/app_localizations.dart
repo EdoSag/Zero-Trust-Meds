@@ -118,7 +118,7 @@ abstract class AppL10n {
   /// No description provided for @loadError.
   ///
   /// In en, this message translates to:
-  /// **'Couldn\'t load your children. Pull down to try again.'**
+  /// **'Couldn\'t load your family\'s medicines. Pull down to try again.'**
   String get loadError;
 
   /// No description provided for @addChildOrJoin.
@@ -130,13 +130,13 @@ abstract class AppL10n {
   /// No description provided for @addChild.
   ///
   /// In en, this message translates to:
-  /// **'Add a child'**
+  /// **'Add a person'**
   String get addChild;
 
   /// No description provided for @addChildHint.
   ///
   /// In en, this message translates to:
-  /// **'You manage their medicines and invite caregivers'**
+  /// **'Yourself, a child or a parent. You can invite caregivers'**
   String get addChildHint;
 
   /// No description provided for @joinWithInvite.
@@ -148,19 +148,19 @@ abstract class AppL10n {
   /// No description provided for @joinWithInviteHint.
   ///
   /// In en, this message translates to:
-  /// **'Scan or paste the invite another parent sent you'**
+  /// **'Scan or paste the invite a family member sent you'**
   String get joinWithInviteHint;
 
   /// No description provided for @emptyTitle.
   ///
   /// In en, this message translates to:
-  /// **'Track your children\'s medicines together'**
+  /// **'Track your family\'s medicines together'**
   String get emptyTitle;
 
   /// No description provided for @emptyBody.
   ///
   /// In en, this message translates to:
-  /// **'Add a child, set up their treatments and invite everyone who gives them medicine. Everything is end-to-end encrypted.'**
+  /// **'Add yourself, a child or an elderly parent, set up their treatments and invite everyone who helps. Everything is end-to-end encrypted.'**
   String get emptyBody;
 
   /// No description provided for @waitingForAdmin.
@@ -172,7 +172,7 @@ abstract class AppL10n {
   /// No description provided for @waitingForSync.
   ///
   /// In en, this message translates to:
-  /// **'Confirmed. The child\'s details will appear in a moment.'**
+  /// **'Confirmed. Their details will appear in a moment.'**
   String get waitingForSync;
 
   /// No description provided for @waitingCode.
@@ -472,13 +472,13 @@ abstract class AppL10n {
   /// No description provided for @childGone.
   ///
   /// In en, this message translates to:
-  /// **'This child is no longer here.'**
+  /// **'This profile is no longer here.'**
   String get childGone;
 
   /// No description provided for @editChild.
   ///
   /// In en, this message translates to:
-  /// **'Edit child'**
+  /// **'Edit details'**
   String get editChild;
 
   /// No description provided for @exportChild.
@@ -496,7 +496,7 @@ abstract class AppL10n {
   /// No description provided for @deleteChild.
   ///
   /// In en, this message translates to:
-  /// **'Delete child'**
+  /// **'Delete profile'**
   String get deleteChild;
 
   /// No description provided for @addTreatment.
@@ -586,7 +586,7 @@ abstract class AppL10n {
   /// No description provided for @deleteChildBody.
   ///
   /// In en, this message translates to:
-  /// **'Deletes the child, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.'**
+  /// **'Deletes this profile, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.'**
   String get deleteChildBody;
 
   /// No description provided for @delete.
@@ -700,7 +700,7 @@ abstract class AppL10n {
   /// No description provided for @removeCaregiverBody.
   ///
   /// In en, this message translates to:
-  /// **'They lose access at once. The child\'s key is replaced, so nothing written from now on can be read with their old key.'**
+  /// **'They lose access at once. The profile\'s key is replaced, so nothing written from now on can be read with their old key.'**
   String get removeCaregiverBody;
 
   /// No description provided for @remove.
@@ -748,7 +748,7 @@ abstract class AppL10n {
   /// No description provided for @childName.
   ///
   /// In en, this message translates to:
-  /// **'Child\'s name'**
+  /// **'Name'**
   String get childName;
 
   /// No description provided for @required.
@@ -826,7 +826,7 @@ abstract class AppL10n {
   /// No description provided for @addChildPrivacy.
   ///
   /// In en, this message translates to:
-  /// **'Only people you invite can see this child. Names, medicines and doses are encrypted on this phone before they are sent.'**
+  /// **'Only people you invite can see this profile. Names, medicines and doses are encrypted on this phone before they are sent.'**
   String get addChildPrivacy;
 
   /// No description provided for @searchZone.
@@ -976,7 +976,7 @@ abstract class AppL10n {
   /// No description provided for @inviteIntro.
   ///
   /// In en, this message translates to:
-  /// **'Invite a parent, grandparent or babysitter. They need a Zero-Trust account. The invite works once and expires in 7 days.'**
+  /// **'Invite family, a babysitter or a carer. They need a Zero-Trust account. The invite works once and expires in 7 days.'**
   String get inviteIntro;
 
   /// No description provided for @createInvite.
@@ -1102,7 +1102,7 @@ abstract class AppL10n {
   /// No description provided for @joinCodeBody.
   ///
   /// In en, this message translates to:
-  /// **'They compare it with the code on their phone and let you in. The child appears here once they do.'**
+  /// **'They compare it with the code on their phone and let you in. The profile appears here once they do.'**
   String get joinCodeBody;
 
   /// No description provided for @done.
@@ -1114,7 +1114,7 @@ abstract class AppL10n {
   /// No description provided for @joinIntro.
   ///
   /// In en, this message translates to:
-  /// **'Paste the invite link you were sent, or scan the QR code on the other parent\'s phone.'**
+  /// **'Paste the invite link you were sent, or scan the QR code on the other person\'s phone.'**
   String get joinIntro;
 
   /// No description provided for @inviteLink.
@@ -1150,7 +1150,7 @@ abstract class AppL10n {
   /// No description provided for @medicineListHint.
   ///
   /// In en, this message translates to:
-  /// **'The family\'s list, reused across children'**
+  /// **'The family\'s list, reused for everyone'**
   String get medicineListHint;
 
   /// No description provided for @medicineListEmpty.
@@ -1186,7 +1186,7 @@ abstract class AppL10n {
   /// No description provided for @disclaimerBody1.
   ///
   /// In en, this message translates to:
-  /// **'ZT Meds helps you remember and record the medicines your children get. It does not give medical advice, check doses or check for interactions.'**
+  /// **'ZT Meds helps you remember and record the medicines you and your family take. It does not give medical advice, check doses or check for interactions.'**
   String get disclaimerBody1;
 
   /// No description provided for @disclaimerBody2.
@@ -1468,7 +1468,7 @@ abstract class AppL10n {
   /// No description provided for @reminderChannelHint.
   ///
   /// In en, this message translates to:
-  /// **'When your children\'s doses are due or missed'**
+  /// **'When doses are due or missed'**
   String get reminderChannelHint;
 
   /// No description provided for @remindersTitle.
@@ -1528,7 +1528,7 @@ abstract class AppL10n {
   /// No description provided for @missedAlertsHint.
   ///
   /// In en, this message translates to:
-  /// **'When a dose passes the child\'s \"missed after\" time'**
+  /// **'When a dose passes its \"missed after\" time'**
   String get missedAlertsHint;
 
   /// No description provided for @lastDayNotice.
@@ -1704,6 +1704,384 @@ abstract class AppL10n {
   /// In en, this message translates to:
   /// **'No planned doses today'**
   String get nothingPlannedToday;
+
+  /// No description provided for @insertIntoKeyboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Insert into ZT Keyboard'**
+  String get insertIntoKeyboard;
+
+  /// No description provided for @insertPickMedHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap a medicine, then what to type. Only what you tap is typed.'**
+  String get insertPickMedHint;
+
+  /// No description provided for @insertNoMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'No medicines are running now.'**
+  String get insertNoMedicines;
+
+  /// No description provided for @insertMedList.
+  ///
+  /// In en, this message translates to:
+  /// **'All running medicines'**
+  String get insertMedList;
+
+  /// No description provided for @insertMedName.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine'**
+  String get insertMedName;
+
+  /// No description provided for @insertMedDose.
+  ///
+  /// In en, this message translates to:
+  /// **'Medicine and dose'**
+  String get insertMedDose;
+
+  /// No description provided for @insertMedSchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Dose and times'**
+  String get insertMedSchedule;
+
+  /// No description provided for @insertMedScheduleText.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine}: {times}'**
+  String insertMedScheduleText(String medicine, String times);
+
+  /// No description provided for @insertMedLastGiven.
+  ///
+  /// In en, this message translates to:
+  /// **'Last given'**
+  String get insertMedLastGiven;
+
+  /// No description provided for @insertMedLastGivenText.
+  ///
+  /// In en, this message translates to:
+  /// **'{medicine}, last given {when}'**
+  String insertMedLastGivenText(String medicine, String when);
+
+  /// No description provided for @insertMedNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get insertMedNotes;
+
+  /// No description provided for @personRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Who is this?'**
+  String get personRole;
+
+  /// No description provided for @roleSelf.
+  ///
+  /// In en, this message translates to:
+  /// **'Me'**
+  String get roleSelf;
+
+  /// No description provided for @roleChild.
+  ///
+  /// In en, this message translates to:
+  /// **'My child'**
+  String get roleChild;
+
+  /// No description provided for @roleParent.
+  ///
+  /// In en, this message translates to:
+  /// **'My parent'**
+  String get roleParent;
+
+  /// No description provided for @roleOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Someone else'**
+  String get roleOther;
+
+  /// No description provided for @stockTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Supply left'**
+  String get stockTitle;
+
+  /// No description provided for @stockHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Count what is left and get a reminder to order more'**
+  String get stockHint;
+
+  /// No description provided for @stockHowMuch.
+  ///
+  /// In en, this message translates to:
+  /// **'How much is left now?'**
+  String get stockHowMuch;
+
+  /// No description provided for @stockInUnit.
+  ///
+  /// In en, this message translates to:
+  /// **'In {unit}. Doses given from now on are taken off by themselves.'**
+  String stockInUnit(String unit);
+
+  /// No description provided for @stockInDoses.
+  ///
+  /// In en, this message translates to:
+  /// **'In doses. Doses given from now on are taken off by themselves.'**
+  String get stockInDoses;
+
+  /// No description provided for @stockWarn.
+  ///
+  /// In en, this message translates to:
+  /// **'Remind me to order more'**
+  String get stockWarn;
+
+  /// No description provided for @stockDaysBefore.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, =1{1 day before it runs out} other{{days} days before it runs out}}'**
+  String stockDaysBefore(int days);
+
+  /// No description provided for @stockStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop counting'**
+  String get stockStop;
+
+  /// No description provided for @stockLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'About {amount} left'**
+  String stockLeft(String amount);
+
+  /// No description provided for @stockRunsOut.
+  ///
+  /// In en, this message translates to:
+  /// **'runs out around {date}'**
+  String stockRunsOut(String date);
+
+  /// No description provided for @stockOrderMore.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more'**
+  String get stockOrderMore;
+
+  /// No description provided for @stockNoneLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'None left'**
+  String get stockNoneLeft;
+
+  /// No description provided for @stockSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Saved. Doses given from now on are taken off.'**
+  String get stockSaved;
+
+  /// No description provided for @reminderRefillTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more {medicine} for {child}'**
+  String reminderRefillTitle(String child, String medicine);
+
+  /// No description provided for @reminderRefillBody.
+  ///
+  /// In en, this message translates to:
+  /// **'It runs out around {date}.'**
+  String reminderRefillBody(String date);
+
+  /// No description provided for @reminderRefillOutBody.
+  ///
+  /// In en, this message translates to:
+  /// **'None left, as far as the app knows.'**
+  String get reminderRefillOutBody;
+
+  /// No description provided for @refillNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Order more'**
+  String get refillNotice;
+
+  /// No description provided for @refillNoticeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'In the morning, when a medicine you count is about to run out'**
+  String get refillNoticeHint;
+
+  /// No description provided for @medicineFromFamilyList.
+  ///
+  /// In en, this message translates to:
+  /// **'From your list'**
+  String get medicineFromFamilyList;
+
+  /// No description provided for @medicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical ID'**
+  String get medicalId;
+
+  /// No description provided for @medicalIdEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies, conditions, blood type and who to call: not filled in yet'**
+  String get medicalIdEmpty;
+
+  /// No description provided for @medicalIdFilledIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled in'**
+  String get medicalIdFilledIn;
+
+  /// No description provided for @medicalIdIntro.
+  ///
+  /// In en, this message translates to:
+  /// **'What a doctor or paramedic should know at once. Only this profile\'s caregivers can see it, and it is encrypted like everything else.'**
+  String get medicalIdIntro;
+
+  /// No description provided for @medicalIdAllergiesLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies: {list}'**
+  String medicalIdAllergiesLine(String list);
+
+  /// No description provided for @medicalIdShareTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Medical ID: {name}'**
+  String medicalIdShareTitle(String name);
+
+  /// No description provided for @allergies.
+  ///
+  /// In en, this message translates to:
+  /// **'Allergies'**
+  String get allergies;
+
+  /// No description provided for @conditions.
+  ///
+  /// In en, this message translates to:
+  /// **'Conditions'**
+  String get conditions;
+
+  /// No description provided for @currentMedicines.
+  ///
+  /// In en, this message translates to:
+  /// **'Current medicines'**
+  String get currentMedicines;
+
+  /// No description provided for @noneRecorded.
+  ///
+  /// In en, this message translates to:
+  /// **'None recorded'**
+  String get noneRecorded;
+
+  /// No description provided for @bloodType.
+  ///
+  /// In en, this message translates to:
+  /// **'Blood type'**
+  String get bloodType;
+
+  /// No description provided for @bloodTypeUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get bloodTypeUnknown;
+
+  /// No description provided for @medicalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Other important information'**
+  String get medicalNotes;
+
+  /// No description provided for @medicalNotesHint.
+  ///
+  /// In en, this message translates to:
+  /// **'A pacemaker, an implant, where the EpiPen is kept'**
+  String get medicalNotesHint;
+
+  /// No description provided for @emergencyContacts.
+  ///
+  /// In en, this message translates to:
+  /// **'Emergency contacts'**
+  String get emergencyContacts;
+
+  /// No description provided for @addEmergencyContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a contact'**
+  String get addEmergencyContact;
+
+  /// No description provided for @contactName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get contactName;
+
+  /// No description provided for @contactPhone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get contactPhone;
+
+  /// No description provided for @onePerLine.
+  ///
+  /// In en, this message translates to:
+  /// **'One per line'**
+  String get onePerLine;
+
+  /// No description provided for @callContact.
+  ///
+  /// In en, this message translates to:
+  /// **'Call {name}'**
+  String callContact(String name);
+
+  /// No description provided for @editMedicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Medical ID'**
+  String get editMedicalId;
+
+  /// No description provided for @shareMedicalId.
+  ///
+  /// In en, this message translates to:
+  /// **'Share Medical ID'**
+  String get shareMedicalId;
+
+  /// No description provided for @familyCircleShow.
+  ///
+  /// In en, this message translates to:
+  /// **'Show in ZT Family'**
+  String get familyCircleShow;
+
+  /// No description provided for @familyCircleOnHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s doses show in the family hub of {circle}. Everyone in that circle sees the medicine names and times.'**
+  String familyCircleOnHint(String circle);
+
+  /// No description provided for @familyCircleOffHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Show today\'s doses in your ZT Family circle\'s hub'**
+  String get familyCircleOffHint;
+
+  /// No description provided for @familyCircleNone.
+  ///
+  /// In en, this message translates to:
+  /// **'Create or join a circle in ZT Family first'**
+  String get familyCircleNone;
+
+  /// No description provided for @familyCirclePick.
+  ///
+  /// In en, this message translates to:
+  /// **'Which circle?'**
+  String get familyCirclePick;
+
+  /// No description provided for @familyCircleUnnamed.
+  ///
+  /// In en, this message translates to:
+  /// **'Family circle'**
+  String get familyCircleUnnamed;
 }
 
 class _AppL10nDelegate extends LocalizationsDelegate<AppL10n> {

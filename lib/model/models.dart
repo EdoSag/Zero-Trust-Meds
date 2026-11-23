@@ -123,7 +123,24 @@ enum TimeSlot {
 
 TimeOfDose _fromMinutes(int m) => TimeOfDose(m ~/ 60, m % 60);
 
-/// One child. Lives in its own shared space, as the item `child`.
+/// Whose medicines a profile holds. Stored as `relation` in the profile;
+/// profiles from before people other than children could be added have no
+/// `relation` and are children.
+enum PersonRole {
+  self,
+  child,
+  parent,
+  other;
+
+  static PersonRole parse(Object? v) => PersonRole.values.firstWhere(
+    (r) => r.name == v,
+    orElse: () => PersonRole.child,
+  );
+}
+
+/// One person whose medicines are tracked: you, a child, a parent or
+/// someone else you look after. (Named `Child` because the app began with
+/// children; every Z24 space holds one, under the item id `child`.)
 @immutable
 class Child {
   const Child({
@@ -133,6 +150,9 @@ class Child {
     this.color = 0xFFF43F5E,
     this.photo,
     this.missedAfterMinutes = 120,
+    this.role = PersonRole.child,
+    this.familyCircle,
+    this.extra = const {},
   });
 
   factory Child.fromJson(Map<String, Object?> j) => Child(
@@ -144,10 +164,28 @@ class Child {
     color: (j['color'] as num?)?.toInt() ?? 0xFFF43F5E,
     photo: j['photo'] as String?,
     missedAfterMinutes: (j['missedAfterMinutes'] as num?)?.toInt() ?? 120,
+    role: PersonRole.parse(j['relation']),
+    familyCircle: j['familyCircle'] as String?,
+    extra: {
+      for (final e in j.entries)
+        if (!_known.contains(e.key)) e.key: e.value,
+    },
   );
 
   static const kind = 'child';
   static const itemId = 'child';
+
+  static const _known = {
+    'kind',
+    'name',
+    'timeZone',
+    'birthDate',
+    'color',
+    'photo',
+    'missedAfterMinutes',
+    'relation',
+    'familyCircle',
+  };
 
   final String name;
 
@@ -163,6 +201,17 @@ class Child {
   /// A dose not logged this long after its time counts as missed.
   final int missedAfterMinutes;
 
+  /// You, a child, a parent or someone else.
+  final PersonRole role;
+
+  /// The ZT Family circle (its space id) whose hub shows this person's
+  /// doses (S-10, L-2); null when they're shown nowhere else.
+  final String? familyCircle;
+
+  /// Fields this version doesn't know (written by a newer version), kept
+  /// so that saving here doesn't drop them.
+  final Map<String, Object?> extra;
+
   Child copyWith({
     String? name,
     String? timeZone,
@@ -171,6 +220,10 @@ class Child {
     String? photo,
     bool clearPhoto = false,
     int? missedAfterMinutes,
+    PersonRole? role,
+    String? familyCircle,
+    bool clearFamilyCircle = false,
+    Map<String, Object?>? extra,
   }) => Child(
     name: name ?? this.name,
     timeZone: timeZone ?? this.timeZone,
@@ -178,9 +231,13 @@ class Child {
     color: color ?? this.color,
     photo: clearPhoto ? null : photo ?? this.photo,
     missedAfterMinutes: missedAfterMinutes ?? this.missedAfterMinutes,
+    role: role ?? this.role,
+    familyCircle: clearFamilyCircle ? null : familyCircle ?? this.familyCircle,
+    extra: extra ?? this.extra,
   );
 
   Map<String, Object?> toJson() => {
+    ...extra,
     'kind': kind,
     'name': name,
     'timeZone': timeZone,
@@ -188,6 +245,10 @@ class Child {
     'color': color,
     'photo': photo,
     'missedAfterMinutes': missedAfterMinutes,
+    // Left out for children, so profiles look exactly as before to older
+    // versions.
+    if (role != PersonRole.child) 'relation': role.name,
+    if (familyCircle != null) 'familyCircle': familyCircle,
   };
 }
 
@@ -239,6 +300,12 @@ class Medication {
   /// Same medicine, for the reusable list across children.
   String get sameKey =>
       '${name.trim().toLowerCase()}|$amount|$unit|${form.name}';
+
+  /// What a supply count of it is in: the unit ("ml", "tablet") when a
+  /// dose has an amount in one, else "" (counted in doses). Counts and
+  /// doses in different units are never mixed.
+  String get stockUnit =>
+      amount != null && unit.trim().isNotEmpty ? unit.trim().toLowerCase() : '';
 
   /// The same medicine by name, whatever the amount: a one-time dose of
   /// it counts towards an as-needed treatment's gap and daily most.
@@ -450,6 +517,8 @@ class DoseLog {
     this.reason = '',
     this.loggedAt,
     this.medication,
+    this.amount,
+    this.unit,
   });
 
   factory DoseLog.fromJson(String id, Map<String, Object?> j) => DoseLog(
@@ -474,6 +543,8 @@ class DoseLog {
             (j['medication'] as Map).cast<String, Object?>(),
           )
         : null,
+    amount: (j['amount'] as num?)?.toDouble(),
+    unit: j['unit'] as String?,
   );
 
   static const kind = 'dose';
@@ -503,6 +574,12 @@ class DoseLog {
   /// a treatment (the treatment has the medicine).
   final Medication? medication;
 
+  /// For a dose of a treatment: its amount and unit when it was logged, so
+  /// editing the treatment's dose later doesn't change what was given
+  /// (supply counts take it off). Null in records from before.
+  final double? amount;
+  final String? unit;
+
   /// Given once, outside any treatment.
   bool get isOneTime => treatmentId.isEmpty && medication != null;
 
@@ -523,6 +600,8 @@ class DoseLog {
         reason: reason ?? this.reason,
         loggedAt: loggedAt,
         medication: medication,
+        amount: amount,
+        unit: unit,
       );
 
   Map<String, Object?> toJson() => {
@@ -535,9 +614,174 @@ class DoseLog {
     'slotTime': slotTime?.toString(),
     'reason': reason,
     'loggedAt': loggedAt?.toUtc().toIso8601String(),
+    if (amount != null) 'amount': amount,
+    if (unit != null) 'unit': unit,
     if (medication != null) ...{
       'medicationId': medication!.id,
       'medication': medication!.toJson()..remove('kind'),
     },
+  };
+}
+
+/// How much of a medicine is left, as counted by a caregiver at
+/// [countedAt]. Doses given after that are taken off it as they're logged,
+/// so nobody has to change the number after each dose. Any caregiver may
+/// count (it isn't admin-only); the newest count of a medicine wins.
+///
+/// Stored as its own item (`stock/<uuid>`), with the medicine's name inside
+/// the encrypted record and not in the item id.
+@immutable
+class MedStock {
+  const MedStock({
+    required this.id,
+    required this.medicine,
+    required this.count,
+    required this.countedAt,
+    this.warnDays = 7,
+    this.byUserId = '',
+    this.unit,
+  });
+
+  factory MedStock.fromJson(String id, Map<String, Object?> j) => MedStock(
+    id: id,
+    medicine: j['medicine'] as String? ?? '',
+    count: (j['count'] as num?)?.toDouble() ?? 0,
+    countedAt: DateTime.parse(j['countedAt'] as String).toUtc(),
+    warnDays: (j['warnDays'] as num?)?.toInt() ?? 7,
+    byUserId: j['by'] as String? ?? '',
+    unit: j['unit'] as String?,
+  );
+
+  static const kind = 'stock';
+  static const prefix = 'stock/';
+
+  /// Choices for "remind me to order more", in days before it runs out.
+  static const warnChoices = [3, 5, 7, 10, 14];
+
+  final String id;
+
+  /// The medicine's name; matched without case, like the one-time dose
+  /// checks, so a course edited into a new treatment keeps its count.
+  final String medicine;
+
+  /// In the medicine's unit (tablets, ml) when it has a dose amount, else
+  /// in doses.
+  final double count;
+  final DateTime countedAt;
+
+  /// "Order more" this many days before it runs out.
+  final int warnDays;
+  final String byUserId;
+
+  /// What [count] is in ([Medication.stockUnit]): "" for doses. Null in
+  /// counts from before units were kept, which match any unit.
+  final String? unit;
+
+  /// A count of [m]: the same name, in the same unit.
+  bool isFor(Medication m) =>
+      medicine.trim().toLowerCase() == m.name.trim().toLowerCase() &&
+      (unit == null || unit == m.stockUnit);
+
+  Map<String, Object?> toJson() => {
+    'kind': kind,
+    'medicine': medicine,
+    'count': count,
+    'countedAt': countedAt.toUtc().toIso8601String(),
+    'warnDays': warnDays,
+    'by': byUserId,
+    if (unit != null) 'unit': unit,
+  };
+}
+
+/// Someone to call in an emergency.
+@immutable
+class EmergencyContact {
+  const EmergencyContact({required this.name, required this.phone});
+
+  factory EmergencyContact.fromJson(Map<String, Object?> j) => EmergencyContact(
+    name: j['name'] as String? ?? '',
+    phone: j['phone'] as String? ?? '',
+  );
+
+  final String name;
+  final String phone;
+
+  Map<String, Object?> toJson() => {'name': name, 'phone': phone};
+}
+
+/// A person's Medical ID: what a doctor or paramedic should know at once.
+/// One per space (item id `medical_id`), written by admins only, encrypted
+/// like everything else. Current medicines aren't stored here: the card
+/// shows the running treatments.
+@immutable
+class MedicalId {
+  const MedicalId({
+    this.bloodType = '',
+    this.allergies = const [],
+    this.conditions = const [],
+    this.notes = '',
+    this.contacts = const [],
+    this.extra = const {},
+  });
+
+  factory MedicalId.fromJson(Map<String, Object?> j) => MedicalId(
+    bloodType: j['bloodType'] as String? ?? '',
+    allergies: _strings(j['allergies']),
+    conditions: _strings(j['conditions']),
+    notes: j['notes'] as String? ?? '',
+    contacts: [
+      for (final c in (j['contacts'] as List? ?? const []))
+        if (c is Map) EmergencyContact.fromJson(c.cast<String, Object?>()),
+    ],
+    extra: {
+      for (final e in j.entries)
+        if (!_known.contains(e.key)) e.key: e.value,
+    },
+  );
+
+  static List<String> _strings(Object? v) => [
+    for (final s in (v as List? ?? const []))
+      if (s is String && s.trim().isNotEmpty) s.trim(),
+  ];
+
+  static const kind = 'medical_id';
+  static const itemId = 'medical_id';
+  static const bloodTypes = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+  static const _known = {
+    'kind',
+    'bloodType',
+    'allergies',
+    'conditions',
+    'notes',
+    'contacts',
+  };
+
+  /// "A+" etc., or empty when unknown.
+  final String bloodType;
+  final List<String> allergies;
+  final List<String> conditions;
+
+  /// "Has a pacemaker", "Carries an EpiPen in the blue bag".
+  final String notes;
+  final List<EmergencyContact> contacts;
+
+  /// Fields from a newer version, kept on save.
+  final Map<String, Object?> extra;
+
+  bool get isEmpty =>
+      bloodType.isEmpty &&
+      allergies.isEmpty &&
+      conditions.isEmpty &&
+      notes.trim().isEmpty &&
+      contacts.isEmpty;
+
+  Map<String, Object?> toJson() => {
+    ...extra,
+    'kind': kind,
+    'bloodType': bloodType,
+    'allergies': allergies,
+    'conditions': conditions,
+    'notes': notes,
+    'contacts': [for (final c in contacts) c.toJson()],
   };
 }

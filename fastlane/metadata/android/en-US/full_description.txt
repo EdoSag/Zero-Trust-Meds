@@ -1,7 +1,7 @@
 Did someone already give the antibiotic this morning? Zero-Trust Meds lets parents, grandparents and babysitters share one record of every dose a child gets, with reminders, and keeps it end-to-end encrypted between you.
 
 WHAT IT DOES
-• A profile per child, shared with every caregiver by link or QR code.
+• A profile per person: yourself, a child, an elderly parent or anyone you look after, shared with every caregiver by link or QR code.
 • Admins manage medicines and treatments; caregivers see everything and log doses.
 • Treatments at set times each day for a number of days, or "as needed" with a minimum gap and a daily most.
 • Today's doses per child: Given, Due, Missed, Upcoming, Skipped or Paused, always with an icon and a label.

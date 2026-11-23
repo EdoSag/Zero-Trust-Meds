@@ -16,6 +16,7 @@ class ReminderPrefs {
     this.followUpMinutes = 30,
     this.missedAlerts = true,
     this.lastDayNotice = true,
+    this.refillNotice = true,
     this.showNames = true,
     this.mutedChildren = const {},
     this.quietFrom,
@@ -27,6 +28,7 @@ class ReminderPrefs {
     followUpMinutes: (j?['followUpMinutes'] as num?)?.toInt() ?? 30,
     missedAlerts: j?['missedAlerts'] as bool? ?? true,
     lastDayNotice: j?['lastDayNotice'] as bool? ?? true,
+    refillNotice: j?['refillNotice'] as bool? ?? true,
     showNames: j?['showNames'] as bool? ?? true,
     mutedChildren: {
       for (final s in (j?['mutedChildren'] as List?) ?? const [])
@@ -62,6 +64,10 @@ class ReminderPrefs {
   /// A notice on the morning of a course's last day.
   final bool lastDayNotice;
 
+  /// "Order more" in the morning when a counted medicine is about to run
+  /// out (see [MedStock.warnDays]).
+  final bool refillNotice;
+
   /// Child and medicine names in the notification. Off: "Medicine
   /// reminder", and the names stay in the app. The lock screen never shows
   /// the text either way.
@@ -92,6 +98,7 @@ class ReminderPrefs {
     int? followUpMinutes,
     bool? missedAlerts,
     bool? lastDayNotice,
+    bool? refillNotice,
     bool? showNames,
     Set<String>? mutedChildren,
     TimeOfDose? quietFrom,
@@ -102,6 +109,7 @@ class ReminderPrefs {
     followUpMinutes: followUpMinutes ?? this.followUpMinutes,
     missedAlerts: missedAlerts ?? this.missedAlerts,
     lastDayNotice: lastDayNotice ?? this.lastDayNotice,
+    refillNotice: refillNotice ?? this.refillNotice,
     showNames: showNames ?? this.showNames,
     mutedChildren: mutedChildren ?? this.mutedChildren,
     quietFrom: clearQuietHours ? null : quietFrom ?? this.quietFrom,
@@ -114,6 +122,7 @@ class ReminderPrefs {
     'followUpMinutes': followUpMinutes,
     'missedAlerts': missedAlerts,
     'lastDayNotice': lastDayNotice,
+    'refillNotice': refillNotice,
     'showNames': showNames,
     'mutedChildren': mutedChildren.toList()..sort(),
     'quietFrom': quietFrom?.toString(),
@@ -121,7 +130,7 @@ class ReminderPrefs {
   };
 }
 
-enum ReminderKind { dose, followUp, missed, lastDay }
+enum ReminderKind { dose, followUp, missed, lastDay, refill }
 
 /// The words a reminder uses, in the reader's language. Built on this
 /// phone, so each caregiver reads their own language and clock.
@@ -134,6 +143,10 @@ abstract interface class ReminderTexts {
   String missedBody(String time);
   String lastDayTitle(String child, String medicine);
   String get lastDayBody;
+  String refillTitle(String child, String medicine);
+
+  /// [runsOut]: the day it runs out, or null when none is left already.
+  String refillBody(LocalDate? runsOut);
 
   /// Used instead of the titles above when names are hidden.
   String get privateTitle;
@@ -178,7 +191,8 @@ class MedsReminder {
   final bool silent;
 
   /// "Mark as given" is offered for a dose that can still be given.
-  bool get offersGiven => kind != ReminderKind.lastDay;
+  bool get offersGiven =>
+      kind != ReminderKind.lastDay && kind != ReminderKind.refill;
 
   String get key =>
       '${kind.name}|$spaceId|$treatmentId|${date ?? ''}|${time ?? ''}|'
@@ -283,7 +297,7 @@ abstract final class ReminderPlan {
   /// holds the soonest 60 (the app tops them up whenever it runs).
   static const maxIos = 60;
 
-  /// Last-day notices come at this time in the child's zone.
+  /// Last-day and order-more notices come at this time in the child's zone.
   static const lastDayAt = TimeOfDose(9, 0);
 
   /// The reminders this phone should hold now, soonest first.
@@ -394,9 +408,81 @@ abstract final class ReminderPlan {
           }
         }
       }
+      if (prefs.refillNotice) {
+        _refills(c, prefs, texts, nowUtc, until, local, out);
+      }
     }
     out.sort((a, b) => a.at.compareTo(b.at));
     return out.length > limit ? out.sublist(0, limit) : out;
+  }
+
+  /// Most "order more" mornings set ahead per medicine. The plan is made
+  /// again whenever the app runs, so this only covers days it stays closed.
+  static const refillMornings = 7;
+
+  /// "Order more" notices per counted medicine of a running course: every
+  /// morning from its order-by day (or the next morning once that has
+  /// passed), until someone counts it again or the course ends. Set ahead
+  /// for [refillMornings] mornings, so they keep coming while the app stays
+  /// closed. A medicine counted as empty is due at once, even when how fast
+  /// it's used isn't known.
+  static void _refills(
+    ChildData c,
+    ReminderPrefs prefs,
+    ReminderTexts texts,
+    DateTime nowUtc,
+    DateTime until,
+    DateTime Function(DateTime) local,
+    List<MedsReminder> out,
+  ) {
+    final today = c.today(nowUtc);
+    final seen = <String>{};
+    for (final t in c.active(nowUtc)) {
+      final m = t.medication;
+      if (!seen.add('${m.name.trim().toLowerCase()}|${m.stockUnit}')) continue;
+      final s = c.stockOf(m, nowUtc);
+      if (s == null) continue;
+      final orderBy = s.isOut ? today : s.orderBy;
+      if (orderBy == null) continue;
+      var day = orderBy.isBefore(today) ? today : orderBy;
+      if (!ChildClock.instant(c.zone, day, lastDayAt).isAfter(nowUtc)) {
+        day = day.addDays(1);
+      }
+      // The last day any course of this medicine (same count) runs; none
+      // when one of them has no end.
+      final courses = [
+        for (final x in c.active(nowUtc))
+          if (x.medication.name.trim().toLowerCase() ==
+                  m.name.trim().toLowerCase() &&
+              x.medication.stockUnit == m.stockUnit)
+            x,
+      ];
+      final end = courses.any((x) => x.lastDay == null)
+          ? null
+          : courses
+                .map((x) => x.lastDay!)
+                .reduce((a, b) => a.isAfter(b) ? a : b);
+      for (var n = 0; n < refillMornings; n++, day = day.addDays(1)) {
+        if (end != null && day.isAfter(end)) break;
+        final at = ChildClock.instant(c.zone, day, lastDayAt);
+        if (!at.isBefore(until)) break;
+        if (prefs.isQuiet(local(at))) continue;
+        out.add(
+          MedsReminder(
+            kind: ReminderKind.refill,
+            spaceId: c.spaceId,
+            treatmentId: t.id,
+            at: at,
+            title: prefs.showNames
+                ? texts.refillTitle(c.child.name, t.medication.name)
+                : texts.privateTitle,
+            body: prefs.showNames
+                ? texts.refillBody(s.isOut ? null : s.runsOutOn)
+                : texts.privateBody,
+          ),
+        );
+      }
+    }
   }
 
   /// The planned dose a reminder points at, if it's still planned.

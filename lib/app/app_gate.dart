@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:zero_trust_core/zero_trust_core.dart';
 
+import '../data/family_circle.dart';
 import '../data/meds_data.dart';
 import '../logic/dose_logic.dart';
+import '../platform/keyboard_pick.dart';
 import '../platform/links.dart';
 import '../reminders/reminders.dart';
 import '../ui/child_page.dart';
@@ -13,6 +15,7 @@ import '../ui/common.dart';
 import '../ui/dose_actions.dart';
 import '../ui/disclaimer.dart';
 import '../ui/home_page.dart';
+import '../ui/pick_for_keyboard_page.dart';
 import '../ui/sharing_pages.dart';
 import 'auth_providers.dart';
 import 'email_links.dart';
@@ -77,7 +80,10 @@ class _AppGateState extends ConsumerState<AppGate> with WidgetsBindingObserver {
   }
 
   void _forgotPassword() => Navigator.of(context).push(
-    MaterialPageRoute<void>(builder: (_) => ZtForgotPasswordScreen(redirectTo: EmailLinks.passwordReset)),
+    MaterialPageRoute<void>(
+      builder: (_) =>
+          ZtForgotPasswordScreen(redirectTo: EmailLinks.passwordReset),
+    ),
   );
 
   @override
@@ -155,6 +161,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
   StreamSubscription<void>? _links;
   StreamSubscription<void>? _taps;
   Timer? _resyncSoon;
+  Timer? _circleSoon;
   Timer? _hourly;
   bool _handlingTaps = false;
 
@@ -167,12 +174,47 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     });
     // Reminders are set 14 days ahead; this keeps the window moving, and
     // drops follow-ups for doses given while the app stayed open.
-    _hourly = Timer.periodic(const Duration(hours: 1), (_) => _resync());
+    _hourly = Timer.periodic(const Duration(hours: 1), (_) {
+      _resync();
+      _syncCircles();
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _takeLinks();
       _takeTaps();
+      _takeKeyboardPick();
     });
   }
+
+  /// ZT Keyboard's "Insert from ZT apps" key: pick a medicine, its dose,
+  /// times or when it was last given, for the keyboard to type. Only
+  /// reached once the vault is unlocked.
+  ///
+  /// Waits for the notice: a first-time user reads and accepts it before
+  /// the picker opens, as with reminder taps.
+  Future<void> _takeKeyboardPick() async {
+    if (_pickOpen) return;
+    if (!_pickWaiting) {
+      if (!await KeyboardPick.requested() || !mounted) return;
+      _pickWaiting = true;
+    }
+    final me = await ref.read(meProvider.future);
+    // Tried again when the notice is accepted (meProvider changes).
+    if (!mounted || !me.disclaimerAccepted || _pickOpen) return;
+    _pickWaiting = false;
+    _pickOpen = true;
+    try {
+      final picked = await Navigator.of(context).push<String>(
+        MaterialPageRoute(builder: (_) => const PickForKeyboardPage()),
+      );
+      await KeyboardPick.finish(picked);
+    } finally {
+      _pickOpen = false;
+    }
+  }
+
+  /// A keyboard request waiting for the notice to be accepted.
+  bool _pickWaiting = false;
+  bool _pickOpen = false;
 
   @override
   void didChangeDependencies() {
@@ -186,6 +228,7 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     _links?.cancel();
     _taps?.cancel();
     _resyncSoon?.cancel();
+    _circleSoon?.cancel();
     _hourly?.cancel();
     super.dispose();
   }
@@ -212,6 +255,29 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
         await ref.read(reminderSchedulerProvider).sync(plan, texts.channel);
       } on Object {
         // Retried on the next change or within the hour.
+      }
+    });
+  }
+
+  /// Keeps the doses of people shown in a ZT Family circle up to date there
+  /// (see [FamilyCircleDoses]).
+  void _syncCircles() {
+    _circleSoon?.cancel();
+    _circleSoon = Timer(const Duration(seconds: 2), () async {
+      if (!mounted) return;
+      try {
+        final state = ref.read(ztFamilySpacesProvider);
+        if (!state.ready || state.entries.isEmpty) return;
+        final family = await ref.read(familyProvider.future);
+        if (!mounted || family.loading) return;
+        await FamilyCircleDoses.sync(
+          ref.read(ztFamilySpacesProvider.notifier),
+          state,
+          family,
+          DateTime.now().toUtc(),
+        );
+      } on Object {
+        // Tried again on the next change or within the hour.
       }
     });
   }
@@ -299,11 +365,17 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
     // Sync for the account's own vault (name, notice) and the children.
     ref.watch(ztSyncControllerProvider);
     ref.watch(ztSpacesProvider);
+    // The ZT Family circles (S-10), for people shown in one.
+    ref.listen(ztFamilySpacesProvider, (_, _) => _syncCircles());
     ref.listen(familyProvider, (_, _) {
       _resync();
       _takeTaps();
+      _syncCircles();
     });
-    ref.listen(meProvider, (_, _) => _takeTaps());
+    ref.listen(meProvider, (_, _) {
+      _takeTaps();
+      if (_pickWaiting) _takeKeyboardPick();
+    });
     ref.listen(reminderPrefsProvider, (_, _) => _resync());
     final me = ref.watch(meProvider);
     final accepted = me.value?.disclaimerAccepted;

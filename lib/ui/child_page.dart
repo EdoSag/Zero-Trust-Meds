@@ -11,9 +11,12 @@ import '../model/models.dart';
 import 'charts_page.dart';
 import 'child_editor.dart';
 import 'common.dart';
+import 'family_circle_tile.dart';
 import 'home_page.dart';
+import 'medical_id_page.dart';
 import 'one_time_dose.dart';
 import 'sharing_pages.dart';
+import 'stock_sheet.dart';
 import 'treatment_editor.dart';
 
 class ChildPage extends ConsumerWidget {
@@ -100,12 +103,29 @@ class ChildPage extends ConsumerWidget {
             ),
             subtitle: Text(
               [
+                if (c.child.role != PersonRole.child)
+                  roleLabel(l, c.child.role),
                 if (c.child.birthDate != null)
                   l.bornOn(formatLocalDate(context, c.child.birthDate!)),
                 l.timesIn(c.child.timeZone),
               ].join(' · '),
             ),
           ),
+          ListTile(
+            leading: Icon(
+              Icons.medical_information_outlined,
+              color: Theme.of(context).colorScheme.error,
+            ),
+            title: Text(l.medicalId),
+            subtitle: Text(medicalIdSummary(context, c.medicalId)),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => MedicalIdPage(spaceId: c.spaceId),
+              ),
+            ),
+          ),
+          FamilyCircleTile(c),
           SectionHeader(
             l.today,
             trailing: TextButton.icon(
@@ -166,6 +186,8 @@ class ChildPage extends ConsumerWidget {
       'doses': [
         for (final l in c.logs) {...l.toJson(), 'byName': c.nameOf(l.byUserId)},
       ],
+      'stock': [for (final x in c.stocks) x.toJson()],
+      'medicalId': c.medicalId.toJson(),
     });
     final name = c.child.name.replaceAll(
       RegExp(r'[^\p{L}\p{N}]+', unicode: true),
@@ -251,18 +273,32 @@ class _TreatmentTile extends ConsumerWidget {
             formatLocalDate(context, last),
           );
     final adherence = Adherence.of(c.dosesOf(t, now));
+    final finished = t.isFinishedBy(c.today(now));
+    final stock = finished ? null : c.stockOf(t.medication, now);
+    final text = [
+      scheduleText(context, t),
+      period,
+      if (t.isPaused) l.statusPaused,
+      if (adherence.percent != null) l.adherence(adherence.percent!),
+    ].join(' · ');
     return ListTile(
       leading: Icon(t.isPaused ? Icons.pause_circle_outline : Icons.medication),
       title: Text('${t.medication.name} · ${doseText(context, t.medication)}'),
-      subtitle: Text(
-        [
-          scheduleText(context, t),
-          period,
-          if (t.isPaused) l.statusPaused,
-          if (adherence.percent != null) l.adherence(adherence.percent!),
-        ].join(' · '),
-      ),
-      onTap: c.isAdmin ? () => _actions(context, ref) : null,
+      subtitle: stock == null
+          ? Text(text)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(text),
+                const SizedBox(height: 4),
+                StockLine(stock, t.medication, today: c.today(now)),
+              ],
+            ),
+      onTap: c.isAdmin
+          ? () => _actions(context, ref)
+          : finished
+          ? null
+          : () => openStock(context, ref, c, t.medication),
     );
   }
 
@@ -291,6 +327,16 @@ class _TreatmentTile extends ConsumerWidget {
                 );
               },
             ),
+            if (!finished)
+              ListTile(
+                leading: const Icon(Icons.inventory_2_outlined),
+                title: Text(l.stockTitle),
+                subtitle: Text(l.stockHint),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  openStock(context, ref, c, t.medication);
+                },
+              ),
             if (!finished)
               ListTile(
                 leading: Icon(t.isPaused ? Icons.play_arrow : Icons.pause),

@@ -1,7 +1,7 @@
 name: zerotrust_meds
 description: "Zero-Trust Meds: track the medicines your children get, shared between every caregiver, end-to-end encrypted."
 publish_to: none
-version: 0.1.3+4
+version: 0.7.0+13
 
 environment:
   sdk: ^3.9.0
@@ -25,11 +25,7 @@ dependencies:
     git:
       url: https://github.com/EdoSag/Zero-Trust-Core.git
       path: packages/zero_trust_core
-      # Core Dev with the shared spaces trust chain fix (PR #35) and invite
-      # links per app (PR #37). Every app that shares must be on this commit
-      # or later: older ones cannot read the new member records. Switch to
-      # the release tag once one is pushed.
-      ref: 08eccf33e5989c0efceba67d351159b979ae0740
+      ref: v1.0.1
   flutter_riverpod: ^3.5.0
   supabase_flutter: ^2.9.0
   # Reset links from account emails (EmailLinks).
@@ -52,11 +48,13 @@ dependencies:
 dev_dependencies:
   # Release checks every Zero-Trust app runs in CI (keys, sync, sign-in, app
   # setup, database). Independent of zero_trust_core, so it may be newer.
+  # Must include Core PR #85: older checks still expect the raw-password
+  # sign-in for pre-core accounts that Z21 retired.
   zt_release_checks:
     git:
       url: https://github.com/EdoSag/Zero-Trust-Core.git
       path: packages/zt_release_checks
-      ref: b43fcd045722bc364ef2eaa739db181f9dac144f
+      ref: v1.0.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^5.0.0

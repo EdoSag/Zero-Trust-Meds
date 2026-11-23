@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/meds_data.dart';
 import '../model/models.dart';
 import 'common.dart';
+import 'medicine_name_field.dart';
 import 'dose_actions.dart';
 
 /// Opens the one-time dose form for [spaceId] (or the first child).
@@ -213,14 +214,12 @@ class _OneTimeDosePageState extends ConsumerState<OneTimeDosePage> {
               ),
               const SizedBox(height: 12),
             ],
-            TextFormField(
-              key: const Key('oneTimeName'),
+            MedicineNameField(
+              fieldKey: const Key('oneTimeName'),
               controller: _name,
-              textCapitalization: TextCapitalization.sentences,
-              decoration: InputDecoration(labelText: l.medicineName),
-              validator: (v) =>
-                  v == null || v.trim().isEmpty ? l.required : null,
-              onChanged: (_) => setState(() => _medId = ''),
+              family: suggestions,
+              onChanged: () => setState(() => _medId = ''),
+              onSaved: _pick,
             ),
             const SizedBox(height: 12),
             Row(

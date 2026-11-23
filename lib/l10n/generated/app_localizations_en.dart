@@ -19,37 +19,38 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get loadError =>
-      'Couldn\'t load your children. Pull down to try again.';
+      'Couldn\'t load your family\'s medicines. Pull down to try again.';
 
   @override
   String get addChildOrJoin => 'Add or join';
 
   @override
-  String get addChild => 'Add a child';
+  String get addChild => 'Add a person';
 
   @override
-  String get addChildHint => 'You manage their medicines and invite caregivers';
+  String get addChildHint =>
+      'Yourself, a child or a parent. You can invite caregivers';
 
   @override
   String get joinWithInvite => 'Join with an invite';
 
   @override
   String get joinWithInviteHint =>
-      'Scan or paste the invite another parent sent you';
+      'Scan or paste the invite a family member sent you';
 
   @override
-  String get emptyTitle => 'Track your children\'s medicines together';
+  String get emptyTitle => 'Track your family\'s medicines together';
 
   @override
   String get emptyBody =>
-      'Add a child, set up their treatments and invite everyone who gives them medicine. Everything is end-to-end encrypted.';
+      'Add yourself, a child or an elderly parent, set up their treatments and invite everyone who helps. Everything is end-to-end encrypted.';
 
   @override
   String get waitingForAdmin => 'Waiting for the admin to let you in';
 
   @override
   String get waitingForSync =>
-      'Confirmed. The child\'s details will appear in a moment.';
+      'Confirmed. Their details will appear in a moment.';
 
   @override
   String waitingCode(String code) {
@@ -274,10 +275,10 @@ class AppL10nEn extends AppL10n {
   String get recordRemoved => 'Record removed';
 
   @override
-  String get childGone => 'This child is no longer here.';
+  String get childGone => 'This profile is no longer here.';
 
   @override
-  String get editChild => 'Edit child';
+  String get editChild => 'Edit details';
 
   @override
   String get exportChild => 'Export records';
@@ -286,7 +287,7 @@ class AppL10nEn extends AppL10n {
   String get leaveChild => 'Stop being a caregiver';
 
   @override
-  String get deleteChild => 'Delete child';
+  String get deleteChild => 'Delete profile';
 
   @override
   String get addTreatment => 'Add treatment';
@@ -341,7 +342,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get deleteChildBody =>
-      'Deletes the child, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.';
+      'Deletes this profile, every treatment and every dose record for all caregivers. This can\'t be undone. Export the records first if you want to keep them.';
 
   @override
   String get delete => 'Delete';
@@ -413,7 +414,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get removeCaregiverBody =>
-      'They lose access at once. The child\'s key is replaced, so nothing written from now on can be read with their old key.';
+      'They lose access at once. The profile\'s key is replaced, so nothing written from now on can be read with their old key.';
 
   @override
   String get remove => 'Remove';
@@ -439,7 +440,7 @@ class AppL10nEn extends AppL10n {
   String get save => 'Save';
 
   @override
-  String get childName => 'Child\'s name';
+  String get childName => 'Name';
 
   @override
   String get required => 'Required';
@@ -484,7 +485,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get addChildPrivacy =>
-      'Only people you invite can see this child. Names, medicines and doses are encrypted on this phone before they are sent.';
+      'Only people you invite can see this profile. Names, medicines and doses are encrypted on this phone before they are sent.';
 
   @override
   String get searchZone => 'Search city or region';
@@ -577,7 +578,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get inviteIntro =>
-      'Invite a parent, grandparent or babysitter. They need a Zero-Trust account. The invite works once and expires in 7 days.';
+      'Invite family, a babysitter or a carer. They need a Zero-Trust account. The invite works once and expires in 7 days.';
 
   @override
   String get createInvite => 'Create invite';
@@ -651,14 +652,14 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get joinCodeBody =>
-      'They compare it with the code on their phone and let you in. The child appears here once they do.';
+      'They compare it with the code on their phone and let you in. The profile appears here once they do.';
 
   @override
   String get done => 'Done';
 
   @override
   String get joinIntro =>
-      'Paste the invite link you were sent, or scan the QR code on the other parent\'s phone.';
+      'Paste the invite link you were sent, or scan the QR code on the other person\'s phone.';
 
   @override
   String get inviteLink => 'Invite link';
@@ -676,7 +677,7 @@ class AppL10nEn extends AppL10n {
   String get medicineList => 'Medicines';
 
   @override
-  String get medicineListHint => 'The family\'s list, reused across children';
+  String get medicineListHint => 'The family\'s list, reused for everyone';
 
   @override
   String get medicineListEmpty =>
@@ -698,7 +699,7 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get disclaimerBody1 =>
-      'ZT Meds helps you remember and record the medicines your children get. It does not give medical advice, check doses or check for interactions.';
+      'ZT Meds helps you remember and record the medicines you and your family take. It does not give medical advice, check doses or check for interactions.';
 
   @override
   String get disclaimerBody2 =>
@@ -900,8 +901,7 @@ class AppL10nEn extends AppL10n {
   String get reminderChannel => 'Dose reminders';
 
   @override
-  String get reminderChannelHint =>
-      'When your children\'s doses are due or missed';
+  String get reminderChannelHint => 'When doses are due or missed';
 
   @override
   String get remindersTitle => 'Reminders';
@@ -933,8 +933,7 @@ class AppL10nEn extends AppL10n {
   String get missedAlerts => 'Missed-dose alert';
 
   @override
-  String get missedAlertsHint =>
-      'When a dose passes the child\'s \"missed after\" time';
+  String get missedAlertsHint => 'When a dose passes its \"missed after\" time';
 
   @override
   String get lastDayNotice => 'Last-day notice';
@@ -1037,4 +1036,230 @@ class AppL10nEn extends AppL10n {
 
   @override
   String get nothingPlannedToday => 'No planned doses today';
+
+  @override
+  String get insertIntoKeyboard => 'Insert into ZT Keyboard';
+
+  @override
+  String get insertPickMedHint =>
+      'Tap a medicine, then what to type. Only what you tap is typed.';
+
+  @override
+  String get insertNoMedicines => 'No medicines are running now.';
+
+  @override
+  String get insertMedList => 'All running medicines';
+
+  @override
+  String get insertMedName => 'Medicine';
+
+  @override
+  String get insertMedDose => 'Medicine and dose';
+
+  @override
+  String get insertMedSchedule => 'Dose and times';
+
+  @override
+  String insertMedScheduleText(String medicine, String times) {
+    return '$medicine: $times';
+  }
+
+  @override
+  String get insertMedLastGiven => 'Last given';
+
+  @override
+  String insertMedLastGivenText(String medicine, String when) {
+    return '$medicine, last given $when';
+  }
+
+  @override
+  String get insertMedNotes => 'Notes';
+
+  @override
+  String get personRole => 'Who is this?';
+
+  @override
+  String get roleSelf => 'Me';
+
+  @override
+  String get roleChild => 'My child';
+
+  @override
+  String get roleParent => 'My parent';
+
+  @override
+  String get roleOther => 'Someone else';
+
+  @override
+  String get stockTitle => 'Supply left';
+
+  @override
+  String get stockHint => 'Count what is left and get a reminder to order more';
+
+  @override
+  String get stockHowMuch => 'How much is left now?';
+
+  @override
+  String stockInUnit(String unit) {
+    return 'In $unit. Doses given from now on are taken off by themselves.';
+  }
+
+  @override
+  String get stockInDoses =>
+      'In doses. Doses given from now on are taken off by themselves.';
+
+  @override
+  String get stockWarn => 'Remind me to order more';
+
+  @override
+  String stockDaysBefore(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: '$days days before it runs out',
+      one: '1 day before it runs out',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockStop => 'Stop counting';
+
+  @override
+  String stockLeft(String amount) {
+    return 'About $amount left';
+  }
+
+  @override
+  String stockRunsOut(String date) {
+    return 'runs out around $date';
+  }
+
+  @override
+  String get stockOrderMore => 'Order more';
+
+  @override
+  String get stockNoneLeft => 'None left';
+
+  @override
+  String get stockSaved => 'Saved. Doses given from now on are taken off.';
+
+  @override
+  String reminderRefillTitle(String child, String medicine) {
+    return 'Order more $medicine for $child';
+  }
+
+  @override
+  String reminderRefillBody(String date) {
+    return 'It runs out around $date.';
+  }
+
+  @override
+  String get reminderRefillOutBody => 'None left, as far as the app knows.';
+
+  @override
+  String get refillNotice => 'Order more';
+
+  @override
+  String get refillNoticeHint =>
+      'In the morning, when a medicine you count is about to run out';
+
+  @override
+  String get medicineFromFamilyList => 'From your list';
+
+  @override
+  String get medicalId => 'Medical ID';
+
+  @override
+  String get medicalIdEmpty =>
+      'Allergies, conditions, blood type and who to call: not filled in yet';
+
+  @override
+  String get medicalIdFilledIn => 'Filled in';
+
+  @override
+  String get medicalIdIntro =>
+      'What a doctor or paramedic should know at once. Only this profile\'s caregivers can see it, and it is encrypted like everything else.';
+
+  @override
+  String medicalIdAllergiesLine(String list) {
+    return 'Allergies: $list';
+  }
+
+  @override
+  String medicalIdShareTitle(String name) {
+    return 'Medical ID: $name';
+  }
+
+  @override
+  String get allergies => 'Allergies';
+
+  @override
+  String get conditions => 'Conditions';
+
+  @override
+  String get currentMedicines => 'Current medicines';
+
+  @override
+  String get noneRecorded => 'None recorded';
+
+  @override
+  String get bloodType => 'Blood type';
+
+  @override
+  String get bloodTypeUnknown => 'Unknown';
+
+  @override
+  String get medicalNotes => 'Other important information';
+
+  @override
+  String get medicalNotesHint =>
+      'A pacemaker, an implant, where the EpiPen is kept';
+
+  @override
+  String get emergencyContacts => 'Emergency contacts';
+
+  @override
+  String get addEmergencyContact => 'Add a contact';
+
+  @override
+  String get contactName => 'Name';
+
+  @override
+  String get contactPhone => 'Phone';
+
+  @override
+  String get onePerLine => 'One per line';
+
+  @override
+  String callContact(String name) {
+    return 'Call $name';
+  }
+
+  @override
+  String get editMedicalId => 'Edit Medical ID';
+
+  @override
+  String get shareMedicalId => 'Share Medical ID';
+
+  @override
+  String get familyCircleShow => 'Show in ZT Family';
+
+  @override
+  String familyCircleOnHint(String circle) {
+    return 'Today\'s doses show in the family hub of $circle. Everyone in that circle sees the medicine names and times.';
+  }
+
+  @override
+  String get familyCircleOffHint =>
+      'Show today\'s doses in your ZT Family circle\'s hub';
+
+  @override
+  String get familyCircleNone => 'Create or join a circle in ZT Family first';
+
+  @override
+  String get familyCirclePick => 'Which circle?';
+
+  @override
+  String get familyCircleUnnamed => 'Family circle';
 }

@@ -5,7 +5,9 @@ import 'package:timezone/timezone.dart' as tz;
 import 'package:zero_trust_core/zero_trust_core.dart';
 
 import '../logic/dose_logic.dart';
+import '../logic/stock.dart';
 import '../model/models.dart';
+import 'family_circle.dart';
 
 /// Bumped after every local write, so screens update at once even offline
 /// (the sync status, which also refreshes them, changes only on sync).
@@ -28,6 +30,8 @@ class ChildData {
     required this.treatments,
     required this.logs,
     required this.zone,
+    this.stocks = const [],
+    this.medicalId = const MedicalId(),
   });
 
   final SpaceEntry entry;
@@ -38,6 +42,13 @@ class ChildData {
   final List<Treatment> treatments;
   final List<DoseLog> logs;
   final tz.Location zone;
+
+  /// Supply counts (see [MedStock]); possibly several per medicine, when
+  /// two caregivers counted at once. The newest one counts.
+  final List<MedStock> stocks;
+
+  /// Allergies, conditions, blood type and emergency contacts.
+  final MedicalId medicalId;
 
   String get spaceId => entry.info.id;
   SharedSpace get space => entry.space!;
@@ -151,6 +162,64 @@ class ChildData {
     return best;
   }
 
+  /// The medicine as a record says it was given: a one-time dose's own,
+  /// or the treatment's with the amount and unit logged at the time.
+  Medication? givenAs(DoseLog log) {
+    final m = medicineOf(log);
+    if (m == null || log.isOneTime || log.amount == null) return m;
+    return Medication(
+      id: m.id,
+      name: m.name,
+      form: m.form,
+      amount: log.amount,
+      unit: log.unit ?? m.unit,
+      notes: m.notes,
+    );
+  }
+
+  /// The newest count of [m] (same name and unit), if anyone counted it.
+  MedStock? stockFor(Medication m) {
+    MedStock? best;
+    for (final s in stocks) {
+      if (!s.isFor(m)) continue;
+      if (best == null || s.countedAt.isAfter(best.countedAt)) best = s;
+    }
+    return best;
+  }
+
+  /// How much of [m] is left and when it runs out; null when nobody
+  /// counted it. Only doses in the count's unit are taken off, each with
+  /// the amount given at the time.
+  StockStatus? stockOf(Medication m, DateTime nowUtc) {
+    final stock = stockFor(m);
+    if (stock == null) return null;
+    bool same(Medication x) =>
+        x.name.trim().toLowerCase() == m.name.trim().toLowerCase() &&
+        (stock.unit == null || x.stockUnit == stock.unit);
+    final day = today(nowUtc);
+    var planned = 0.0;
+    for (final t in active(nowUtc)) {
+      if (!same(t.medication)) continue;
+      if (t.isPaused || !t.runsOn(day)) continue;
+      final s = t.schedule;
+      if (s is FixedTimes) {
+        planned += s.times.length * (t.medication.amount ?? 1);
+      }
+    }
+    return StockMath.of(
+      stock: stock,
+      given: [
+        for (final l in logs)
+          if (l.given)
+            if (givenAs(l) case final g? when same(g))
+              (at: l.at, amount: g.amount ?? 1),
+      ],
+      plannedPerDay: planned,
+      nowUtc: nowUtc,
+      today: day,
+    );
+  }
+
   /// As-needed treatments running today.
   List<Treatment> asNeeded(DateTime nowUtc) => [
     for (final t in active(nowUtc))
@@ -223,6 +292,8 @@ Future<ChildData?> readChild(SpaceEntry e) async {
   final meds = <Medication>[];
   final treatments = <Treatment>[];
   final logs = <DoseLog>[];
+  final stocks = <MedStock>[];
+  var medicalId = const MedicalId();
   for (final item in await space.store.all()) {
     final j = item.json;
     if (item.deleted || j == null) continue;
@@ -236,6 +307,10 @@ Future<ChildData?> readChild(SpaceEntry e) async {
           treatments.add(Treatment.fromJson(item.itemId, j));
         case DoseLog.kind:
           logs.add(DoseLog.fromJson(item.itemId, j));
+        case MedStock.kind:
+          stocks.add(MedStock.fromJson(item.itemId, j));
+        case MedicalId.kind:
+          medicalId = MedicalId.fromJson(j);
       }
     } on Object {
       // A record from a newer version of the app: skipped, not fatal.
@@ -249,6 +324,8 @@ Future<ChildData?> readChild(SpaceEntry e) async {
     treatments: treatments,
     logs: logs,
     zone: zoneOf(child.timeZone),
+    stocks: stocks,
+    medicalId: medicalId,
   );
 }
 
@@ -343,8 +420,29 @@ class MedsActions {
     _changed();
   }
 
+  Future<void> saveMedicalId(String spaceId, MedicalId id) async {
+    await _spaces.save(spaceId, MedicalId.itemId, id.toJson());
+    _changed();
+  }
+
   /// Deletes the child and every record about them, for every caregiver.
   Future<void> deleteChild(String spaceId) async {
+    // Shown in a ZT Family circle: its doses leave the hub first.
+    final family = ref.read(familyProvider).value;
+    final circle = family?.child(spaceId)?.child.familyCircle;
+    if (circle != null) {
+      try {
+        await FamilyCircleDoses.removePerson(
+          ref.read(ztFamilySpacesProvider.notifier),
+          ref.read(ztFamilySpacesProvider),
+          circle,
+          spaceId,
+        );
+      } on Object {
+        // Offline or not in the circle any more: the copies go once they
+        // are past (FamilyCircleDoses.stale).
+      }
+    }
     await _spaces.deleteSpace(spaceId);
     _changed();
   }
@@ -501,6 +599,12 @@ class MedsActions {
       slotTime: slot?.time,
       reason: reason,
       loggedAt: DateTime.now().toUtc(),
+      // The dose as it is now; a later edit of the treatment doesn't
+      // change what was given.
+      amount: action == DoseAction.given ? treatment.medication.amount : null,
+      unit: action == DoseAction.given && treatment.medication.amount != null
+          ? treatment.medication.unit.trim()
+          : null,
     );
     await _spaces.save(c.spaceId, log.id, log.toJson());
     _changed();
@@ -541,6 +645,39 @@ class MedsActions {
 
   Future<void> updateLog(ChildData c, DoseLog log) async {
     await _spaces.save(c.spaceId, log.id, log.toJson());
+    _changed();
+  }
+
+  /// Records how much of a medicine is left now. Updates the newest count
+  /// of it when there is one, so the space keeps one record per medicine.
+  Future<void> countStock(
+    ChildData c, {
+    required Medication medicine,
+    required double count,
+    required int warnDays,
+  }) async {
+    final old = c.stockFor(medicine);
+    final stock = MedStock(
+      // A count from before units were kept is updated in place, and
+      // gets its unit now.
+      id: old?.id ?? '${MedStock.prefix}${newUuid()}',
+      medicine: medicine.name.trim(),
+      count: count,
+      countedAt: DateTime.now().toUtc(),
+      warnDays: warnDays,
+      byUserId: myUserId,
+      unit: medicine.stockUnit,
+    );
+    await _spaces.save(c.spaceId, stock.id, stock.toJson());
+    _changed();
+    unawaited(_spaces.syncNow(c.spaceId).catchError((Object _) {}));
+  }
+
+  /// Stops counting a medicine: every count of it is deleted.
+  Future<void> stopCounting(ChildData c, Medication medicine) async {
+    for (final s in c.stocks) {
+      if (s.isFor(medicine)) await _spaces.delete(c.spaceId, s.id);
+    }
     _changed();
   }
 

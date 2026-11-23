@@ -69,6 +69,13 @@ class L10nReminderTexts implements ReminderTexts {
   @override
   String get lastDayBody => l.reminderLastDayBody;
   @override
+  String refillTitle(String child, String medicine) =>
+      l.reminderRefillTitle(child, medicine);
+  @override
+  String refillBody(LocalDate? runsOut) => runsOut == null
+      ? l.reminderRefillOutBody
+      : l.reminderRefillBody(formatLocalDate(context, runsOut));
+  @override
   String get privateTitle => l.reminderPrivateTitle;
   @override
   String get privateBody => l.reminderPrivateBody;

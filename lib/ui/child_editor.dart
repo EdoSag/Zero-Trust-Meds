@@ -25,7 +25,8 @@ const childColors = [
 
 const missedWindows = [30, 60, 120, 180, 240];
 
-/// Adds a child (a new shared space with you as admin) or edits one.
+/// Adds a person (yourself, a child, a parent or someone else: a new
+/// shared space with you as admin) or edits one.
 class ChildEditorPage extends ConsumerStatefulWidget {
   const ChildEditorPage({super.key, this.existing});
   final ChildData? existing;
@@ -42,6 +43,7 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
   late int _color = widget.existing?.child.color ?? childColors.first;
   String? _zone;
   late int _missed = widget.existing?.child.missedAfterMinutes ?? 120;
+  late PersonRole _role = widget.existing?.child.role ?? PersonRole.child;
 
   /// Small JPEG, base64; encrypted with the rest of the child's profile.
   late String? _photo = widget.existing?.child.photo;
@@ -66,7 +68,11 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
     ref
         .read(meProvider.future)
         .then((me) {
-          if (mounted && _myName.text.isEmpty) _myName.text = me.name;
+          if (!mounted) return;
+          if (_myName.text.isEmpty) _myName.text = me.name;
+          if (_role == PersonRole.self && _name.text.isEmpty) {
+            _name.text = me.name;
+          }
         })
         .catchError((Object _) {});
   }
@@ -89,6 +95,9 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
       color: _color,
       photo: _photo,
       missedAfterMinutes: _missed,
+      role: _role,
+      familyCircle: widget.existing?.child.familyCircle,
+      extra: widget.existing?.child.extra ?? const {},
     );
     try {
       if (_isNew) {
@@ -142,6 +151,26 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
               ),
             ),
             const SizedBox(height: 16),
+            Text(l.personRole, style: Theme.of(context).textTheme.labelLarge),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final r in PersonRole.values)
+                  ChoiceChip(
+                    label: Text(roleLabel(l, r)),
+                    selected: r == _role,
+                    onSelected: (_) => setState(() {
+                      _role = r;
+                      if (r == PersonRole.self && _name.text.trim().isEmpty) {
+                        _name.text = _myName.text;
+                      }
+                    }),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
             TextFormField(
               controller: _name,
               autofocus: _isNew,
@@ -164,9 +193,13 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
                 final picked = await showDatePicker(
                   context: context,
                   initialDate: b == null
-                      ? DateTime(now.year - 3, now.month, now.day)
+                      ? DateTime(
+                          now.year - _typicalAge(_role),
+                          now.month,
+                          now.day,
+                        )
                       : DateTime(b.year, b.month, b.day),
-                  firstDate: DateTime(now.year - 25),
+                  firstDate: DateTime(now.year - 120),
                   lastDate: now,
                 );
                 if (picked != null) {
@@ -258,6 +291,13 @@ class _ChildEditorPageState extends ConsumerState<ChildEditorPage> {
     );
   }
 }
+
+/// Where the birth-date picker opens when no date is set yet.
+int _typicalAge(PersonRole r) => switch (r) {
+  PersonRole.child => 3,
+  PersonRole.parent => 70,
+  PersonRole.self || PersonRole.other => 35,
+};
 
 class _ZonePicker extends StatefulWidget {
   const _ZonePicker();

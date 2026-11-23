@@ -46,6 +46,14 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https" android:host="zerotrust.bz" android:pathPrefix="/auth/meds/"/>
             </intent-filter>
+            <!-- ZT Keyboard's "Insert from ZT apps": the keyboard opens Meds for the
+                 user to pick a medicine, its dose, times or when it was last given.
+                 MainActivity only answers a caller signed with this app's own key
+                 (see TextPick). -->
+            <intent-filter>
+                <action android:name="bz.zerotrust.action.PICK_TEXT"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
             <!-- Caregiver invites: https://zerotrust.bz/join/meds#zt1.meds.… -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW"/>
