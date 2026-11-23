@@ -189,7 +189,8 @@ class ChildData {
 
   /// How much of [m] is left and when it runs out; null when nobody
   /// counted it. Only doses in the count's unit are taken off, each with
-  /// the amount given at the time.
+  /// the amount given at the time. A medicine counted in doses (no unit)
+  /// loses one per dose, whatever amount it has.
   StockStatus? stockOf(Medication m, DateTime nowUtc) {
     final stock = stockFor(m);
     if (stock == null) return null;
@@ -203,7 +204,7 @@ class ChildData {
       if (t.isPaused || !t.runsOn(day)) continue;
       final s = t.schedule;
       if (s is FixedTimes) {
-        planned += s.times.length * (t.medication.amount ?? 1);
+        planned += s.times.length * _perDose(t.medication);
       }
     }
     return StockMath.of(
@@ -212,13 +213,18 @@ class ChildData {
         for (final l in logs)
           if (l.given)
             if (givenAs(l) case final g? when same(g))
-              (at: l.at, amount: g.amount ?? 1),
+              (at: l.at, amount: _perDose(g)),
       ],
       plannedPerDay: planned,
       nowUtc: nowUtc,
       today: day,
     );
   }
+
+  /// What one dose of [m] takes off its count: the amount when the count
+  /// is in a unit (5 ml), else one dose.
+  static double _perDose(Medication m) =>
+      m.stockUnit.isEmpty ? 1 : (m.amount ?? 1);
 
   /// As-needed treatments running today.
   List<Treatment> asNeeded(DateTime nowUtc) => [

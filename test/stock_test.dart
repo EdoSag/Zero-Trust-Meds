@@ -254,6 +254,44 @@ void main() {
       );
     });
 
+    test('a medicine with an amount but no unit is counted in doses: '
+        'one comes off per dose', () async {
+      final space = await mumPhone.spaces.open(spaceId);
+      const drops = Medication(id: 'med-9', name: 'Drops', amount: 2);
+      await space.save(
+        't9',
+        Treatment(
+          id: 't9',
+          medication: drops,
+          schedule: const FixedTimes([TimeOfDose(8, 0), TimeOfDose(20, 0)]),
+          startDate: LocalDate.parse('2026-01-10'),
+        ).toJson(),
+      );
+      await space.save(
+        'stock/d',
+        MedStock(
+          id: 'stock/d',
+          medicine: 'Drops',
+          count: 10,
+          countedAt: DateTime.utc(2026, 1, 10, 7),
+          unit: '',
+        ).toJson(),
+      );
+      final dose = DoseLog(
+        id: 'dose/d1',
+        treatmentId: 't9',
+        action: DoseAction.given,
+        at: DateTime.utc(2026, 1, 10, 8),
+        byUserId: mum,
+        amount: 2,
+      );
+      await space.save(dose.id, dose.toJson());
+      final c = (await mumPhone.child(spaceId))!;
+      final s = c.stockOf(drops, DateTime.utc(2026, 1, 10, 9))!;
+      expect(s.left, 9);
+      expect(s.perDay, 2);
+    });
+
     test('the newest count wins when two were made', () async {
       final space = await mumPhone.spaces.open(spaceId);
       for (final (id, count, hour) in [
