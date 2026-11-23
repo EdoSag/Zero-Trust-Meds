@@ -301,6 +301,12 @@ class Medication {
   String get sameKey =>
       '${name.trim().toLowerCase()}|$amount|$unit|${form.name}';
 
+  /// What a supply count of it is in: the unit ("ml", "tablet") when a
+  /// dose has an amount in one, else "" (counted in doses). Counts and
+  /// doses in different units are never mixed.
+  String get stockUnit =>
+      amount != null && unit.trim().isNotEmpty ? unit.trim().toLowerCase() : '';
+
   /// The same medicine by name, whatever the amount: a one-time dose of
   /// it counts towards an as-needed treatment's gap and daily most.
   bool sameNameAs(Medication other) =>
@@ -511,6 +517,8 @@ class DoseLog {
     this.reason = '',
     this.loggedAt,
     this.medication,
+    this.amount,
+    this.unit,
   });
 
   factory DoseLog.fromJson(String id, Map<String, Object?> j) => DoseLog(
@@ -535,6 +543,8 @@ class DoseLog {
             (j['medication'] as Map).cast<String, Object?>(),
           )
         : null,
+    amount: (j['amount'] as num?)?.toDouble(),
+    unit: j['unit'] as String?,
   );
 
   static const kind = 'dose';
@@ -564,6 +574,12 @@ class DoseLog {
   /// a treatment (the treatment has the medicine).
   final Medication? medication;
 
+  /// For a dose of a treatment: its amount and unit when it was logged, so
+  /// editing the treatment's dose later doesn't change what was given
+  /// (supply counts take it off). Null in records from before.
+  final double? amount;
+  final String? unit;
+
   /// Given once, outside any treatment.
   bool get isOneTime => treatmentId.isEmpty && medication != null;
 
@@ -584,6 +600,8 @@ class DoseLog {
         reason: reason ?? this.reason,
         loggedAt: loggedAt,
         medication: medication,
+        amount: amount,
+        unit: unit,
       );
 
   Map<String, Object?> toJson() => {
@@ -596,6 +614,8 @@ class DoseLog {
     'slotTime': slotTime?.toString(),
     'reason': reason,
     'loggedAt': loggedAt?.toUtc().toIso8601String(),
+    if (amount != null) 'amount': amount,
+    if (unit != null) 'unit': unit,
     if (medication != null) ...{
       'medicationId': medication!.id,
       'medication': medication!.toJson()..remove('kind'),
@@ -619,6 +639,7 @@ class MedStock {
     required this.countedAt,
     this.warnDays = 7,
     this.byUserId = '',
+    this.unit,
   });
 
   factory MedStock.fromJson(String id, Map<String, Object?> j) => MedStock(
@@ -628,6 +649,7 @@ class MedStock {
     countedAt: DateTime.parse(j['countedAt'] as String).toUtc(),
     warnDays: (j['warnDays'] as num?)?.toInt() ?? 7,
     byUserId: j['by'] as String? ?? '',
+    unit: j['unit'] as String?,
   );
 
   static const kind = 'stock';
@@ -651,8 +673,14 @@ class MedStock {
   final int warnDays;
   final String byUserId;
 
-  bool isFor(String name) =>
-      medicine.trim().toLowerCase() == name.trim().toLowerCase();
+  /// What [count] is in ([Medication.stockUnit]): "" for doses. Null in
+  /// counts from before units were kept, which match any unit.
+  final String? unit;
+
+  /// A count of [m]: the same name, in the same unit.
+  bool isFor(Medication m) =>
+      medicine.trim().toLowerCase() == m.name.trim().toLowerCase() &&
+      (unit == null || unit == m.stockUnit);
 
   Map<String, Object?> toJson() => {
     'kind': kind,
@@ -661,6 +689,7 @@ class MedStock {
     'countedAt': countedAt.toUtc().toIso8601String(),
     'warnDays': warnDays,
     'by': byUserId,
+    if (unit != null) 'unit': unit,
   };
 }
 

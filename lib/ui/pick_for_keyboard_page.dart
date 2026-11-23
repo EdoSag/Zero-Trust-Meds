@@ -15,10 +15,12 @@ String medicineWithDose(BuildContext context, Medication m) {
   return dose.isEmpty ? m.name.trim() : '${m.name.trim()} $dose';
 }
 
-/// The last dose of [t] that was given, if any.
+/// The last dose of [t]'s medicine that was given, if any: from the
+/// treatment, or a one-time dose of the same medicine (as the dose checks
+/// count them).
 DoseLog? lastGiven(ChildData c, Treatment t) {
   DoseLog? last;
-  for (final l in c.logsOf(t.id)) {
+  for (final l in c.guardLogsOf(t)) {
     if (l.action != DoseAction.given) continue;
     if (last == null || l.at.isAfter(last.at)) last = l;
   }
@@ -57,7 +59,11 @@ List<PickValue> treatmentValues(
       (
         icon: Icons.check_circle_outline,
         label: l.insertMedLastGiven,
-        text: l.insertMedLastGivenText(withDose, formatWhen(context, last.at)),
+        // A one-time dose says its own amount.
+        text: l.insertMedLastGivenText(
+          medicineWithDose(context, c.medicineOf(last) ?? m),
+          formatWhen(context, last.at),
+        ),
       ),
     if (m.notes.trim().isNotEmpty)
       (icon: Icons.notes, label: l.insertMedNotes, text: m.notes.trim()),

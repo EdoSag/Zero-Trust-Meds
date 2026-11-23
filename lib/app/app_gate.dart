@@ -188,13 +188,33 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
   /// ZT Keyboard's "Insert from ZT apps" key: pick a medicine, its dose,
   /// times or when it was last given, for the keyboard to type. Only
   /// reached once the vault is unlocked.
+  ///
+  /// Waits for the notice: a first-time user reads and accepts it before
+  /// the picker opens, as with reminder taps.
   Future<void> _takeKeyboardPick() async {
-    if (!await KeyboardPick.requested() || !mounted) return;
-    final picked = await Navigator.of(context).push<String>(
-      MaterialPageRoute(builder: (_) => const PickForKeyboardPage()),
-    );
-    await KeyboardPick.finish(picked);
+    if (_pickOpen) return;
+    if (!_pickWaiting) {
+      if (!await KeyboardPick.requested() || !mounted) return;
+      _pickWaiting = true;
+    }
+    final me = await ref.read(meProvider.future);
+    // Tried again when the notice is accepted (meProvider changes).
+    if (!mounted || !me.disclaimerAccepted || _pickOpen) return;
+    _pickWaiting = false;
+    _pickOpen = true;
+    try {
+      final picked = await Navigator.of(context).push<String>(
+        MaterialPageRoute(builder: (_) => const PickForKeyboardPage()),
+      );
+      await KeyboardPick.finish(picked);
+    } finally {
+      _pickOpen = false;
+    }
   }
+
+  /// A keyboard request waiting for the notice to be accepted.
+  bool _pickWaiting = false;
+  bool _pickOpen = false;
 
   @override
   void didChangeDependencies() {
@@ -352,7 +372,10 @@ class _MedsHomeState extends ConsumerState<MedsHome> {
       _takeTaps();
       _syncCircles();
     });
-    ref.listen(meProvider, (_, _) => _takeTaps());
+    ref.listen(meProvider, (_, _) {
+      _takeTaps();
+      if (_pickWaiting) _takeKeyboardPick();
+    });
     ref.listen(reminderPrefsProvider, (_, _) => _resync());
     final me = ref.watch(meProvider);
     final accepted = me.value?.disclaimerAccepted;

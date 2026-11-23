@@ -416,9 +416,16 @@ abstract final class ReminderPlan {
     return out.length > limit ? out.sublist(0, limit) : out;
   }
 
-  /// One "order more" notice per counted medicine of a running course: the
-  /// morning of its order-by day, or the next morning once that has passed,
-  /// until someone counts it again.
+  /// Most "order more" mornings set ahead per medicine. The plan is made
+  /// again whenever the app runs, so this only covers days it stays closed.
+  static const refillMornings = 7;
+
+  /// "Order more" notices per counted medicine of a running course: every
+  /// morning from its order-by day (or the next morning once that has
+  /// passed), until someone counts it again or the course ends. Set ahead
+  /// for [refillMornings] mornings, so they keep coming while the app stays
+  /// closed. A medicine counted as empty is due at once, even when how fast
+  /// it's used isn't known.
   static void _refills(
     ChildData c,
     ReminderPrefs prefs,
@@ -431,31 +438,50 @@ abstract final class ReminderPlan {
     final today = c.today(nowUtc);
     final seen = <String>{};
     for (final t in c.active(nowUtc)) {
-      if (!seen.add(t.medication.name.trim().toLowerCase())) continue;
-      final s = c.stockOf(t.medication.name, nowUtc);
-      final orderBy = s?.orderBy;
-      if (s == null || orderBy == null) continue;
+      final m = t.medication;
+      if (!seen.add('${m.name.trim().toLowerCase()}|${m.stockUnit}')) continue;
+      final s = c.stockOf(m, nowUtc);
+      if (s == null) continue;
+      final orderBy = s.isOut ? today : s.orderBy;
+      if (orderBy == null) continue;
       var day = orderBy.isBefore(today) ? today : orderBy;
-      var at = ChildClock.instant(c.zone, day, lastDayAt);
-      if (!at.isAfter(nowUtc)) {
+      if (!ChildClock.instant(c.zone, day, lastDayAt).isAfter(nowUtc)) {
         day = day.addDays(1);
-        at = ChildClock.instant(c.zone, day, lastDayAt);
       }
-      if (!at.isBefore(until) || prefs.isQuiet(local(at))) continue;
-      out.add(
-        MedsReminder(
-          kind: ReminderKind.refill,
-          spaceId: c.spaceId,
-          treatmentId: t.id,
-          at: at,
-          title: prefs.showNames
-              ? texts.refillTitle(c.child.name, t.medication.name)
-              : texts.privateTitle,
-          body: prefs.showNames
-              ? texts.refillBody(s.isOut ? null : s.runsOutOn)
-              : texts.privateBody,
-        ),
-      );
+      // The last day any course of this medicine (same count) runs; none
+      // when one of them has no end.
+      final courses = [
+        for (final x in c.active(nowUtc))
+          if (x.medication.name.trim().toLowerCase() ==
+                  m.name.trim().toLowerCase() &&
+              x.medication.stockUnit == m.stockUnit)
+            x,
+      ];
+      final end = courses.any((x) => x.lastDay == null)
+          ? null
+          : courses
+                .map((x) => x.lastDay!)
+                .reduce((a, b) => a.isAfter(b) ? a : b);
+      for (var n = 0; n < refillMornings; n++, day = day.addDays(1)) {
+        if (end != null && day.isAfter(end)) break;
+        final at = ChildClock.instant(c.zone, day, lastDayAt);
+        if (!at.isBefore(until)) break;
+        if (prefs.isQuiet(local(at))) continue;
+        out.add(
+          MedsReminder(
+            kind: ReminderKind.refill,
+            spaceId: c.spaceId,
+            treatmentId: t.id,
+            at: at,
+            title: prefs.showNames
+                ? texts.refillTitle(c.child.name, t.medication.name)
+                : texts.privateTitle,
+            body: prefs.showNames
+                ? texts.refillBody(s.isOut ? null : s.runsOutOn)
+                : texts.privateBody,
+          ),
+        );
+      }
     }
   }
 

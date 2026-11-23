@@ -274,7 +274,7 @@ class _TreatmentTile extends ConsumerWidget {
           );
     final adherence = Adherence.of(c.dosesOf(t, now));
     final finished = t.isFinishedBy(c.today(now));
-    final stock = finished ? null : c.stockOf(t.medication.name, now);
+    final stock = finished ? null : c.stockOf(t.medication, now);
     final text = [
       scheduleText(context, t),
       period,
