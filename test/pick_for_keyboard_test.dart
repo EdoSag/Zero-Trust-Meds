@@ -134,6 +134,40 @@ void main() {
     final without = await _noa(tester);
     expect(lastGiven(without, t)!.id, 'dose/1');
   });
+
+  testWidgets('last given says the dose as it was logged, even after the '
+      'treatment\'s dose was edited', (tester) async {
+    final logged = DoseLog(
+      id: 'dose/3',
+      treatmentId: 't1',
+      action: DoseAction.given,
+      at: DateTime.utc(2026, 1, 12, 15),
+      byUserId: mum,
+      amount: 2.5,
+      unit: 'ml',
+    );
+    final noa = await _noa(tester, more: [logged]);
+    final t = noa.treatments.firstWhere((t) => t.id == 't1');
+    late List<PickValue> values;
+    await tester.pumpWidget(
+      MaterialApp(
+        localizationsDelegates: const [
+          AppL10n.delegate,
+          ...ZtLanguages.delegates,
+        ],
+        supportedLocales: ZtLanguages.supported,
+        home: Builder(
+          builder: (context) {
+            values = treatmentValues(context, noa, t);
+            return const SizedBox();
+          },
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final last = values.firstWhere((v) => v.icon == Icons.check_circle_outline);
+    expect(last.text, startsWith('Amoxicillin 2.5 ml, last given'));
+  });
 }
 
 Future<ChildData> _noa(

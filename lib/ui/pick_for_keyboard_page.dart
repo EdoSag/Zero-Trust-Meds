@@ -59,9 +59,10 @@ List<PickValue> treatmentValues(
       (
         icon: Icons.check_circle_outline,
         label: l.insertMedLastGiven,
-        // A one-time dose says its own amount.
+        // As it was logged: a one-time dose's own amount, or the
+        // treatment's amount at the time, even if the dose was edited since.
         text: l.insertMedLastGivenText(
-          medicineWithDose(context, c.medicineOf(last) ?? m),
+          medicineWithDose(context, c.givenAs(last) ?? m),
           formatWhen(context, last.at),
         ),
       ),
